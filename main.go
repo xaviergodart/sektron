@@ -83,7 +83,7 @@ func (m model) Clock() tea.Cmd {
 
 func (m *model) Pulse() {
     m.pulse++
-    if m.pulse > pulsesPerQuarterNote*(stepsPerTrack/stepsPerQuarterNote) {
+    if m.pulse == pulsesPerQuarterNote*(stepsPerTrack/stepsPerQuarterNote) {
         m.pulse = 0.0
     }
 }
@@ -140,7 +140,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() string {
     var ui string
 
-    ui = ui + "pulse: " + strconv.Itoa(m.pulse/stepsPerQuarterNote)
+    ui = ui + "pulse: " + strconv.Itoa(m.pulse)
 
     // Tracks
     for _, track := range m.tracks {
