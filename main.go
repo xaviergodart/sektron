@@ -10,6 +10,12 @@ import (
     "github.com/charmbracelet/lipgloss"
 )
 
+const (
+    pulsesPerQuarterNote = 24
+    stepsPerQuarterNote  = 4
+    stepsPerTrack        = 16
+)
+
 var (
     stepStyle = lipgloss.NewStyle().
             Width(6).
@@ -34,14 +40,13 @@ type step struct {
 }
 
 type track struct {
-    steps       []step
-    currentStep int
+    steps []step
 }
 
-func (t track) View() string {
+func (t track) View(pulse int) string {
     var steps []string
     for i, _ := range t.steps {
-        if i == t.currentStep {
+        if i == pulse/(pulsesPerQuarterNote/stepsPerQuarterNote) {
             steps = append(steps, stepCurrentStyle.Render(strconv.Itoa(i+1)))
         } else {
             steps = append(steps, stepStyle.Render(strconv.Itoa(i+1)))
@@ -55,47 +60,52 @@ func (t track) View() string {
 
 type model struct {
     tracks    []track
-    tempo     int
+    tempo     float64
+    pulse     int
     isPlaying bool
 }
 
 func (m *model) TogglePlay() {
     m.isPlaying = !m.isPlaying
+    if !m.isPlaying {
+        m.pulse = 0.0
+    }
 }
 
 func (m model) Clock() tea.Cmd {
     if !m.isPlaying {
         return nil
     }
-    return tea.Every(time.Duration(60000/m.tempo)*time.Millisecond, func(t time.Time) tea.Msg {
+    return tea.Every(time.Duration(1000000*60/m.tempo/pulsesPerQuarterNote)*time.Microsecond, func(t time.Time) tea.Msg {
         return ClockTickMsg(t)
     })
 }
 
-func (m *model) UpdateTracks() {
-    for i, track := range m.tracks {
-        m.tracks[i].currentStep = (track.currentStep + 1) % len(track.steps)
+func (m *model) Pulse() {
+    m.pulse++
+    if m.pulse > pulsesPerQuarterNote*(stepsPerTrack/stepsPerQuarterNote) {
+        m.pulse = 0.0
     }
 }
 
 func initialModel() model {
     var steps []step
-    for i := 1; i <= 16; i++ {
+    for i := 1; i <= stepsPerTrack; i++ {
         steps = append(steps, step{
             note: 0,
         })
     }
 
     var tracks []track
-    for i := 1; i <= 4; i++ {
+    for i := 1; i <= 1; i++ {
         tracks = append(tracks, track{
-            steps:       steps,
-            currentStep: 0,
+            steps: steps,
         })
     }
     return model{
         tracks:    tracks,
-        tempo:     220,
+        tempo:     120.0,
+        pulse:     0.0,
         isPlaying: false,
     }
 }
@@ -109,7 +119,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
     switch msg := msg.(type) {
 
     case ClockTickMsg:
-        m.UpdateTracks()
+        m.Pulse()
         return m, m.Clock()
 
     case tea.KeyMsg:
@@ -130,9 +140,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() string {
     var ui string
 
+    ui = ui + "pulse: " + strconv.Itoa(m.pulse/stepsPerQuarterNote)
+
     // Tracks
     for _, track := range m.tracks {
-        ui = ui + track.View()
+        ui = ui + track.View(m.pulse)
     }
     // Send the UI for rendering
     return ui
