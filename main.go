@@ -2,12 +2,15 @@ package main
 
 import (
     "fmt"
+    "log"
     "os"
     "strconv"
     "time"
 
     tea "github.com/charmbracelet/bubbletea"
     "github.com/charmbracelet/lipgloss"
+    "gitlab.com/gomidi/midi/v2"
+    _ "gitlab.com/gomidi/midi/v2/drivers/portmididrv" // autoregisters driver
 )
 
 const (
@@ -17,6 +20,7 @@ const (
 )
 
 var (
+    midiSend  func(msg midi.Message) error
     stepStyle = lipgloss.NewStyle().
             Width(6).
             Height(3).
@@ -36,17 +40,24 @@ var (
 type ClockTickMsg time.Time
 
 type step struct {
-    note int
+    note      uint8
+    triggered bool
 }
 
 type track struct {
-    steps []step
+    trigger chan<- struct{}
+    steps   []step
 }
 
 func (t track) View(pulse int) string {
     var steps []string
-    for i, _ := range t.steps {
+    for i, step := range t.steps {
         if i == pulse/(pulsesPerQuarterNote/stepsPerQuarterNote) {
+            if !step.triggered {
+                msg := midi.NoteOn(0, step.note, 120)
+                midiSend(msg)
+                step.triggered = true
+            }
             steps = append(steps, stepCurrentStyle.Render(strconv.Itoa(i+1)))
         } else {
             steps = append(steps, stepStyle.Render(strconv.Itoa(i+1)))
@@ -92,7 +103,8 @@ func initialModel() model {
     var steps []step
     for i := 1; i <= stepsPerTrack; i++ {
         steps = append(steps, step{
-            note: 0,
+            note:      60,
+            triggered: false,
         })
     }
 
@@ -151,6 +163,14 @@ func (m model) View() string {
 }
 
 func main() {
+    defer midi.CloseDriver()
+
+    drivers := midi.GetOutPorts()
+    if len(drivers) == 0 {
+        log.Fatal("No midi drivers")
+    }
+    midiSend, _ = midi.SendTo(drivers[0])
+
     p := tea.NewProgram(initialModel())
     if _, err := p.Run(); err != nil {
         fmt.Printf("Alas, there's been an error: %v", err)
