@@ -60,9 +60,8 @@ func (s Sequencer) Clock() tea.Cmd {
 	if !s.isPlaying {
 		return nil
 	}
-	// TODO: need some lear rework for handling meter correctly.
-	// Roght now, tempo == quarter notes per minute.
-	return tea.Every(time.Duration(1000000*60/s.tempo/pulsesPerQuarterNote)*time.Microsecond, func(t time.Time) tea.Msg {
+	// midi clock: http://midi.teragonaudio.com/tech/midispec/clock.htm
+	return tea.Every(time.Duration(60000000/(s.tempo*pulsesPerQuarterNote))*time.Microsecond, func(t time.Time) tea.Msg {
 		return ClockTickMsg(t)
 	})
 }

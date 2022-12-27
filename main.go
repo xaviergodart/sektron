@@ -4,6 +4,7 @@ import (
     "fmt"
     "log"
     "os"
+    sekmidi "sektron/midi"
     "sektron/ui"
 
     tea "github.com/charmbracelet/bubbletea"
@@ -19,6 +20,13 @@ func main() {
         log.Fatal("No midi drivers")
     }
     midiSend, _ := midi.SendTo(drivers[0])
+
+    sekmidi, err := sekmidi.NewServer()
+    if err != nil {
+        log.Fatal(err)
+    }
+    sekmidi.Start()
+    sekmidi.Close()
 
     p := tea.NewProgram(ui.New(midiSend))
     if _, err := p.Run(); err != nil {
