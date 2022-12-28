@@ -1,10 +1,10 @@
 package sequencer
 
 import (
+	"sektron/midi"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"gitlab.com/gomidi/midi/v2"
 )
 
 const (
@@ -19,32 +19,31 @@ const (
 type ClockTickMsg time.Time
 
 type Sequencer struct {
-	tracks    []track
+	midi      *midi.Server
+	tracks    []*track
 	tempo     float64
-	pulse     int
 	isPlaying bool
 }
 
-func New(sendMidi func(msg midi.Message) error) Sequencer {
-	var steps []step
+func New(midi *midi.Server) Sequencer {
+	var steps []*step
 	for i := 1; i <= stepsPerTrack; i++ {
-		steps = append(steps, step{
-			note:      defaultNote,
-			triggered: false,
+		steps = append(steps, &step{
+			midi: midi,
+			note: defaultNote + uint8(i),
 		})
 	}
 
-	var tracks []track
+	var tracks []*track
 	for i := 1; i <= 1; i++ {
-		tracks = append(tracks, track{
-			steps:    steps,
-			sendMidi: sendMidi,
+		tracks = append(tracks, &track{
+			steps: steps,
+			pulse: 0,
 		})
 	}
 	return Sequencer{
 		tracks:    tracks,
 		tempo:     defaultTempo,
-		pulse:     0.0,
 		isPlaying: false,
 	}
 }
@@ -52,7 +51,7 @@ func New(sendMidi func(msg midi.Message) error) Sequencer {
 func (s *Sequencer) TogglePlay() {
 	s.isPlaying = !s.isPlaying
 	if !s.isPlaying {
-		s.pulse = 0.0
+		s.Reset()
 	}
 }
 
@@ -67,8 +66,16 @@ func (s Sequencer) Clock() tea.Cmd {
 }
 
 func (s *Sequencer) Pulse() {
-	s.pulse++
-	if s.pulse == pulsesPerQuarterNote*(stepsPerTrack/stepsPerQuarterNote) {
-		s.pulse = 0.0
+	if !s.isPlaying {
+		return
+	}
+	for _, track := range s.tracks {
+		track.incrPulse()
+	}
+}
+
+func (s *Sequencer) Reset() {
+	for _, track := range s.tracks {
+		track.resetPulse()
 	}
 }

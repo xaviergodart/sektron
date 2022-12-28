@@ -1,36 +1,26 @@
 package main
 
 import (
-    "fmt"
-    "log"
-    "os"
-    sekmidi "sektron/midi"
-    "sektron/ui"
+	"fmt"
+	"log"
+	"os"
+	"sektron/midi"
+	"sektron/ui"
 
-    tea "github.com/charmbracelet/bubbletea"
-    "gitlab.com/gomidi/midi/v2"
-    _ "gitlab.com/gomidi/midi/v2/drivers/portmididrv" // autoregisters driver
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 func main() {
-    defer midi.CloseDriver()
+	midi, err := midi.NewServer()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer midi.Close()
+	midi.Start()
 
-    drivers := midi.GetOutPorts()
-    if len(drivers) == 0 {
-        log.Fatal("No midi drivers")
-    }
-    midiSend, _ := midi.SendTo(drivers[0])
-
-    sekmidi, err := sekmidi.NewServer()
-    if err != nil {
-        log.Fatal(err)
-    }
-    sekmidi.Start()
-    sekmidi.Close()
-
-    p := tea.NewProgram(ui.New(midiSend))
-    if _, err := p.Run(); err != nil {
-        fmt.Printf("Alas, there's been an error: %v", err)
-        os.Exit(1)
-    }
+	p := tea.NewProgram(ui.New(midi))
+	if _, err := p.Run(); err != nil {
+		fmt.Printf("Alas, there's been an error: %v", err)
+		os.Exit(1)
+	}
 }

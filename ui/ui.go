@@ -1,19 +1,19 @@
 package ui
 
 import (
+	"sektron/midi"
 	"sektron/sequencer"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"gitlab.com/gomidi/midi/v2"
 )
 
 type UI struct {
 	seq sequencer.Sequencer
 }
 
-func New(sendMidi func(msg midi.Message) error) UI {
+func New(midi *midi.Server) UI {
 	return UI{
-		seq: sequencer.New(sendMidi),
+		seq: sequencer.New(midi),
 	}
 }
 

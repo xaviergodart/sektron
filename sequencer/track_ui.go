@@ -1,10 +1,10 @@
 package sequencer
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/charmbracelet/lipgloss"
-	"gitlab.com/gomidi/midi/v2"
 )
 
 var (
@@ -24,21 +24,17 @@ var (
 				Background(lipgloss.Color("#FFFFFF"))
 )
 
-func (t track) View(pulse int) string {
+func (t track) View() string {
+	ui := fmt.Sprintf("pulse: %d\n", t.pulse)
 	var steps []string
-	for i, step := range t.steps {
-		if i == pulse/(pulsesPerQuarterNote/stepsPerQuarterNote) {
-			if !step.triggered {
-				msg := midi.NoteOn(0, step.note, 120)
-				t.sendMidi(msg)
-				step.triggered = true
-			}
+	for i := range t.steps {
+		if i == t.activeStep() {
 			steps = append(steps, stepCurrentStyle.Render(strconv.Itoa(i+1)))
 		} else {
 			steps = append(steps, stepStyle.Render(strconv.Itoa(i+1)))
 		}
 	}
-	return lipgloss.JoinHorizontal(
+	return ui + lipgloss.JoinHorizontal(
 		lipgloss.Left,
 		steps...,
 	)
