@@ -1,19 +1,18 @@
 package ui
 
 import (
-	"sektron/midi"
 	"sektron/sequencer"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 type UI struct {
-	seq sequencer.Sequencer
+	seq *sequencer.Sequencer
 }
 
-func New(midi *midi.Server) UI {
+func New(seq *sequencer.Sequencer) UI {
 	return UI{
-		seq: sequencer.New(midi),
+		seq: seq,
 	}
 }
 

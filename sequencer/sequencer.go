@@ -25,7 +25,7 @@ type Sequencer struct {
 	isPlaying bool
 }
 
-func New(midi *midi.Server) Sequencer {
+func New(midi *midi.Server) *Sequencer {
 	var steps []*Step
 	for i := 1; i <= stepsPerTrack; i++ {
 		steps = append(steps, &Step{
@@ -41,7 +41,7 @@ func New(midi *midi.Server) Sequencer {
 			pulse: 0,
 		})
 	}
-	return Sequencer{
+	return &Sequencer{
 		tracks:    tracks,
 		tempo:     defaultTempo,
 		isPlaying: false,
