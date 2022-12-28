@@ -1,7 +1,7 @@
-package sequencer
+package ui
 
 import (
-	"fmt"
+	"sektron/sequencer"
 	"strconv"
 
 	"github.com/charmbracelet/lipgloss"
@@ -24,17 +24,16 @@ var (
 				Background(lipgloss.Color("#FFFFFF"))
 )
 
-func (t track) View() string {
-	ui := fmt.Sprintf("pulse: %d\n", t.pulse)
+func (u UI) ViewTrack(track *sequencer.Track) string {
 	var steps []string
-	for i := range t.steps {
-		if i == t.activeStep() {
+	for i := range track.GetSteps() {
+		if i == track.ActiveStep() {
 			steps = append(steps, stepCurrentStyle.Render(strconv.Itoa(i+1)))
 		} else {
 			steps = append(steps, stepStyle.Render(strconv.Itoa(i+1)))
 		}
 	}
-	return ui + lipgloss.JoinHorizontal(
+	return lipgloss.JoinHorizontal(
 		lipgloss.Left,
 		steps...,
 	)

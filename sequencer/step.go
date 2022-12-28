@@ -4,13 +4,13 @@ import (
 	"sektron/midi"
 )
 
-type step struct {
+type Step struct {
 	midi      *midi.Server
 	note      uint8
 	triggered bool
 }
 
-func (s *step) trigger() {
+func (s *Step) trigger() {
 	if s.triggered {
 		return
 	}
@@ -19,7 +19,7 @@ func (s *step) trigger() {
 	s.triggered = true
 }
 
-func (s *step) reset() {
+func (s *Step) reset() {
 	if s.triggered {
 		s.midi.NoteOff(0, 0, s.note)
 	}

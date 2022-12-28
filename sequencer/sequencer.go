@@ -20,23 +20,23 @@ type ClockTickMsg time.Time
 
 type Sequencer struct {
 	midi      *midi.Server
-	tracks    []*track
+	tracks    []*Track
 	tempo     float64
 	isPlaying bool
 }
 
 func New(midi *midi.Server) Sequencer {
-	var steps []*step
+	var steps []*Step
 	for i := 1; i <= stepsPerTrack; i++ {
-		steps = append(steps, &step{
+		steps = append(steps, &Step{
 			midi: midi,
 			note: defaultNote + uint8(i),
 		})
 	}
 
-	var tracks []*track
+	var tracks []*Track
 	for i := 1; i <= 1; i++ {
-		tracks = append(tracks, &track{
+		tracks = append(tracks, &Track{
 			steps: steps,
 			pulse: 0,
 		})
@@ -46,6 +46,10 @@ func New(midi *midi.Server) Sequencer {
 		tempo:     defaultTempo,
 		isPlaying: false,
 	}
+}
+
+func (s *Sequencer) GetTracks() []*Track {
+	return s.tracks
 }
 
 func (s *Sequencer) TogglePlay() {
