@@ -8,6 +8,7 @@ type Track struct {
 
 	note     uint8
 	velocity uint8
+	active   bool
 }
 
 func (t Track) Pulse() int {
@@ -38,6 +39,9 @@ func (t *Track) resetPulse() {
 }
 
 func (t *Track) triggerStep() {
+	if !t.active {
+		return
+	}
 	for i, step := range t.steps {
 		if i != t.ActiveStep() {
 			step.reset()

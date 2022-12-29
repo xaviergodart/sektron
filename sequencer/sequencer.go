@@ -37,6 +37,7 @@ func New(midi *midi.Server) *Sequencer {
 			velocity: defaultVelocity,
 			device:   defaultDevice,
 			channel:  uint8(i),
+			active:   true,
 		}
 		for j := 0; j < stepsPerTrack; j++ {
 			steps = append(steps, &Step{
