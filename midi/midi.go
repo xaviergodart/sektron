@@ -2,6 +2,7 @@ package midi
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"sync"
 
@@ -20,6 +21,7 @@ type Server struct {
 
 func NewServer() (*Server, error) {
 	devices := midi.GetOutPorts()
+	fmt.Println(devices)
 	if len(devices) == 0 {
 		return nil, errors.New("no midi drivers")
 	}
@@ -45,8 +47,8 @@ func (s *Server) Start() error {
 				select {
 				case <-done:
 					return
-				case note := <-output:
-					send(note)
+				case msg := <-output:
+					send(msg)
 				}
 			}
 		}(device, s.done, s.outputs[i])
@@ -64,6 +66,10 @@ func (s *Server) NoteOn(device int, channel uint8, note uint8, velocity uint8) {
 func (s *Server) NoteOff(device int, channel uint8, note uint8) {
 	// TODO: check if output exists. Handle hot plug?
 	s.outputs[device] <- midi.NoteOff(channel, note)
+}
+
+func (s *Server) SendClock() {
+	s.outputs[0] <- midi.TimingClock()
 }
 
 func (s *Server) Close() {
