@@ -8,8 +8,10 @@ import (
 )
 
 const (
-	defaultTempo = 90.0
-	defaultNote  = 60
+	defaultTempo    = 90.0
+	defaultNote     = 60
+	defaultVelocity = 100
+	defaultDevice   = 0
 
 	pulsesPerQuarterNote = 24
 	stepsPerQuarterNote  = 4
@@ -26,20 +28,25 @@ type Sequencer struct {
 }
 
 func New(midi *midi.Server) *Sequencer {
-	var steps []*Step
-	for i := 1; i <= stepsPerTrack; i++ {
-		steps = append(steps, &Step{
-			midi: midi,
-			note: defaultNote + uint8(i),
-		})
-	}
-
 	var tracks []*Track
-	for i := 1; i <= 1; i++ {
-		tracks = append(tracks, &Track{
-			steps: steps,
-			pulse: 0,
-		})
+	for i := 0; i <= 1; i++ {
+		var steps []*Step
+		track := &Track{
+			pulse:    0,
+			note:     defaultNote + uint8(i*12) + uint8(i*5),
+			velocity: defaultVelocity,
+			device:   defaultDevice,
+			channel:  uint8(i),
+		}
+		for j := 0; j < stepsPerTrack; j++ {
+			steps = append(steps, &Step{
+				midi:   midi,
+				track:  track,
+				active: true,
+			})
+		}
+		track.steps = steps
+		tracks = append(tracks, track)
 	}
 	return &Sequencer{
 		tracks:    tracks,
@@ -48,7 +55,7 @@ func New(midi *midi.Server) *Sequencer {
 	}
 }
 
-func (s *Sequencer) GetTracks() []*Track {
+func (s *Sequencer) Tracks() []*Track {
 	return s.tracks
 }
 

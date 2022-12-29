@@ -1,15 +1,20 @@
 package sequencer
 
 type Track struct {
-	steps []*Step
-	pulse int
+	steps   []*Step
+	device  int
+	pulse   int
+	channel uint8
+
+	note     uint8
+	velocity uint8
 }
 
-func (t Track) GetPulse() int {
+func (t Track) Pulse() int {
 	return t.pulse
 }
 
-func (t Track) GetSteps() []*Step {
+func (t Track) Steps() []*Step {
 	return t.steps
 }
 

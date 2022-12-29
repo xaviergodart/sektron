@@ -26,7 +26,7 @@ var (
 
 func (u UI) ViewTrack(track *sequencer.Track) string {
 	var steps []string
-	for i := range track.GetSteps() {
+	for i := range track.Steps() {
 		if i == track.ActiveStep() {
 			steps = append(steps, stepCurrentStyle.Render(strconv.Itoa(i+1)))
 		} else {
