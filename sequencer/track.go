@@ -7,7 +7,7 @@ type Track struct {
 	length  int
 	channel uint8
 
-	note        uint8
+	chord       []uint8
 	velocity    uint8
 	probability int
 	active      bool

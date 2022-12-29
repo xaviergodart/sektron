@@ -34,9 +34,10 @@ func New(midi *midi.Server) *Sequencer {
 	var tracks []*Track
 	for i := 0; i <= 1; i++ {
 		var steps []*Step
+		note := defaultNote + uint8(i*12) + uint8(i*5)
 		track := &Track{
 			pulse:       0,
-			note:        defaultNote + uint8(i*12) + uint8(i*5),
+			chord:       []uint8{note, note + 5},
 			length:      pulsesPerStep * 4,
 			velocity:    defaultVelocity,
 			probability: defaultProbability,
