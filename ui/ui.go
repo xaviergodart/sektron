@@ -36,6 +36,7 @@ func (u UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		// These keys should exit the program.
 		case "ctrl+c", "q":
+			u.seq.Reset()
 			return u, tea.Quit
 		}
 	}

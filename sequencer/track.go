@@ -20,12 +20,12 @@ func (t Track) CurrentStep() int {
 	return t.pulse / pulsesPerStep
 }
 
-func (t Track) NextStep() int {
+func (t Track) stepForNextPulse() int {
 	return (t.pulse + 1) % (pulsesPerStep * len(t.steps)) / pulsesPerStep
 }
 
-func (t Track) relativePulseForStep(step int) int {
-	return t.pulse - (step * pulsesPerStep)
+func (t Track) isStepForNextPulseActive() bool {
+	return t.steps[t.stepForNextPulse()].active
 }
 
 func (t *Track) incrPulse() {
@@ -48,10 +48,12 @@ func (t *Track) triggerStep() {
 		return
 	}
 	for i, step := range t.steps {
-		if i == t.CurrentStep() && t.relativePulseForStep(i) == 0 {
+		if step.isStartingPulse() {
 			step.trigger()
 		}
-		if t.relativePulseForStep(i) >= step.Length() || (t.steps[t.NextStep()].active && i != t.CurrentStep()) {
+		// Avoid 2 steps to be triggered at the same time
+		// when the first step overlaps
+		if step.isEndingPulse() || (i != t.CurrentStep() && t.isStepForNextPulseActive()) {
 			step.reset()
 		}
 	}

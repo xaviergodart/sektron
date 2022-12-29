@@ -5,12 +5,14 @@ import (
 )
 
 type Step struct {
-	midi  *midi.Server
-	track *Track
+	midi   *midi.Server
+	track  *Track
+	number int
 
 	length    *int
 	note      *uint8
 	velocity  *uint8
+	offset    int
 	active    bool
 	triggered bool
 }
@@ -34,6 +36,18 @@ func (s Step) Length() int {
 		return s.track.length
 	}
 	return *s.length
+}
+
+func (s Step) relativePulse() int {
+	return s.track.pulse - (s.number * pulsesPerStep)
+}
+
+func (s Step) isStartingPulse() bool {
+	return s.relativePulse() == s.offset
+}
+
+func (s Step) isEndingPulse() bool {
+	return s.relativePulse() >= s.Length()+s.offset
 }
 
 func (s *Step) trigger() {

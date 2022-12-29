@@ -8,13 +8,13 @@ import (
 )
 
 const (
-	defaultTempo         = 120.0
-	defaultNote          = 60
-	defaultVelocity      = 100
-	defaultDevice        = 0
-	defaultStepsPerTrack = 16
+	defaultTempo         float64 = 120.0
+	defaultNote          uint8   = 60
+	defaultVelocity      uint8   = 100
+	defaultDevice        int     = 0
+	defaultStepsPerTrack int     = 16
 
-	pulsesPerStep = 24
+	pulsesPerStep int = 24
 )
 
 type ClockTickMsg time.Time
@@ -33,7 +33,7 @@ func New(midi *midi.Server) *Sequencer {
 		track := &Track{
 			pulse:    0,
 			note:     defaultNote + uint8(i*12) + uint8(i*5),
-			length:   pulsesPerStep,
+			length:   pulsesPerStep * 4,
 			velocity: defaultVelocity,
 			device:   defaultDevice,
 			channel:  uint8(i),
@@ -41,9 +41,11 @@ func New(midi *midi.Server) *Sequencer {
 		}
 		for j := 0; j < defaultStepsPerTrack; j++ {
 			steps = append(steps, &Step{
+				number: j,
 				midi:   midi,
 				track:  track,
 				active: j%4 == 0,
+				offset: i * 24,
 			})
 		}
 		track.steps = steps
@@ -72,7 +74,7 @@ func (s Sequencer) Clock() tea.Cmd {
 		return nil
 	}
 	// midi clock: http://midi.teragonaudio.com/tech/midispec/clock.htm
-	return tea.Every(time.Duration(60000000/(s.tempo*pulsesPerStep*4))*time.Microsecond, func(t time.Time) tea.Msg {
+	return tea.Every(time.Duration(60000000/(s.tempo*float64(pulsesPerStep*4)))*time.Microsecond, func(t time.Time) tea.Msg {
 		return ClockTickMsg(t)
 	})
 }
