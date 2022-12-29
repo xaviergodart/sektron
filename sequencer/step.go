@@ -29,7 +29,7 @@ func (s Step) Velocity() uint8 {
 }
 
 func (s *Step) trigger() {
-	if s.triggered {
+	if !s.active || s.triggered {
 		return
 	}
 	s.midi.NoteOn(s.track.device, s.track.channel, s.Note(), s.Velocity())
