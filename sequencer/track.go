@@ -20,6 +20,10 @@ func (t Track) CurrentStep() int {
 	return t.pulse / pulsesPerStep
 }
 
+func (t Track) NextStep() int {
+	return (t.pulse + 1) % (pulsesPerStep * len(t.steps)) / pulsesPerStep
+}
+
 func (t Track) relativePulseForStep(step int) int {
 	return t.pulse - (step * pulsesPerStep)
 }
@@ -47,7 +51,7 @@ func (t *Track) triggerStep() {
 		if i == t.CurrentStep() && t.relativePulseForStep(i) == 0 {
 			step.trigger()
 		}
-		if t.relativePulseForStep(i) >= step.Length() {
+		if t.relativePulseForStep(i) >= step.Length() || (t.steps[t.NextStep()].active && i != t.CurrentStep()) {
 			step.reset()
 		}
 	}
