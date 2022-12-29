@@ -1,6 +1,8 @@
 package sequencer
 
 import (
+	"math/rand"
+
 	"sektron/midi"
 	"time"
 
@@ -11,6 +13,7 @@ const (
 	defaultTempo         float64 = 120.0
 	defaultNote          uint8   = 60
 	defaultVelocity      uint8   = 100
+	defaultProbability   int     = 100
 	defaultDevice        int     = 0
 	defaultStepsPerTrack int     = 16
 
@@ -27,17 +30,19 @@ type Sequencer struct {
 }
 
 func New(midi *midi.Server) *Sequencer {
+	rand.Seed(time.Now().UnixNano())
 	var tracks []*Track
 	for i := 0; i <= 1; i++ {
 		var steps []*Step
 		track := &Track{
-			pulse:    0,
-			note:     defaultNote + uint8(i*12) + uint8(i*5),
-			length:   pulsesPerStep * 4,
-			velocity: defaultVelocity,
-			device:   defaultDevice,
-			channel:  uint8(i),
-			active:   true,
+			pulse:       0,
+			note:        defaultNote + uint8(i*12) + uint8(i*5),
+			length:      pulsesPerStep * 4,
+			velocity:    defaultVelocity,
+			probability: defaultProbability,
+			device:      defaultDevice,
+			channel:     uint8(i),
+			active:      true,
 		}
 		for j := 0; j < defaultStepsPerTrack; j++ {
 			steps = append(steps, &Step{

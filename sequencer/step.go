@@ -1,6 +1,8 @@
 package sequencer
 
 import (
+	"math/rand"
+
 	"sektron/midi"
 )
 
@@ -9,12 +11,13 @@ type Step struct {
 	track  *Track
 	number int
 
-	length    *int
-	note      *uint8
-	velocity  *uint8
-	offset    int
-	active    bool
-	triggered bool
+	length      *int
+	note        *uint8
+	velocity    *uint8
+	probability *int
+	offset      int
+	active      bool
+	triggered   bool
 }
 
 func (s Step) Note() uint8 {
@@ -38,6 +41,17 @@ func (s Step) Length() int {
 	return *s.length
 }
 
+func (s Step) Probability() int {
+	if s.probability == nil {
+		return s.track.probability
+	}
+	return *s.probability
+}
+
+func (s Step) skip() bool {
+	return s.Probability() < 100 && rand.Intn(100) > s.Probability()
+}
+
 func (s Step) relativePulse() int {
 	return s.track.pulse - (s.number * pulsesPerStep)
 }
@@ -51,7 +65,7 @@ func (s Step) isEndingPulse() bool {
 }
 
 func (s *Step) trigger() {
-	if !s.active || s.triggered {
+	if !s.active || s.triggered || s.skip() {
 		return
 	}
 	s.midi.NoteOn(s.track.device, s.track.channel, s.Note(), s.Velocity())

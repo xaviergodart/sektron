@@ -7,9 +7,10 @@ type Track struct {
 	length  int
 	channel uint8
 
-	note     uint8
-	velocity uint8
-	active   bool
+	note        uint8
+	velocity    uint8
+	probability int
+	active      bool
 }
 
 func (t Track) Steps() []*Step {
