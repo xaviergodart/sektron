@@ -4,6 +4,7 @@ type Track struct {
 	steps   []*Step
 	device  int
 	pulse   int
+	length  int
 	channel uint8
 
 	note     uint8
@@ -11,21 +12,17 @@ type Track struct {
 	active   bool
 }
 
-func (t Track) Pulse() int {
-	return t.pulse
-}
-
 func (t Track) Steps() []*Step {
 	return t.steps
 }
 
-func (t Track) ActiveStep() int {
-	return t.pulse / (pulsesPerQuarterNote / stepsPerQuarterNote)
+func (t Track) CurrentStep() int {
+	return t.pulse / pulsesPerStep
 }
 
 func (t *Track) incrPulse() {
 	t.pulse++
-	if t.pulse == pulsesPerQuarterNote*(stepsPerTrack/stepsPerQuarterNote) {
+	if t.pulse == pulsesPerStep*len(t.steps) {
 		t.resetPulse()
 	}
 	t.triggerStep()
@@ -43,10 +40,9 @@ func (t *Track) triggerStep() {
 		return
 	}
 	for i, step := range t.steps {
-		if i != t.ActiveStep() {
-			step.reset()
-			continue
+		if i == t.CurrentStep() {
+			step.trigger()
 		}
-		step.trigger()
+		step.incrPulse()
 	}
 }
