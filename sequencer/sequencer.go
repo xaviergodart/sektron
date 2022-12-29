@@ -33,7 +33,7 @@ func New(midi *midi.Server) *Sequencer {
 		track := &Track{
 			pulse:    0,
 			note:     defaultNote + uint8(i*12) + uint8(i*5),
-			length:   pulsesPerStep * 2,
+			length:   pulsesPerStep * 5,
 			velocity: defaultVelocity,
 			device:   defaultDevice,
 			channel:  uint8(i),

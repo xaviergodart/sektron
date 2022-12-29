@@ -8,7 +8,7 @@ type Step struct {
 	midi  *midi.Server
 	track *Track
 
-	pulse     int
+	length    *int
 	note      *uint8
 	velocity  *uint8
 	active    bool
@@ -29,15 +29,11 @@ func (s Step) Velocity() uint8 {
 	return *s.velocity
 }
 
-func (s *Step) incrPulse() {
-	if !s.triggered {
-		return
+func (s Step) Length() int {
+	if s.length == nil {
+		return s.track.length
 	}
-	if s.pulse > s.track.length {
-		s.reset()
-		return
-	}
-	s.pulse++
+	return *s.length
 }
 
 func (s *Step) trigger() {
@@ -54,5 +50,4 @@ func (s *Step) reset() {
 	}
 	s.midi.NoteOff(s.track.device, s.track.channel, s.Note())
 	s.triggered = false
-	s.pulse = 0
 }
