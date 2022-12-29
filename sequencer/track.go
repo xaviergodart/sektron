@@ -30,21 +30,21 @@ func (t Track) isStepForNextPulseActive() bool {
 }
 
 func (t *Track) incrPulse() {
-	t.triggerStep()
+	t.trigger()
 	t.pulse++
 	if t.pulse == pulsesPerStep*len(t.steps) {
-		t.resetPulse()
+		t.reset()
 	}
 }
 
-func (t *Track) resetPulse() {
+func (t *Track) reset() {
 	t.pulse = 0
 	for _, step := range t.steps {
 		step.reset()
 	}
 }
 
-func (t *Track) triggerStep() {
+func (t *Track) trigger() {
 	if !t.active {
 		return
 	}

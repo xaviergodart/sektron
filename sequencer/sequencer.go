@@ -96,6 +96,6 @@ func (s *Sequencer) Pulse() {
 
 func (s *Sequencer) Reset() {
 	for _, track := range s.tracks {
-		track.resetPulse()
+		track.reset()
 	}
 }
