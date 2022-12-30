@@ -27,7 +27,7 @@ type Sequencer struct {
 func New(midi *midi.Server) *Sequencer {
 	rand.Seed(time.Now().UnixNano())
 	var tracks []*Track
-	for i := 0; i <= 1; i++ {
+	for i := 0; i <= 11; i++ {
 		var steps []*Step
 		note := defaultNote + uint8(i*12) + uint8(i*5)
 		track := &Track{

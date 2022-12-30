@@ -7,6 +7,10 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+const (
+	refreshFrequency = 16 * time.Millisecond
+)
+
 type RefreshTickMsg time.Time
 
 type UI struct {
@@ -20,7 +24,7 @@ func New(seq *sequencer.Sequencer) UI {
 }
 
 func refresh() tea.Cmd {
-	return tea.Tick(16*time.Millisecond, func(t time.Time) tea.Msg {
+	return tea.Tick(refreshFrequency, func(t time.Time) tea.Msg {
 		return RefreshTickMsg(t)
 	})
 }
