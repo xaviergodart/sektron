@@ -5,8 +5,6 @@ import (
 
 	"sektron/midi"
 	"time"
-
-	tea "github.com/charmbracelet/bubbletea"
 )
 
 const (
@@ -16,16 +14,12 @@ const (
 	defaultProbability   int     = 100
 	defaultDevice        int     = 0
 	defaultStepsPerTrack int     = 16
-
-	pulsesPerStep int = 6
 )
-
-type ClockTickMsg time.Time
 
 type Sequencer struct {
 	midi      *midi.Server
 	tracks    []*Track
-	tempo     float64
+	clock     *Clock
 	isPlaying bool
 }
 
@@ -38,7 +32,7 @@ func New(midi *midi.Server) *Sequencer {
 		track := &Track{
 			pulse:       0,
 			chord:       []uint8{note, note + 5},
-			length:      pulsesPerStep / 2,
+			length:      pulsesPerStep,
 			velocity:    defaultVelocity,
 			probability: defaultProbability,
 			device:      defaultDevice,
@@ -51,7 +45,7 @@ func New(midi *midi.Server) *Sequencer {
 				midi:   midi,
 				track:  track,
 				active: j%4 == 0,
-				//offset: i * pulsesPerStep,
+				offset: i * pulsesPerStep,
 			})
 		}
 		track.steps = steps
@@ -60,9 +54,17 @@ func New(midi *midi.Server) *Sequencer {
 	return &Sequencer{
 		midi:      midi,
 		tracks:    tracks,
-		tempo:     defaultTempo,
 		isPlaying: false,
 	}
+}
+
+func (s *Sequencer) Start() {
+	for _, track := range s.tracks {
+		track.Start()
+	}
+	s.clock = NewClock(defaultTempo, func() {
+		s.Pulse()
+	})
 }
 
 func (s *Sequencer) Tracks() []*Track {
@@ -76,24 +78,14 @@ func (s *Sequencer) TogglePlay() {
 	}
 }
 
-func (s Sequencer) Clock() tea.Cmd {
-	if !s.isPlaying {
-		return nil
-	}
-	// midi clock: http://midi.teragonaudio.com/tech/midispec/clock.htm
-	return tea.Tick(time.Duration(60000000/(s.tempo*float64(pulsesPerStep*4)))*time.Microsecond, func(t time.Time) tea.Msg {
-		return ClockTickMsg(t)
-	})
-}
-
 func (s *Sequencer) Pulse() {
+	s.midi.SendClock()
 	if !s.isPlaying {
 		return
 	}
 	for _, track := range s.tracks {
-		track.incrPulse()
+		track.Pulse()
 	}
-	s.midi.SendClock()
 }
 
 func (s *Sequencer) Reset() {

@@ -10,7 +10,22 @@ type Track struct {
 	chord       []uint8
 	velocity    uint8
 	probability int
+	trig        chan struct{}
 	active      bool
+}
+
+func (t *Track) Start() {
+	t.trig = make(chan struct{})
+	go func(track *Track) {
+		for {
+			<-track.trig
+			track.trigger()
+		}
+	}(t)
+}
+
+func (t *Track) Pulse() {
+	t.trig <- struct{}{}
 }
 
 func (t Track) Steps() []*Step {
@@ -29,21 +44,6 @@ func (t Track) isStepForNextPulseActive() bool {
 	return t.steps[t.stepForNextPulse()].active
 }
 
-func (t *Track) incrPulse() {
-	t.trigger()
-	t.pulse++
-	if t.pulse == pulsesPerStep*len(t.steps) {
-		t.reset()
-	}
-}
-
-func (t *Track) reset() {
-	t.pulse = 0
-	for _, step := range t.steps {
-		step.reset()
-	}
-}
-
 func (t *Track) trigger() {
 	if !t.active {
 		return
@@ -57,5 +57,16 @@ func (t *Track) trigger() {
 		if step.isEndingPulse() || (i != t.CurrentStep() && t.isStepForNextPulseActive()) {
 			step.reset()
 		}
+	}
+	t.pulse++
+	if t.pulse == pulsesPerStep*len(t.steps) {
+		t.reset()
+	}
+}
+
+func (t *Track) reset() {
+	t.pulse = 0
+	for _, step := range t.steps {
+		step.reset()
 	}
 }

@@ -20,6 +20,7 @@ func main() {
 	midi.Start()
 
 	seq := sequencer.New(midi)
+	seq.Start()
 
 	p := tea.NewProgram(ui.New(seq))
 	if _, err := p.Run(); err != nil {

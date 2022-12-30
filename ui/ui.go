@@ -2,9 +2,12 @@ package ui
 
 import (
 	"sektron/sequencer"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
+
+type RefreshTickMsg time.Time
 
 type UI struct {
 	seq *sequencer.Sequencer
@@ -16,23 +19,28 @@ func New(seq *sequencer.Sequencer) UI {
 	}
 }
 
+func refresh() tea.Cmd {
+	return tea.Tick(16*time.Millisecond, func(t time.Time) tea.Msg {
+		return RefreshTickMsg(t)
+	})
+}
+
 func (u UI) Init() tea.Cmd {
-	return nil
+	return refresh()
 }
 
 func (u UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 
-	case sequencer.ClockTickMsg:
-		u.seq.Pulse()
-		return u, u.seq.Clock()
+	case RefreshTickMsg:
+		return u, refresh()
 
 	case tea.KeyMsg:
 		switch msg.String() {
 
 		case " ":
 			u.seq.TogglePlay()
-			return u, u.seq.Clock()
+			return u, nil
 
 		// These keys should exit the program.
 		case "ctrl+c", "q":
