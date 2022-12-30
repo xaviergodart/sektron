@@ -17,10 +17,11 @@ const (
 )
 
 type Sequencer struct {
-	midi      *midi.Server
-	tracks    []*Track
-	clock     *Clock
-	isPlaying bool
+	midi          *midi.Server
+	midiClockSend []int
+	tracks        []*Track
+	clock         *Clock
+	isPlaying     bool
 }
 
 func New(midi *midi.Server) *Sequencer {
@@ -52,9 +53,10 @@ func New(midi *midi.Server) *Sequencer {
 		tracks = append(tracks, track)
 	}
 	return &Sequencer{
-		midi:      midi,
-		tracks:    tracks,
-		isPlaying: false,
+		midi:          midi,
+		midiClockSend: []int{defaultDevice},
+		tracks:        tracks,
+		isPlaying:     false,
 	}
 }
 
@@ -79,7 +81,7 @@ func (s *Sequencer) TogglePlay() {
 }
 
 func (s *Sequencer) Pulse() {
-	s.midi.SendClock()
+	s.midi.SendClock(s.midiClockSend)
 	if !s.isPlaying {
 		return
 	}

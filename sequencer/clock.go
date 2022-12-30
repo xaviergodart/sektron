@@ -32,5 +32,6 @@ func NewClock(tempo float64, tick func()) *Clock {
 }
 
 func NewClockInterval(tempo float64) time.Duration {
+	// midi clock: http://midi.teragonaudio.com/tech/midispec/clock.htm
 	return time.Duration(1000000*60/(tempo*float64(pulsesPerStep*stepsPerQuarterNote))) * time.Microsecond
 }

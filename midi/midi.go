@@ -8,7 +8,10 @@ import (
 
 	"gitlab.com/gomidi/midi/v2"
 	"gitlab.com/gomidi/midi/v2/drivers"
-	_ "gitlab.com/gomidi/midi/v2/drivers/portmididrv" // autoregisters driver
+	_ "gitlab.com/gomidi/midi/v2/drivers/rtmididrv" // autoregisters driver
+	// Weirdly, if you send clock to 2 midi devices at the same time
+	// with portmidi, it crashes
+	//_ "gitlab.com/gomidi/midi/v2/drivers/portmididrv" // autoregisters driver
 )
 
 type Server struct {
@@ -68,8 +71,10 @@ func (s *Server) NoteOff(device int, channel uint8, note uint8) {
 	s.outputs[device] <- midi.NoteOff(channel, note)
 }
 
-func (s *Server) SendClock() {
-	s.outputs[0] <- midi.TimingClock()
+func (s *Server) SendClock(devices []int) {
+	for _, device := range devices {
+		s.outputs[device] <- midi.TimingClock()
+	}
 }
 
 func (s *Server) Close() {
