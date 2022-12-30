@@ -4,6 +4,7 @@ import (
 	"sektron/sequencer"
 	"time"
 
+	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -14,12 +15,14 @@ const (
 type RefreshTickMsg time.Time
 
 type UI struct {
-	seq *sequencer.Sequencer
+	seq         *sequencer.Sequencer
+	activeTrack int
 }
 
 func New(seq *sequencer.Sequencer) UI {
 	return UI{
-		seq: seq,
+		seq:         seq,
+		activeTrack: 0,
 	}
 }
 
@@ -47,9 +50,53 @@ func (u UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return u, nil
 
 		// These keys should exit the program.
-		case "ctrl+c", "q":
+		case "ctrl+c", "esc":
 			u.seq.Reset()
 			return u, tea.Quit
+		}
+
+		switch {
+		case key.Matches(msg, DefaultKeyMap.Step1):
+			u.activeTrack = 0
+			return u, nil
+		case key.Matches(msg, DefaultKeyMap.Step2):
+			u.activeTrack = 1
+			return u, nil
+		case key.Matches(msg, DefaultKeyMap.Step3):
+			u.activeTrack = 2
+			return u, nil
+		case key.Matches(msg, DefaultKeyMap.Step4):
+			u.activeTrack = 3
+			return u, nil
+		case key.Matches(msg, DefaultKeyMap.Step5):
+			u.activeTrack = 4
+			return u, nil
+		case key.Matches(msg, DefaultKeyMap.Step6):
+			u.activeTrack = 5
+			return u, nil
+		case key.Matches(msg, DefaultKeyMap.Step7):
+			u.activeTrack = 6
+			return u, nil
+		case key.Matches(msg, DefaultKeyMap.Step8):
+			u.activeTrack = 7
+			return u, nil
+		case key.Matches(msg, DefaultKeyMap.Step9):
+			u.activeTrack = 8
+			return u, nil
+		case key.Matches(msg, DefaultKeyMap.Step10):
+			return u, nil
+		case key.Matches(msg, DefaultKeyMap.Step11):
+			return u, nil
+		case key.Matches(msg, DefaultKeyMap.Step12):
+			return u, nil
+		case key.Matches(msg, DefaultKeyMap.Step13):
+			return u, nil
+		case key.Matches(msg, DefaultKeyMap.Step14):
+			return u, nil
+		case key.Matches(msg, DefaultKeyMap.Step15):
+			return u, nil
+		case key.Matches(msg, DefaultKeyMap.Step16):
+			return u, nil
 		}
 	}
 	return u, nil

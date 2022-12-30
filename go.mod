@@ -3,6 +3,7 @@ module sektron
 go 1.19
 
 require (
+	github.com/charmbracelet/bubbles v0.14.0
 	github.com/charmbracelet/bubbletea v0.23.1
 	github.com/charmbracelet/lipgloss v0.6.0
 	gitlab.com/gomidi/midi/v2 v2.0.25
