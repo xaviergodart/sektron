@@ -13,9 +13,25 @@ var (
 			Height(3).
 			Margin(1).
 			Bold(true).
+			BorderStyle(lipgloss.NormalBorder()).
+			BorderForeground(lipgloss.Color("#FAFAFA"))
+		//Background(lipgloss.Color("#7D56F4"))
+	stepCurrentStyle = lipgloss.NewStyle().
+				Width(6).
+				Height(3).
+				Margin(1).
+				Bold(true).
+				BorderStyle(lipgloss.NormalBorder()).
+				BorderForeground(lipgloss.Color("#000000"))
+		//Background(lipgloss.Color("#FFFFFF"))
+	stepActiveStyle = lipgloss.NewStyle().
+			Width(6).
+			Height(3).
+			Margin(1).
+			Bold(true).
 			Foreground(lipgloss.Color("#FAFAFA")).
 			Background(lipgloss.Color("#7D56F4"))
-	stepCurrentStyle = lipgloss.NewStyle().
+	stepActiveCurrentStyle = lipgloss.NewStyle().
 				Width(6).
 				Height(3).
 				Margin(1).
@@ -28,9 +44,17 @@ func (u UI) ViewTrack(track *sequencer.Track) string {
 	var steps []string
 	for i := range track.Steps() {
 		if i == track.CurrentStep() {
-			steps = append(steps, stepCurrentStyle.Render(strconv.Itoa(i+1)))
+			if track.IsActive() {
+				steps = append(steps, stepActiveCurrentStyle.Render(strconv.Itoa(i+1)))
+			} else {
+				steps = append(steps, stepCurrentStyle.Render(strconv.Itoa(i+1)))
+			}
 		} else {
-			steps = append(steps, stepStyle.Render(strconv.Itoa(i+1)))
+			if track.IsActive() {
+				steps = append(steps, stepActiveStyle.Render(strconv.Itoa(i+1)))
+			} else {
+				steps = append(steps, stepStyle.Render(strconv.Itoa(i+1)))
+			}
 		}
 	}
 	return lipgloss.JoinHorizontal(

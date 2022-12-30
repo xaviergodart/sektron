@@ -36,6 +36,10 @@ func (t Track) CurrentStep() int {
 	return t.pulse / pulsesPerStep
 }
 
+func (t Track) IsActive() bool {
+	return t.active
+}
+
 func (t Track) stepForNextPulse() int {
 	return (t.pulse + 1) % (pulsesPerStep * len(t.steps)) / pulsesPerStep
 }

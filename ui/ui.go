@@ -81,7 +81,6 @@ func (u UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			u.activeTrack = 7
 			return u, nil
 		case key.Matches(msg, DefaultKeyMap.Step9):
-			u.activeTrack = 8
 			return u, nil
 		case key.Matches(msg, DefaultKeyMap.Step10):
 			return u, nil
