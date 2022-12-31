@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"fmt"
 	"sektron/sequencer"
 	"strconv"
 
@@ -8,57 +9,82 @@ import (
 )
 
 var (
+	trackTitle = lipgloss.NewStyle().
+			Align(lipgloss.Left).
+			Margin(1, 1).
+			Bold(true)
+
+	stepsPerPage = 16
+	stepsPerLine = 8
+
+	stepWith     = 14
+	stepHeight   = 6
+	primaryColor = lipgloss.Color("201")
+
 	stepStyle = lipgloss.NewStyle().
-			Width(6).
-			Height(3).
-			Margin(1).
-			Bold(true).
 			BorderStyle(lipgloss.NormalBorder()).
-			BorderForeground(lipgloss.Color("#FAFAFA"))
-		//Background(lipgloss.Color("#7D56F4"))
-	stepCurrentStyle = lipgloss.NewStyle().
-				Width(6).
-				Height(3).
-				Margin(1).
+			Width(stepWith).
+			Height(stepHeight)
+	stepStyleCurrent = lipgloss.NewStyle().
+				BorderStyle(lipgloss.ThickBorder()).
 				Bold(true).
-				BorderStyle(lipgloss.NormalBorder()).
-				BorderForeground(lipgloss.Color("#000000"))
-		//Background(lipgloss.Color("#FFFFFF"))
-	stepActiveStyle = lipgloss.NewStyle().
-			Width(6).
-			Height(3).
-			Margin(1).
-			Bold(true).
-			Foreground(lipgloss.Color("#FAFAFA")).
-			Background(lipgloss.Color("#7D56F4"))
-	stepActiveCurrentStyle = lipgloss.NewStyle().
-				Width(6).
-				Height(3).
-				Margin(1).
-				Bold(true).
-				Foreground(lipgloss.Color("#000000")).
-				Background(lipgloss.Color("#FFFFFF"))
+				Inherit(stepStyle)
+	stepStyleActive = lipgloss.NewStyle().
+			BorderForeground(primaryColor).
+			Foreground(primaryColor).
+			Inherit(stepStyle)
+	stepStyleActiveCurrent = lipgloss.NewStyle().
+				Inherit(stepStyleCurrent).
+				Inherit(stepStyleActive)
 )
 
-func (u UI) ViewTrack(track *sequencer.Track) string {
-	var steps []string
-	for i := range track.Steps() {
+func (u UI) viewTrack(track *sequencer.Track) string {
+	pages := make([][]string, len(track.Steps()))
+
+	for i, s := range track.Steps() {
+		page := i / stepsPerPage
+		var step string
+		if !track.IsActive() {
+			step = stepStyle.Render("")
+			pages[page] = append(pages[page], step)
+			continue
+		}
 		if i == track.CurrentStep() {
-			if track.IsActive() {
-				steps = append(steps, stepActiveCurrentStyle.Render(strconv.Itoa(i+1)))
+			if s.IsActive() {
+				step = stepStyleActiveCurrent.Render(strconv.Itoa(i + 1))
 			} else {
-				steps = append(steps, stepCurrentStyle.Render(strconv.Itoa(i+1)))
+				step = stepStyleCurrent.Render(strconv.Itoa(i + 1))
 			}
 		} else {
-			if track.IsActive() {
-				steps = append(steps, stepActiveStyle.Render(strconv.Itoa(i+1)))
+			if s.IsActive() {
+				step = stepStyleActive.Render(strconv.Itoa(i + 1))
 			} else {
-				steps = append(steps, stepStyle.Render(strconv.Itoa(i+1)))
+				step = stepStyle.Render(strconv.Itoa(i + 1))
 			}
 		}
+		pages[page] = append(pages[page], step)
 	}
-	return lipgloss.JoinHorizontal(
+	return lipgloss.JoinVertical(
 		lipgloss.Left,
-		steps...,
+		u.viewTrackTitle(track),
+		lipgloss.JoinHorizontal(
+			lipgloss.Left,
+			pages[u.activeTrackPage][:stepsPerLine]...,
+		),
+		lipgloss.JoinHorizontal(
+			lipgloss.Left,
+			pages[u.activeTrackPage][len(pages[u.activeTrackPage])-stepsPerLine:]...,
+		),
 	)
+}
+
+func (u UI) viewTrackTitle(track *sequencer.Track) string {
+	var title string
+	value := fmt.Sprintf("TRACK: %d", u.activeTrack+1)
+	if track.IsActive() {
+		title = trackTitle.Strikethrough(false).Render(value)
+	} else {
+		title = trackTitle.Strikethrough(true).Render(value)
+	}
+	return title
 }

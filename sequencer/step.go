@@ -47,6 +47,10 @@ func (s Step) Probability() int {
 	return *s.probability
 }
 
+func (s Step) IsActive() bool {
+	return s.active
+}
+
 func (s Step) skip() bool {
 	return s.Probability() < 100 && rand.Intn(100) > s.Probability()
 }

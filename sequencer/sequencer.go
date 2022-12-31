@@ -44,7 +44,7 @@ func New(midi midi.MidiInterface) *Sequencer {
 			probability: defaultProbability,
 			device:      defaultDevice,
 			channel:     uint8(i),
-			active:      true,
+			active:      i <= 3,
 		}
 		for j := 0; j < defaultStepsPerTrack; j++ {
 			steps = append(steps, &Step{
