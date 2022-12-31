@@ -14,7 +14,7 @@ type Track struct {
 	active      bool
 }
 
-func (t *Track) Start() {
+func (t *Track) start() {
 	t.trig = make(chan struct{})
 	go func(track *Track) {
 		for {
@@ -24,7 +24,7 @@ func (t *Track) Start() {
 	}(t)
 }
 
-func (t *Track) Pulse() {
+func (t *Track) tick() {
 	t.trig <- struct{}{}
 }
 

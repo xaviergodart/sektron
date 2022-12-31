@@ -16,15 +16,21 @@ const (
 	defaultStepsPerTrack int     = 16
 )
 
+type SequencerInterface interface {
+	Reset()
+	TogglePlay()
+	Tracks() []*Track
+}
+
 type Sequencer struct {
-	midi          *midi.Server
+	midi          midi.MidiInterface
 	midiClockSend []int
 	tracks        []*Track
 	clock         *Clock
 	isPlaying     bool
 }
 
-func New(midi *midi.Server) *Sequencer {
+func New(midi midi.MidiInterface) *Sequencer {
 	rand.Seed(time.Now().UnixNano())
 	var tracks []*Track
 	for i := 0; i <= 7; i++ {
@@ -52,20 +58,22 @@ func New(midi *midi.Server) *Sequencer {
 		track.steps = steps
 		tracks = append(tracks, track)
 	}
-	return &Sequencer{
+	seq := &Sequencer{
 		midi:          midi,
 		midiClockSend: []int{defaultDevice},
 		tracks:        tracks,
 		isPlaying:     false,
 	}
+	seq.start()
+	return seq
 }
 
-func (s *Sequencer) Start() {
+func (s *Sequencer) start() {
 	for _, track := range s.tracks {
-		track.Start()
+		track.start()
 	}
 	s.clock = NewClock(defaultTempo, func() {
-		s.Pulse()
+		s.tick()
 	})
 }
 
@@ -80,18 +88,18 @@ func (s *Sequencer) TogglePlay() {
 	}
 }
 
-func (s *Sequencer) Pulse() {
+func (s *Sequencer) Reset() {
+	for _, track := range s.tracks {
+		track.reset()
+	}
+}
+
+func (s *Sequencer) tick() {
 	s.midi.SendClock(s.midiClockSend)
 	if !s.isPlaying {
 		return
 	}
 	for _, track := range s.tracks {
-		track.Pulse()
-	}
-}
-
-func (s *Sequencer) Reset() {
-	for _, track := range s.tracks {
-		track.reset()
+		track.tick()
 	}
 }

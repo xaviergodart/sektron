@@ -6,7 +6,7 @@ import (
 )
 
 type Step struct {
-	midi   *midi.Server
+	midi   midi.MidiInterface
 	track  *Track
 	number int
 

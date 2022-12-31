@@ -12,15 +12,13 @@ import (
 )
 
 func main() {
-	midi, err := midi.NewServer()
+	midi, err := midi.NewMidi()
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer midi.Close()
-	midi.Start()
 
 	seq := sequencer.New(midi)
-	seq.Start()
 
 	p := tea.NewProgram(ui.New(seq))
 	if _, err := p.Run(); err != nil {

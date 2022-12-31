@@ -15,11 +15,11 @@ const (
 type RefreshTickMsg time.Time
 
 type UI struct {
-	seq         *sequencer.Sequencer
+	seq         sequencer.SequencerInterface
 	activeTrack int
 }
 
-func New(seq *sequencer.Sequencer) UI {
+func New(seq sequencer.SequencerInterface) UI {
 	return UI{
 		seq:         seq,
 		activeTrack: 0,

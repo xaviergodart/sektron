@@ -2,7 +2,6 @@ package midi
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"sync"
 
@@ -14,7 +13,17 @@ import (
 	//_ "gitlab.com/gomidi/midi/v2/drivers/portmididrv" // autoregisters driver
 )
 
-type Server struct {
+const (
+	midiChanBufferSize = 1024
+)
+
+type MidiInterface interface {
+	NoteOn(device int, channel uint8, note uint8, velocity uint8)
+	NoteOff(device int, channel uint8, note uint8)
+	SendClock(devices []int)
+}
+
+type Midi struct {
 	devices   midi.OutPorts
 	waitGroup *sync.WaitGroup
 	done      chan struct{}
@@ -22,24 +31,25 @@ type Server struct {
 	started   bool
 }
 
-func NewServer() (*Server, error) {
+func NewMidi() (*Midi, error) {
 	devices := midi.GetOutPorts()
-	fmt.Println(devices)
 	if len(devices) == 0 {
 		return nil, errors.New("no midi drivers")
 	}
-	return &Server{
+	instrument := &Midi{
 		devices: devices,
 		started: false,
-	}, nil
+	}
+	instrument.start()
+	return instrument, nil
 }
 
-func (s *Server) Start() error {
+func (m *Midi) start() error {
 	var wg sync.WaitGroup
-	wg.Add(len(s.devices))
-	s.done = make(chan struct{})
-	for i, device := range s.devices {
-		s.outputs = append(s.outputs, make(chan midi.Message, 1000))
+	wg.Add(len(m.devices))
+	m.done = make(chan struct{})
+	for i, device := range m.devices {
+		m.outputs = append(m.outputs, make(chan midi.Message, midiChanBufferSize))
 		go func(device drivers.Out, done <-chan struct{}, output <-chan midi.Message) {
 			defer wg.Done()
 			send, err := midi.SendTo(device)
@@ -54,33 +64,31 @@ func (s *Server) Start() error {
 					send(msg)
 				}
 			}
-		}(device, s.done, s.outputs[i])
+		}(device, m.done, m.outputs[i])
 	}
-	s.waitGroup = &wg
-	s.started = true
+	m.waitGroup = &wg
+	m.started = true
 	return nil
 }
 
-func (s *Server) NoteOn(device int, channel uint8, note uint8, velocity uint8) {
-	// TODO: check if output exists. Handle hot plug?
-	s.outputs[device] <- midi.NoteOn(channel, note, velocity)
+func (m *Midi) NoteOn(device int, channel uint8, note uint8, velocity uint8) {
+	m.outputs[device] <- midi.NoteOn(channel, note, velocity)
 }
 
-func (s *Server) NoteOff(device int, channel uint8, note uint8) {
-	// TODO: check if output exists. Handle hot plug?
-	s.outputs[device] <- midi.NoteOff(channel, note)
+func (m *Midi) NoteOff(device int, channel uint8, note uint8) {
+	m.outputs[device] <- midi.NoteOff(channel, note)
 }
 
-func (s *Server) SendClock(devices []int) {
+func (m *Midi) SendClock(devices []int) {
 	for _, device := range devices {
-		s.outputs[device] <- midi.TimingClock()
+		m.outputs[device] <- midi.TimingClock()
 	}
 }
 
-func (s *Server) Close() {
+func (m *Midi) Close() {
 	defer midi.CloseDriver()
-	for range s.devices {
-		s.done <- struct{}{}
+	for range m.devices {
+		m.done <- struct{}{}
 	}
-	s.waitGroup.Wait()
+	m.waitGroup.Wait()
 }
