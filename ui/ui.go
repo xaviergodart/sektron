@@ -14,15 +14,15 @@ const (
 
 type TickMsg time.Time
 
-type UI struct {
+type mainModel struct {
 	seq             sequencer.SequencerInterface
 	pressedKey      *tea.KeyMsg
 	activeTrack     int
 	activeTrackPage int
 }
 
-func New(seq sequencer.SequencerInterface) UI {
-	return UI{
+func New(seq sequencer.SequencerInterface) mainModel {
+	return mainModel{
 		seq:             seq,
 		pressedKey:      nil,
 		activeTrack:     0,
@@ -36,77 +36,77 @@ func tick() tea.Cmd {
 	})
 }
 
-func (u UI) Init() tea.Cmd {
+func (m mainModel) Init() tea.Cmd {
 	return tea.Batch(tea.EnterAltScreen, tick())
 }
 
-func (u UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 
 	case TickMsg:
-		return u, tick()
+		return m, tick()
 
 	case tea.KeyMsg:
-		u.pressedKey = &msg
+		m.pressedKey = &msg
 
 		switch msg.String() {
 
 		case " ":
-			u.seq.TogglePlay()
-			return u, nil
+			m.seq.TogglePlay()
+			return m, nil
 
 		// These keys should exit the program.
 		case "ctrl+c", "esc":
-			u.seq.Reset()
-			return u, tea.Quit
+			m.seq.Reset()
+			return m, tea.Quit
 		}
 
 		switch {
 		case key.Matches(msg, DefaultKeyMap.Step1):
-			u.activeTrack = 0
-			return u, nil
+			m.activeTrack = 0
+			return m, nil
 		case key.Matches(msg, DefaultKeyMap.Step2):
-			u.activeTrack = 1
-			return u, nil
+			m.activeTrack = 1
+			return m, nil
 		case key.Matches(msg, DefaultKeyMap.Step3):
-			u.activeTrack = 2
-			return u, nil
+			m.activeTrack = 2
+			return m, nil
 		case key.Matches(msg, DefaultKeyMap.Step4):
-			u.activeTrack = 3
-			return u, nil
+			m.activeTrack = 3
+			return m, nil
 		case key.Matches(msg, DefaultKeyMap.Step5):
-			u.activeTrack = 4
-			return u, nil
+			m.activeTrack = 4
+			return m, nil
 		case key.Matches(msg, DefaultKeyMap.Step6):
-			u.activeTrack = 5
-			return u, nil
+			m.activeTrack = 5
+			return m, nil
 		case key.Matches(msg, DefaultKeyMap.Step7):
-			u.activeTrack = 6
-			return u, nil
+			m.activeTrack = 6
+			return m, nil
 		case key.Matches(msg, DefaultKeyMap.Step8):
-			u.activeTrack = 7
-			return u, nil
+			m.activeTrack = 7
+			return m, nil
 		case key.Matches(msg, DefaultKeyMap.Step9):
-			return u, nil
+			return m, nil
 		case key.Matches(msg, DefaultKeyMap.Step10):
-			return u, nil
+			return m, nil
 		case key.Matches(msg, DefaultKeyMap.Step11):
-			return u, nil
+			return m, nil
 		case key.Matches(msg, DefaultKeyMap.Step12):
-			return u, nil
+			return m, nil
 		case key.Matches(msg, DefaultKeyMap.Step13):
-			return u, nil
+			return m, nil
 		case key.Matches(msg, DefaultKeyMap.Step14):
-			return u, nil
+			return m, nil
 		case key.Matches(msg, DefaultKeyMap.Step15):
-			return u, nil
+			return m, nil
 		case key.Matches(msg, DefaultKeyMap.Step16):
-			return u, nil
+			return m, nil
 		}
 	}
-	return u, nil
+	return m, nil
 }
 
-func (u UI) View() string {
-	return u.renderSequencer()
+func (m mainModel) View() string {
+	return m.renderSequencer()
 }

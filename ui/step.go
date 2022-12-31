@@ -32,8 +32,8 @@ var (
 				Inherit(stepStyleActive)
 )
 
-func (u UI) renderStep(step *sequencer.Step) string {
-	content := u.renderStepContent(step)
+func (m mainModel) renderStep(step *sequencer.Step) string {
+	content := m.renderStepContent(step)
 	if !step.Track().IsActive() {
 		return stepStyle.Render("")
 	}
@@ -49,6 +49,6 @@ func (u UI) renderStep(step *sequencer.Step) string {
 	return stepStyle.Render(content)
 }
 
-func (u UI) renderStepContent(step *sequencer.Step) string {
+func (m mainModel) renderStepContent(step *sequencer.Step) string {
 	return strconv.Itoa(step.Number() + 1)
 }
