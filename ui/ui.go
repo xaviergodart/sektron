@@ -12,7 +12,7 @@ const (
 	refreshFrequency = 16 * time.Millisecond
 )
 
-type RefreshTickMsg time.Time
+type TickMsg time.Time
 
 type UI struct {
 	seq             sequencer.SequencerInterface
@@ -30,21 +30,21 @@ func New(seq sequencer.SequencerInterface) UI {
 	}
 }
 
-func refresh() tea.Cmd {
+func tick() tea.Cmd {
 	return tea.Tick(refreshFrequency, func(t time.Time) tea.Msg {
-		return RefreshTickMsg(t)
+		return TickMsg(t)
 	})
 }
 
 func (u UI) Init() tea.Cmd {
-	return refresh()
+	return tea.Batch(tea.EnterAltScreen, tick())
 }
 
 func (u UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 
-	case RefreshTickMsg:
-		return u, refresh()
+	case TickMsg:
+		return u, tick()
 
 	case tea.KeyMsg:
 		u.pressedKey = &msg

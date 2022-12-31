@@ -10,7 +10,8 @@ import (
 var (
 	stepWith     = 14
 	stepHeight   = 6
-	primaryColor = lipgloss.Color("201")
+	primaryColor = lipgloss.Color("207")
+	focusColor   = lipgloss.Color("15")
 
 	stepStyle = lipgloss.NewStyle().
 			BorderStyle(lipgloss.NormalBorder()).
@@ -18,6 +19,7 @@ var (
 			Height(stepHeight)
 	stepStyleCurrent = lipgloss.NewStyle().
 				BorderStyle(lipgloss.ThickBorder()).
+				BorderForeground(focusColor).
 				Bold(true).
 				Inherit(stepStyle)
 	stepStyleActive = lipgloss.NewStyle().
@@ -26,6 +28,7 @@ var (
 			Inherit(stepStyle)
 	stepStyleActiveCurrent = lipgloss.NewStyle().
 				Inherit(stepStyleCurrent).
+				UnsetBorderForeground().
 				Inherit(stepStyleActive)
 )
 
