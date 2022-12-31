@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"os"
 	"sektron/midi"
 	"sektron/sequencer"
 	"sektron/ui"
@@ -22,7 +20,6 @@ func main() {
 
 	p := tea.NewProgram(ui.New(seq))
 	if _, err := p.Run(); err != nil {
-		fmt.Printf("Alas, there's been an error: %v", err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 }
