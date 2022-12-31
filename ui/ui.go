@@ -16,6 +16,8 @@ type TickMsg time.Time
 
 type mainModel struct {
 	seq             sequencer.SequencerInterface
+	width           int
+	height          int
 	pressedKey      *tea.KeyMsg
 	activeTrack     int
 	activeTrackPage int
@@ -42,6 +44,11 @@ func (m mainModel) Init() tea.Cmd {
 
 func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+
+	case tea.WindowSizeMsg:
+		m.width = msg.Width
+		m.height = msg.Height
+		return m, nil
 
 	case TickMsg:
 		return m, tick()

@@ -8,14 +8,14 @@ import (
 )
 
 var (
-	stepWith     = 14
-	stepHeight   = 6
+	stepWidth    = 12
+	stepHeight   = stepWidth/2 - 1
 	primaryColor = lipgloss.Color("207")
 	focusColor   = lipgloss.Color("15")
 
 	stepStyle = lipgloss.NewStyle().
 			BorderStyle(lipgloss.NormalBorder()).
-			Width(stepWith).
+			Width(stepWidth).
 			Height(stepHeight)
 	stepStyleCurrent = lipgloss.NewStyle().
 				BorderStyle(lipgloss.ThickBorder()).
@@ -34,19 +34,36 @@ var (
 
 func (m mainModel) renderStep(step *sequencer.Step) string {
 	content := m.renderStepContent(step)
+	width, height := m.stepSize()
+	return m.stepStyle(step).
+		Width(width).
+		Height(height).
+		Render(content)
+}
+
+func (m mainModel) stepSize() (int, int) {
+	width := m.width/8 - 4
+	height := width/2 - 1
+	if width < stepWidth || height < stepHeight {
+		return stepWidth, stepHeight
+	}
+	return width, height
+}
+
+func (m mainModel) stepStyle(step *sequencer.Step) lipgloss.Style {
 	if !step.Track().IsActive() {
-		return stepStyle.Render("")
+		return stepStyle
 	}
 	if step.IsCurrentStep() {
 		if step.IsActive() {
-			return stepStyleActiveCurrent.Render(content)
+			return stepStyleActiveCurrent
 		}
-		return stepStyleCurrent.Render(content)
+		return stepStyleCurrent
 	}
 	if step.IsActive() {
-		return stepStyleActive.Render(content)
+		return stepStyleActive
 	}
-	return stepStyle.Render(content)
+	return stepStyle
 }
 
 func (m mainModel) renderStepContent(step *sequencer.Step) string {
