@@ -16,6 +16,7 @@ type RefreshTickMsg time.Time
 
 type UI struct {
 	seq             sequencer.SequencerInterface
+	pressedKey      *tea.KeyMsg
 	activeTrack     int
 	activeTrackPage int
 }
@@ -23,6 +24,7 @@ type UI struct {
 func New(seq sequencer.SequencerInterface) UI {
 	return UI{
 		seq:             seq,
+		pressedKey:      nil,
 		activeTrack:     0,
 		activeTrackPage: 0,
 	}
@@ -45,6 +47,8 @@ func (u UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return u, refresh()
 
 	case tea.KeyMsg:
+		u.pressedKey = &msg
+
 		switch msg.String() {
 
 		case " ":
@@ -104,5 +108,5 @@ func (u UI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (u UI) View() string {
-	return u.ViewSequencer()
+	return u.renderSequencer()
 }

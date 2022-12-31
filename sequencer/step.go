@@ -19,6 +19,18 @@ type Step struct {
 	triggered   bool
 }
 
+func (s Step) Track() *Track {
+	return s.track
+}
+
+func (s Step) Number() int {
+	return s.number
+}
+
+func (s Step) IsCurrentStep() bool {
+	return s.number == s.track.CurrentStep()
+}
+
 func (s Step) Chord() []uint8 {
 	if s.chord == nil {
 		return s.track.chord
