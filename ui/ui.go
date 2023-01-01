@@ -8,17 +8,24 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+type TickMsg time.Time
+type mode uint8
+
+const (
+	trackMode mode = iota
+	recMode
+)
+
 const (
 	refreshFrequency = 16 * time.Millisecond
 )
-
-type TickMsg time.Time
 
 type mainModel struct {
 	seq             sequencer.SequencerInterface
 	width           int
 	height          int
 	pressedKey      *tea.KeyMsg
+	mode            mode
 	activeTrack     int
 	activeTrackPage int
 }
@@ -39,6 +46,7 @@ func tick() tea.Cmd {
 }
 
 func (m mainModel) Init() tea.Cmd {
+	initKeyMap()
 	return tea.Batch(tea.EnterAltScreen, tick())
 }
 
@@ -62,6 +70,14 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.seq.TogglePlay()
 			return m, nil
 
+		case "tab":
+			if m.mode == trackMode {
+				m.mode = recMode
+			} else {
+				m.mode = trackMode
+			}
+			return m, nil
+
 		// These keys should exit the program.
 		case "ctrl+c", "esc":
 			m.seq.Reset()
@@ -69,49 +85,22 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		switch {
-		case key.Matches(msg, DefaultKeyMap.Step1):
-			m.activeTrack = 0
-			return m, nil
-		case key.Matches(msg, DefaultKeyMap.Step2):
-			m.activeTrack = 1
-			return m, nil
-		case key.Matches(msg, DefaultKeyMap.Step3):
-			m.activeTrack = 2
-			return m, nil
-		case key.Matches(msg, DefaultKeyMap.Step4):
-			m.activeTrack = 3
-			return m, nil
-		case key.Matches(msg, DefaultKeyMap.Step5):
-			m.activeTrack = 4
-			return m, nil
-		case key.Matches(msg, DefaultKeyMap.Step6):
-			m.activeTrack = 5
-			return m, nil
-		case key.Matches(msg, DefaultKeyMap.Step7):
-			m.activeTrack = 6
-			return m, nil
-		case key.Matches(msg, DefaultKeyMap.Step8):
-			m.activeTrack = 7
-			return m, nil
-		case key.Matches(msg, DefaultKeyMap.Step9):
-			return m, nil
-		case key.Matches(msg, DefaultKeyMap.Step10):
-			return m, nil
-		case key.Matches(msg, DefaultKeyMap.Step11):
-			return m, nil
-		case key.Matches(msg, DefaultKeyMap.Step12):
-			return m, nil
-		case key.Matches(msg, DefaultKeyMap.Step13):
-			return m, nil
-		case key.Matches(msg, DefaultKeyMap.Step14):
-			return m, nil
-		case key.Matches(msg, DefaultKeyMap.Step15):
-			return m, nil
-		case key.Matches(msg, DefaultKeyMap.Step16):
+		case key.Matches(msg, DefaultKeyMap.Steps):
+			m.stepPress(msg)
 			return m, nil
 		}
 	}
 	return m, nil
+}
+
+func (m *mainModel) stepPress(msg tea.KeyMsg) {
+	number := stepIndex[msg.String()]
+	switch m.mode {
+	case trackMode:
+		m.activeTrack = number
+	case recMode:
+		m.seq.ToggleStep(m.activeTrack, number)
+	}
 }
 
 func (m mainModel) View() string {

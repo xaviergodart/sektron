@@ -20,6 +20,7 @@ type SequencerInterface interface {
 	Reset()
 	TogglePlay()
 	Tracks() []*Track
+	ToggleStep(track int, step int)
 }
 
 type Sequencer struct {
@@ -92,6 +93,13 @@ func (s *Sequencer) Reset() {
 	for _, track := range s.tracks {
 		track.reset()
 	}
+}
+
+func (s *Sequencer) ToggleStep(track int, step int) {
+	if len(s.tracks[track].steps) <= step {
+		return
+	}
+	s.tracks[track].steps[step].active = !s.tracks[track].steps[step].active
 }
 
 func (s *Sequencer) tick() {
