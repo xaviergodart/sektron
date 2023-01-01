@@ -6,6 +6,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type TickMsg time.Time
@@ -97,6 +98,9 @@ func (m *mainModel) stepPress(msg tea.KeyMsg) {
 	number := stepIndex[msg.String()]
 	switch m.mode {
 	case trackMode:
+		if number >= 8 {
+			return
+		}
 		m.activeTrack = number
 	case recMode:
 		m.seq.ToggleStep(m.activeTrack, number)
@@ -104,5 +108,9 @@ func (m *mainModel) stepPress(msg tea.KeyMsg) {
 }
 
 func (m mainModel) View() string {
-	return m.renderSequencer()
+	return lipgloss.JoinVertical(
+		lipgloss.Left,
+		m.renderSequencer(),
+		m.renderStatus(),
+	)
 }
