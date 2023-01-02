@@ -18,7 +18,8 @@ const (
 )
 
 const (
-	refreshFrequency = 16 * time.Millisecond
+	refreshFrequency   = 16 * time.Millisecond
+	mainViewSideMargin = 2
 )
 
 type mainModel struct {
@@ -108,9 +109,11 @@ func (m *mainModel) stepPress(msg tea.KeyMsg) {
 }
 
 func (m mainModel) View() string {
+	//mainView := lipgloss.NewStyle().Align(lipgloss.Center)
+
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
-		m.renderSequencer(),
 		m.renderStatus(),
+		m.renderSequencer(),
 	)
 }

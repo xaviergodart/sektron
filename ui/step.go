@@ -8,10 +8,8 @@ import (
 )
 
 var (
-	stepWidth    = 12
-	stepHeight   = stepWidth/2 - 1
-	primaryColor = lipgloss.Color("207")
-	focusColor   = lipgloss.Color("15")
+	stepWidth  = 8
+	stepHeight = stepWidth/2 - 1
 
 	stepStyle = lipgloss.NewStyle().
 			BorderStyle(lipgloss.NormalBorder()).
@@ -42,7 +40,7 @@ func (m mainModel) renderStep(step *sequencer.Step) string {
 }
 
 func (m mainModel) stepSize() (int, int) {
-	width := m.width/8 - 4
+	width := m.width/stepsPerLine - 2
 	height := width/2 - 1
 	if width < stepWidth || height < stepHeight {
 		return stepWidth, stepHeight
