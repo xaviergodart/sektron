@@ -31,7 +31,7 @@ type Midi struct {
 	started   bool
 }
 
-func NewMidi() (*Midi, error) {
+func New() (*Midi, error) {
 	devices := midi.GetOutPorts()
 	if len(devices) == 0 {
 		return nil, errors.New("no midi drivers")

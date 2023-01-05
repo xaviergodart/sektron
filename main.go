@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	midi, err := midi.NewMidi()
+	midi, err := midi.New()
 	if err != nil {
 		log.Fatal(err)
 	}
