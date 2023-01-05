@@ -24,20 +24,22 @@ const (
 
 type mainModel struct {
 	seq             sequencer.SequencerInterface
+	keymap          KeyMap
 	width           int
 	height          int
-	pressedKey      *tea.KeyMsg
 	mode            mode
 	activeTrack     int
 	activeTrackPage int
+	activeParam     int
 }
 
 func New(seq sequencer.SequencerInterface) mainModel {
 	return mainModel{
 		seq:             seq,
-		pressedKey:      nil,
+		keymap:          DefaultKeyMap(),
 		activeTrack:     0,
 		activeTrackPage: 0,
+		activeParam:     0,
 	}
 }
 
@@ -48,7 +50,6 @@ func tick() tea.Cmd {
 }
 
 func (m mainModel) Init() tea.Cmd {
-	initKeyMap()
 	return tea.Batch(tea.EnterAltScreen, tick())
 }
 
@@ -64,8 +65,6 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, tick()
 
 	case tea.KeyMsg:
-		m.pressedKey = &msg
-
 		switch msg.String() {
 
 		case " ":
@@ -87,8 +86,12 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		switch {
-		case key.Matches(msg, DefaultKeyMap.Steps):
+		case key.Matches(msg, m.keymap.Steps):
 			m.stepPress(msg)
+			return m, nil
+
+		case key.Matches(msg, m.keymap.Params):
+			m.activeParam = m.keymap.ParamsIndex[msg.String()]
 			return m, nil
 		}
 	}
@@ -96,7 +99,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m *mainModel) stepPress(msg tea.KeyMsg) {
-	number := stepIndex[msg.String()]
+	number := m.keymap.StepsIndex[msg.String()]
 	switch m.mode {
 	case trackMode:
 		if number >= 8 {
