@@ -8,35 +8,55 @@ import (
 )
 
 var (
-	stepWidth  = 8
-	stepHeight = stepWidth/2 - 1
+	stepWidth  = 15
+	stepHeight = stepWidth / 2
 
-	stepStyle = lipgloss.NewStyle().
-			BorderStyle(lipgloss.NormalBorder()).
-			Width(stepWidth).
-			Height(stepHeight)
-	stepStyleCurrent = lipgloss.NewStyle().
-				BorderStyle(lipgloss.ThickBorder()).
-				BorderForeground(focusColor).
-				Bold(true).
-				Inherit(stepStyle)
-	stepStyleActive = lipgloss.NewStyle().
-			BorderForeground(primaryColor).
-			Foreground(primaryColor).
-			Inherit(stepStyle)
-	stepStyleActiveCurrent = lipgloss.NewStyle().
-				Inherit(stepStyleCurrent).
-				UnsetBorderForeground().
-				Inherit(stepStyleActive)
+	stepCurrentColor        = lipgloss.Color("15")
+	stepActiveColor         = lipgloss.Color("250")
+	stepInactiveColor       = lipgloss.Color("240")
+	stepTextBackgroundColor = lipgloss.Color("240")
+	stepTextColor           = lipgloss.Color("0")
+
+	stepStyle = lipgloss.NewStyle().Margin(1, 2, 0, 0)
+	textStyle = lipgloss.NewStyle().
+			Foreground(stepTextColor).
+			Padding(1, 2).
+			Bold(true)
 )
 
 func (m mainModel) renderStep(step *sequencer.Step) string {
 	content := m.renderStepContent(step)
 	width, height := m.stepSize()
-	return m.stepStyle(step).
-		Width(width).
-		Height(height).
-		Render(content)
+
+	if step.IsCurrentStep() {
+		return stepStyle.Render(lipgloss.Place(
+			width,
+			height,
+			lipgloss.Center,
+			lipgloss.Center,
+			textStyle.Background(stepCurrentColor).Render(content),
+			lipgloss.WithWhitespaceBackground(stepCurrentColor),
+		))
+	}
+	if step.IsActive() {
+		return stepStyle.Render(lipgloss.Place(
+			width,
+			height,
+			lipgloss.Center,
+			lipgloss.Center,
+			textStyle.Background(stepActiveColor).Render(content),
+			lipgloss.WithWhitespaceBackground(stepActiveColor),
+		))
+	}
+	return stepStyle.Render(lipgloss.Place(
+		width,
+		height,
+		lipgloss.Center,
+		lipgloss.Center,
+		textStyle.Background(stepInactiveColor).Render(content),
+		lipgloss.WithWhitespaceBackground(stepInactiveColor),
+		lipgloss.WithWhitespaceChars("/"),
+	))
 }
 
 func (m mainModel) stepSize() (int, int) {
@@ -46,22 +66,6 @@ func (m mainModel) stepSize() (int, int) {
 		return stepWidth, stepHeight
 	}
 	return width, height
-}
-
-func (m mainModel) stepStyle(step *sequencer.Step) lipgloss.Style {
-	if !step.Track().IsActive() {
-		return stepStyle
-	}
-	if step.IsCurrentStep() {
-		if step.IsActive() {
-			return stepStyleActiveCurrent
-		}
-		return stepStyleCurrent
-	}
-	if step.IsActive() {
-		return stepStyleActive
-	}
-	return stepStyle
 }
 
 func (m mainModel) renderStepContent(step *sequencer.Step) string {
