@@ -8,12 +8,16 @@ import (
 
 var (
 	stepKeys  = []string{"a", "z", "e", "r", "t", "y", "u", "i", "q", "s", "d", "f", "g", "h", "j", "k"}
+	trackKeys = []string{"A", "Z", "E", "R", "T", "Y", "U", "I", "Q", "S", "D", "F", "G", "H", "J", "K"}
 	paramKeys = []string{"&", "é", "\"", "'", "(", "-", "è", "_", "ç", "à"}
 )
 
 type KeyMap struct {
 	StepsIndex map[string]int
 	Steps      key.Binding
+
+	TracksIndex map[string]int
+	Tracks      key.Binding
 
 	ParamsIndex map[string]int
 	Params      key.Binding
@@ -28,6 +32,11 @@ func DefaultKeyMap() KeyMap {
 		Steps: key.NewBinding(
 			key.WithKeys(stepKeys...),
 			key.WithHelp(strings.Join(stepKeys, "/"), "track mode: select tracks 1 to 16 | record mode: toggle step 1 - 16"),
+		),
+		TracksIndex: map[string]int{},
+		Tracks: key.NewBinding(
+			key.WithKeys(trackKeys...),
+			key.WithHelp(strings.Join(stepKeys, "/"), "toggle tracks 1 to 16"),
 		),
 		ParamsIndex: map[string]int{},
 		Params: key.NewBinding(
@@ -45,6 +54,9 @@ func DefaultKeyMap() KeyMap {
 	}
 	for i, k := range stepKeys {
 		km.StepsIndex[k] = i
+	}
+	for i, k := range trackKeys {
+		km.TracksIndex[k] = i
 	}
 	for i, k := range paramKeys {
 		km.ParamsIndex[k] = i

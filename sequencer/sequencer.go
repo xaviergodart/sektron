@@ -21,6 +21,7 @@ type SequencerInterface interface {
 	TogglePlay()
 	IsPlaying() bool
 	Tracks() []*Track
+	ToggleTrack(track int)
 	ToggleStep(track int, step int)
 	Tempo() float64
 }
@@ -103,6 +104,13 @@ func (s *Sequencer) Reset() {
 	for _, track := range s.tracks {
 		track.reset()
 	}
+}
+
+func (s *Sequencer) ToggleTrack(track int) {
+	if len(s.tracks) <= track {
+		return
+	}
+	s.tracks[track].active = !s.tracks[track].active
 }
 
 func (s *Sequencer) ToggleStep(track int, step int) {

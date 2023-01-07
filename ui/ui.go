@@ -91,6 +91,11 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.stepPress(msg)
 			return m, nil
 
+		case key.Matches(msg, m.keymap.Tracks):
+			number := m.keymap.TracksIndex[msg.String()]
+			m.seq.ToggleTrack(number)
+			return m, nil
+
 		case key.Matches(msg, m.keymap.Params):
 			m.activeParam = m.keymap.ParamsIndex[msg.String()]
 			return m, nil
