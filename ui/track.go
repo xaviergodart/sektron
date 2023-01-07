@@ -12,12 +12,18 @@ var (
 )
 
 func (m mainModel) renderTrack(track *sequencer.Track) string {
-	pages := make([][]string, len(track.Steps()))
+	pageNb := len(m.seq.Tracks()[m.activeTrack].Steps())/stepsPerPage + 1
+	pages := make([][]string, pageNb)
+
+	for i := range pages {
+		pages[i] = make([]string, stepsPerPage)
+	}
 
 	for i, step := range track.Steps() {
 		page := i / stepsPerPage
-		pages[page] = append(pages[page], m.renderStep(step))
+		pages[page][i%stepsPerPage] = m.renderStep(step)
 	}
+
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
 		lipgloss.JoinHorizontal(

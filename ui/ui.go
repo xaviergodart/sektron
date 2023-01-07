@@ -96,6 +96,10 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.seq.ToggleTrack(number)
 			return m, nil
 
+		case key.Matches(msg, m.keymap.TrackPageUp):
+			m.trackPagePress()
+			return m, nil
+
 		case key.Matches(msg, m.keymap.Params):
 			m.activeParam = m.keymap.ParamsIndex[msg.String()]
 			return m, nil
@@ -108,13 +112,21 @@ func (m *mainModel) stepPress(msg tea.KeyMsg) {
 	number := m.keymap.StepsIndex[msg.String()]
 	switch m.mode {
 	case trackMode:
-		if number >= 8 {
+		if number >= len(m.seq.Tracks()) {
 			return
 		}
 		m.activeTrack = number
 	case recMode:
 		m.seq.ToggleStep(m.activeTrack, number)
 	}
+}
+
+func (m *mainModel) trackPagePress() {
+	pageNb := len(m.seq.Tracks()[m.activeTrack].Steps()) / stepsPerPage
+	if len(m.seq.Tracks()[m.activeTrack].Steps())%stepsPerPage > 0 {
+		pageNb++
+	}
+	m.activeTrackPage = (m.activeTrackPage + 1) % pageNb
 }
 
 func (m mainModel) View() string {

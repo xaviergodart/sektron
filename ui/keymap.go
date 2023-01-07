@@ -16,8 +16,10 @@ type KeyMap struct {
 	StepsIndex map[string]int
 	Steps      key.Binding
 
-	TracksIndex map[string]int
-	Tracks      key.Binding
+	TracksIndex   map[string]int
+	Tracks        key.Binding
+	TrackPageUp   key.Binding
+	TrackPageDown key.Binding
 
 	ParamsIndex map[string]int
 	Params      key.Binding
@@ -37,6 +39,14 @@ func DefaultKeyMap() KeyMap {
 		Tracks: key.NewBinding(
 			key.WithKeys(trackKeys...),
 			key.WithHelp(strings.Join(stepKeys, "/"), "toggle tracks 1 to 16"),
+		),
+		TrackPageUp: key.NewBinding(
+			key.WithKeys("p"),
+			key.WithHelp("p", "track page up"),
+		),
+		TrackPageDown: key.NewBinding(
+			key.WithKeys("m"),
+			key.WithHelp("m", "track page down"),
 		),
 		ParamsIndex: map[string]int{},
 		Params: key.NewBinding(
