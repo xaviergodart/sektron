@@ -40,6 +40,13 @@ func (t Track) IsActive() bool {
 	return t.active
 }
 
+func (t Track) IsCurrentStepActive() bool {
+	if !t.active || len(t.steps) < t.CurrentStep() {
+		return false
+	}
+	return t.steps[t.CurrentStep()].IsActive()
+}
+
 func (t Track) stepForNextPulse() int {
 	return (t.pulse + 1) % (pulsesPerStep * len(t.steps)) / pulsesPerStep
 }

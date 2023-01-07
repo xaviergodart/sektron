@@ -19,6 +19,7 @@ const (
 type SequencerInterface interface {
 	Reset()
 	TogglePlay()
+	IsPlaying() bool
 	Tracks() []*Track
 	ToggleStep(track int, step int)
 }
@@ -87,6 +88,10 @@ func (s *Sequencer) TogglePlay() {
 	if !s.isPlaying {
 		s.Reset()
 	}
+}
+
+func (s *Sequencer) IsPlaying() bool {
+	return s.isPlaying
 }
 
 func (s *Sequencer) Reset() {

@@ -15,7 +15,7 @@ var (
 	stepActiveColor         = lipgloss.Color("250")
 	stepInactiveColor       = lipgloss.Color("240")
 	stepTextBackgroundColor = lipgloss.Color("240")
-	stepTextColor           = lipgloss.Color("0")
+	stepTextColor           = lipgloss.Color("232")
 
 	stepStyle = lipgloss.NewStyle().Margin(1, 2, 0, 0)
 	textStyle = lipgloss.NewStyle().
@@ -55,7 +55,6 @@ func (m mainModel) renderStep(step *sequencer.Step) string {
 		lipgloss.Center,
 		textStyle.Background(stepInactiveColor).Render(content),
 		lipgloss.WithWhitespaceBackground(stepInactiveColor),
-		lipgloss.WithWhitespaceChars("/"),
 	))
 }
 
