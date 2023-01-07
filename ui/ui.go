@@ -112,11 +112,21 @@ func (m *mainModel) stepPress(msg tea.KeyMsg) {
 }
 
 func (m mainModel) View() string {
-	//mainView := lipgloss.NewStyle().Align(lipgloss.Center)
-
-	return lipgloss.JoinVertical(
+	mainView := lipgloss.JoinVertical(
 		lipgloss.Left,
 		m.renderStatus(),
 		m.renderSequencer(),
+	)
+
+	// Cleanup gibber
+	cleanup := lipgloss.NewStyle().
+		Width(m.width).
+		Height(m.height - lipgloss.Height(mainView)).
+		Render("")
+
+	return lipgloss.JoinVertical(
+		lipgloss.Left,
+		mainView,
+		cleanup,
 	)
 }

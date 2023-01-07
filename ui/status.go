@@ -10,13 +10,11 @@ var (
 	recModeColor = lipgloss.Color("9")
 
 	statusBarStyle = lipgloss.NewStyle().
-		//BorderForeground(focusColor).
-		Padding(1, 1).
-		Bold(true)
+			Padding(1, 1).
+			Bold(true)
 
 	trackStatusStyle = statusBarStyle.Copy().
 				Foreground(lipgloss.Color(primaryTextColor)).
-				Padding(1, 1).
 				Background(primaryColor)
 
 	statusModeStyle = statusBarStyle.Copy().
