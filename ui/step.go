@@ -44,7 +44,7 @@ func (m mainModel) renderStep(step *sequencer.Step) string {
 		inactiveColor = stepInactiveInactiveTrackColor
 	}
 
-	if step.IsCurrentStep() {
+	if m.seq.IsPlaying() && step.IsCurrentStep() {
 		return stepStyle.Render(lipgloss.Place(
 			width,
 			height,

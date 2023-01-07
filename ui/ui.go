@@ -117,7 +117,7 @@ func (m *mainModel) stepPress(msg tea.KeyMsg) {
 		}
 		m.activeTrack = number
 	case recMode:
-		m.seq.ToggleStep(m.activeTrack, number)
+		m.seq.ToggleStep(m.activeTrack, number+(m.activeTrackPage*stepsPerPage))
 	}
 }
 
