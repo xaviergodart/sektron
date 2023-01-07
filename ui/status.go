@@ -13,6 +13,7 @@ var (
 	trackActiveStepTriggerColor = lipgloss.Color("255")
 	trackStepTriggerColor       = lipgloss.Color("238")
 
+	tempoColor         = lipgloss.Color("27")
 	recModeColor       = lipgloss.Color("124")
 	playingStatusColor = lipgloss.Color("34")
 	stoppedStatusColor = lipgloss.Color("250")
@@ -45,7 +46,7 @@ var (
 
 	tempoStyle = statusBarStyle.Copy().
 			Foreground(primaryTextColor).
-			Background(recModeColor)
+			Background(tempoColor)
 
 	statusText = lipgloss.NewStyle().Inherit(statusBarStyle)
 
@@ -59,6 +60,7 @@ func (m mainModel) renderStatus() string {
 
 	statusTrack := m.renderStatusTracks()
 	statusMode := statusModeStyle.Render("●")
+	statusTempo := tempoStyle.Render(fmt.Sprintf("⧗ %.1f", m.seq.Tempo()))
 	var statusPlayer string
 	if m.seq.IsPlaying() {
 		statusPlayer = statusPlayingStyle.Render("▶")
@@ -69,6 +71,7 @@ func (m mainModel) renderStatus() string {
 		Render(sektron)
 
 	return lipgloss.JoinHorizontal(lipgloss.Center,
+		statusTempo,
 		statusPlayer,
 		statusMode,
 		statusTrack,

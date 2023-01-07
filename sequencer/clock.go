@@ -10,12 +10,14 @@ const (
 type Clock struct {
 	ticker *time.Ticker
 	update chan float64
+	tempo  float64
 }
 
 func NewClock(tempo float64, tick func()) *Clock {
 	clock := &Clock{
 		ticker: time.NewTicker(NewClockInterval(tempo)),
 		update: make(chan float64, 128),
+		tempo:  tempo,
 	}
 	go func(clock *Clock) {
 		for {
@@ -25,6 +27,7 @@ func NewClock(tempo float64, tick func()) *Clock {
 			case newTempo := <-clock.update:
 				clock.ticker.Stop()
 				clock.ticker = time.NewTicker(NewClockInterval(newTempo))
+				clock.tempo = newTempo
 			}
 		}
 	}(clock)
