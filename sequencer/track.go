@@ -60,11 +60,8 @@ func (t *Track) trigger() {
 	if t.pulse == pulsesPerStep*len(t.steps) {
 		t.reset()
 	}
-	if !t.active {
-		return
-	}
 	for i, step := range t.steps {
-		if step.isStartingPulse() {
+		if t.active && step.isStartingPulse() {
 			step.trigger()
 		}
 		// Avoid 2 steps to be triggered at the same time
