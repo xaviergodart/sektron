@@ -12,11 +12,13 @@ var (
 	trackActiveColor            = lipgloss.Color("250")
 	trackActiveStepTriggerColor = lipgloss.Color("255")
 	trackStepTriggerColor       = lipgloss.Color("238")
-	recModeColor                = lipgloss.Color("124")
+
+	recModeColor       = lipgloss.Color("124")
+	playingStatusColor = lipgloss.Color("34")
+	stoppedStatusColor = lipgloss.Color("250")
 
 	statusBarStyle = lipgloss.NewStyle().
 			Padding(1, 2).
-			Margin(0, 1, 0, 0).
 			Bold(true)
 
 	trackActiveStyle = statusBarStyle.Copy().
@@ -28,7 +30,14 @@ var (
 	trackCurrentStepActiveStyle = statusBarStyle.Copy().
 					Background(trackStepTriggerColor)
 	trackInactive = statusBarStyle.Copy().
+			Italic(true).
 			Foreground(trackTextInactiveColor)
+
+	statusPlayerStyle = statusBarStyle.Copy().
+				Background(stoppedStatusColor).
+				Foreground(trackTextActiveColor)
+	statusPlayingStyle = statusPlayerStyle.Copy().
+				Background(playingStatusColor)
 
 	statusModeStyle = statusBarStyle.Copy().
 			Foreground(primaryTextColor).
@@ -40,24 +49,29 @@ var (
 
 	statusText = lipgloss.NewStyle().Inherit(statusBarStyle)
 
-	logoStyle = lipgloss.NewStyle().Inherit(statusBarStyle)
+	logoStyle = lipgloss.NewStyle().
+			Italic(true).
+			Inherit(statusBarStyle)
 )
 
 func (m mainModel) renderStatus() string {
 	w := lipgloss.Width
 
 	statusTrack := m.renderStatusTracks()
-	statusMode := statusModeStyle.Render("REC")
-	logo := logoStyle.Render("SEKTRON")
-	text := "Playing"
-	statusVal := statusText.Copy().
-		PaddingRight((m.width/stepsPerLine-2)*stepsPerLine - w(statusMode) - w(statusTrack) - w(logo) + w(text)).
-		Render(text)
+	statusMode := statusModeStyle.Render("●")
+	var statusPlayer string
+	if m.seq.IsPlaying() {
+		statusPlayer = statusPlayingStyle.Render("▶")
+	} else {
+		statusPlayer = statusPlayerStyle.Render("■")
+	}
+	logo := logoStyle.PaddingLeft((m.width/stepsPerLine-2)*stepsPerLine - w(statusMode) - w(statusTrack) + w(statusPlayer) - w(sektron)).
+		Render(sektron)
 
 	return lipgloss.JoinHorizontal(lipgloss.Center,
-		statusTrack,
+		statusPlayer,
 		statusMode,
-		statusVal,
+		statusTrack,
 		logo,
 	)
 }
