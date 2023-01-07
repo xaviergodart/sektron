@@ -8,12 +8,17 @@ import (
 )
 
 var (
-	stepWidth  = 15
+	stepWidth  = 13
 	stepHeight = stepWidth / 2
 
-	stepCurrentColor        = lipgloss.Color("15")
-	stepActiveColor         = lipgloss.Color("250")
-	stepInactiveColor       = lipgloss.Color("240")
+	stepCurrentColor  = lipgloss.Color("15")
+	stepActiveColor   = lipgloss.Color("250")
+	stepInactiveColor = lipgloss.Color("240")
+
+	stepCurrentInactiveTrackColor  = lipgloss.Color("240")
+	stepActiveInactiveTrackColor   = lipgloss.Color("239")
+	stepInactiveInactiveTrackColor = lipgloss.Color("234")
+
 	stepTextBackgroundColor = lipgloss.Color("240")
 	stepTextColor           = lipgloss.Color("232")
 
@@ -28,14 +33,25 @@ func (m mainModel) renderStep(step *sequencer.Step) string {
 	content := m.renderStepContent(step)
 	width, height := m.stepSize()
 
+	var currentColor, activeColor, inactiveColor lipgloss.Color
+	if step.Track().IsActive() {
+		currentColor = stepCurrentColor
+		activeColor = stepActiveColor
+		inactiveColor = stepInactiveColor
+	} else {
+		currentColor = stepCurrentInactiveTrackColor
+		activeColor = stepActiveInactiveTrackColor
+		inactiveColor = stepInactiveInactiveTrackColor
+	}
+
 	if step.IsCurrentStep() {
 		return stepStyle.Render(lipgloss.Place(
 			width,
 			height,
 			lipgloss.Center,
 			lipgloss.Center,
-			textStyle.Background(stepCurrentColor).Render(content),
-			lipgloss.WithWhitespaceBackground(stepCurrentColor),
+			textStyle.Background(currentColor).Render(content),
+			lipgloss.WithWhitespaceBackground(currentColor),
 		))
 	}
 	if step.IsActive() {
@@ -44,17 +60,18 @@ func (m mainModel) renderStep(step *sequencer.Step) string {
 			height,
 			lipgloss.Center,
 			lipgloss.Center,
-			textStyle.Background(stepActiveColor).Render(content),
-			lipgloss.WithWhitespaceBackground(stepActiveColor),
+			textStyle.Background(activeColor).Render(content),
+			lipgloss.WithWhitespaceBackground(activeColor),
 		))
 	}
+
 	return stepStyle.Render(lipgloss.Place(
 		width,
 		height,
 		lipgloss.Center,
 		lipgloss.Center,
-		textStyle.Background(stepInactiveColor).Render(content),
-		lipgloss.WithWhitespaceBackground(stepInactiveColor),
+		textStyle.Background(inactiveColor).Render(content),
+		lipgloss.WithWhitespaceBackground(inactiveColor),
 	))
 }
 
