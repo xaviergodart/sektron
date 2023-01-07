@@ -14,6 +14,7 @@ var (
 	trackStepTriggerColor       = lipgloss.Color("238")
 
 	tempoColor         = lipgloss.Color("27")
+	tempoTickColor     = lipgloss.Color("159")
 	recModeColor       = lipgloss.Color("124")
 	playingStatusColor = lipgloss.Color("34")
 	stoppedStatusColor = lipgloss.Color("250")
@@ -48,6 +49,10 @@ var (
 			Foreground(primaryTextColor).
 			Background(tempoColor)
 
+	tempoTickStyle = tempoStyle.Copy().
+			Foreground(primaryTextColor).
+			Background(tempoTickColor)
+
 	statusText = lipgloss.NewStyle().Inherit(statusBarStyle)
 
 	logoStyle = lipgloss.NewStyle().
@@ -60,14 +65,10 @@ func (m mainModel) renderStatus() string {
 
 	statusTrack := m.renderStatusTracks()
 	statusMode := statusModeStyle.Render("●")
-	statusTempo := tempoStyle.Render(fmt.Sprintf("⧗ %.1f", m.seq.Tempo()))
-	var statusPlayer string
-	if m.seq.IsPlaying() {
-		statusPlayer = statusPlayingStyle.Render("▶")
-	} else {
-		statusPlayer = statusPlayerStyle.Render("■")
-	}
-	logo := logoStyle.PaddingLeft((m.width/stepsPerLine-2)*stepsPerLine - w(statusMode) - w(statusTrack) + w(statusPlayer) - w(sektron)).
+	statusTempo := m.renderStatusTempo()
+	statusPlayer := m.renderStatusPlayer()
+
+	logo := logoStyle.PaddingLeft((m.width/stepsPerLine-2)*stepsPerLine - w(statusMode) - w(statusTempo) - w(statusTrack) - w(statusPlayer) - w(sektron) + 13).
 		Render(sektron)
 
 	return lipgloss.JoinHorizontal(lipgloss.Center,
@@ -98,4 +99,18 @@ func (m mainModel) renderStatusTracks() string {
 	}
 
 	return lipgloss.JoinHorizontal(lipgloss.Center, tracks...)
+}
+
+func (m mainModel) renderStatusTempo() string {
+	if m.seq.IsPlaying() && m.seq.Tracks()[0].CurrentStep()%4 == 0 {
+		return tempoTickStyle.Render(fmt.Sprintf("⧗ %.1f", m.seq.Tempo()))
+	}
+	return tempoStyle.Render(fmt.Sprintf("⧗ %.1f", m.seq.Tempo()))
+}
+
+func (m mainModel) renderStatusPlayer() string {
+	if m.seq.IsPlaying() {
+		return statusPlayingStyle.Render("▶")
+	}
+	return statusPlayerStyle.Render("■")
 }
