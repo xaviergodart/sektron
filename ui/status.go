@@ -64,7 +64,7 @@ func (m mainModel) renderStatus() string {
 	w := lipgloss.Width
 
 	statusTrack := m.renderStatusTracks()
-	statusMode := statusModeStyle.Render("●")
+	statusMode := m.renderStatusMode()
 	statusTempo := m.renderStatusTempo()
 	statusPlayer := m.renderStatusPlayer()
 
@@ -102,10 +102,11 @@ func (m mainModel) renderStatusTracks() string {
 }
 
 func (m mainModel) renderStatusTempo() string {
+	text := fmt.Sprintf("⧗ %.1f", m.seq.Tempo())
 	if m.seq.IsPlaying() && m.seq.Tracks()[0].CurrentStep()%4 == 0 {
-		return tempoTickStyle.Render(fmt.Sprintf("⧗ %.1f", m.seq.Tempo()))
+		return tempoTickStyle.Render(text)
 	}
-	return tempoStyle.Render(fmt.Sprintf("⧗ %.1f", m.seq.Tempo()))
+	return tempoStyle.Render(text)
 }
 
 func (m mainModel) renderStatusPlayer() string {
@@ -113,4 +114,12 @@ func (m mainModel) renderStatusPlayer() string {
 		return statusPlayingStyle.Render("▶")
 	}
 	return statusPlayerStyle.Render("■")
+}
+
+func (m mainModel) renderStatusMode() string {
+	text := "●"
+	if m.mode == recMode {
+		return statusModeStyle.Render(text)
+	}
+	return statusBarStyle.Render(text)
 }
