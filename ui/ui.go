@@ -97,7 +97,17 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case key.Matches(msg, m.keymap.TrackPageUp):
-			m.trackPagePress()
+			pageNb := m.trackPagesNb()
+			m.activeTrackPage = (m.activeTrackPage + 1) % pageNb
+			return m, nil
+
+		case key.Matches(msg, m.keymap.TrackPageDown):
+			pageNb := m.trackPagesNb()
+			if m.activeTrackPage-1 < 0 {
+				m.activeTrackPage = pageNb - 1
+			} else {
+				m.activeTrackPage = m.activeTrackPage - 1
+			}
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Params):
@@ -121,12 +131,12 @@ func (m *mainModel) stepPress(msg tea.KeyMsg) {
 	}
 }
 
-func (m *mainModel) trackPagePress() {
+func (m mainModel) trackPagesNb() int {
 	pageNb := len(m.seq.Tracks()[m.activeTrack].Steps()) / stepsPerPage
 	if len(m.seq.Tracks()[m.activeTrack].Steps())%stepsPerPage > 0 {
 		pageNb++
 	}
-	m.activeTrackPage = (m.activeTrackPage + 1) % pageNb
+	return pageNb
 }
 
 func (m mainModel) View() string {

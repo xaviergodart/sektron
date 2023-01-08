@@ -7,7 +7,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-var (
+const (
 	stepWidth  = 13
 	stepHeight = stepWidth / 2
 
@@ -21,7 +21,9 @@ var (
 
 	stepTextBackgroundColor = lipgloss.Color("240")
 	stepTextColor           = lipgloss.Color("232")
+)
 
+var (
 	stepStyle = lipgloss.NewStyle().Margin(1, 2, 0, 0)
 	textStyle = lipgloss.NewStyle().
 			Foreground(stepTextColor).
