@@ -7,64 +7,48 @@ import (
 )
 
 var (
-	trackTextActiveColor        = lipgloss.Color("232")
-	trackTextInactiveColor      = lipgloss.Color("240")
-	trackActiveColor            = lipgloss.Color("250")
-	trackActiveStepTriggerColor = lipgloss.Color("255")
-	trackStepTriggerColor       = lipgloss.Color("238")
-
-	trackPageColor        = lipgloss.Color("240")
-	trackPageCurrentColor = lipgloss.Color("255")
-	trackPageActiveColor  = lipgloss.Color("197")
-
-	tempoColor         = lipgloss.Color("197")
-	tempoTickColor     = lipgloss.Color("159")
-	recModeColor       = lipgloss.Color("124")
-	playingStatusColor = lipgloss.Color("154")
-	stoppedStatusColor = lipgloss.Color("250")
-
 	statusBarStyle = lipgloss.NewStyle().
 			Padding(1, 2).
 			Bold(true)
 
 	trackActiveStyle = statusBarStyle.Copy().
-				Foreground(trackTextActiveColor).
-				Background(trackActiveColor)
+				Foreground(secondaryTextColor).
+				Background(activeColor)
 	trackActiveCurrentStepActiveStyle = statusBarStyle.Copy().
-						Foreground(trackTextActiveColor).
-						Background(trackActiveStepTriggerColor)
+						Foreground(secondaryTextColor).
+						Background(currentColor)
 	trackCurrentStepActiveStyle = statusBarStyle.Copy().
-					Background(trackStepTriggerColor)
+					Background(currentDimmedColor)
 	trackInactive = statusBarStyle.Copy().
 			Italic(true).
-			Foreground(trackTextInactiveColor)
+			Foreground(secondaryDimmedColor)
 
 	statusPlayerStyle = statusBarStyle.Copy().
-				Background(stoppedStatusColor).
-				Foreground(trackTextActiveColor)
+				Background(currentColor).
+				Foreground(secondaryTextColor)
 	statusPlayingStyle = statusPlayerStyle.Copy().
-				Background(playingStatusColor)
+				Background(transportPlayColor)
 
 	statusModeStyle = statusBarStyle.Copy().
 			Foreground(primaryTextColor).
-			Background(recModeColor)
+			Background(transportRecColor)
 
 	tempoStyle = statusBarStyle.Copy().
 			Foreground(primaryTextColor).
-			Background(tempoColor)
+			Background(primaryColor)
 
 	tempoTickStyle = tempoStyle.Copy().
 			Foreground(primaryTextColor).
-			Background(tempoTickColor)
+			Background(currentColor)
 
 	statusTrackPage = lipgloss.NewStyle().
 			MarginLeft(8)
 	trackPage = statusBarStyle.Copy().
-			Foreground(trackPageColor)
+			Foreground(inactiveColor)
 	trackPageActive = trackPage.Copy().
-			Foreground(trackPageActiveColor)
+			Foreground(primaryColor)
 	trackPageCurrent = trackPage.Copy().
-				Foreground(trackPageCurrentColor)
+				Foreground(activeColor)
 
 	logoStyle = lipgloss.NewStyle().
 			Italic(true).
@@ -101,7 +85,7 @@ func (m mainModel) renderStatusTracks() string {
 	var tracks []string
 	for i, track := range m.seq.Tracks() {
 		text := fmt.Sprintf("T%d", i+1)
-		if i == m.activeTrack && track.IsCurrentStepActive() {
+		if m.seq.IsPlaying() && i == m.activeTrack && track.IsCurrentStepActive() {
 			tracks = append(tracks, trackActiveCurrentStepActiveStyle.Render(text))
 		} else if m.seq.IsPlaying() && track.IsCurrentStepActive() {
 			tracks = append(tracks, trackCurrentStepActiveStyle.Render(text))

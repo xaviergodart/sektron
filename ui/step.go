@@ -10,23 +10,12 @@ import (
 const (
 	stepWidth  = 13
 	stepHeight = stepWidth / 2
-
-	stepCurrentColor  = lipgloss.Color("15")
-	stepActiveColor   = lipgloss.Color("250")
-	stepInactiveColor = lipgloss.Color("240")
-
-	stepCurrentInactiveTrackColor  = lipgloss.Color("240")
-	stepActiveInactiveTrackColor   = lipgloss.Color("239")
-	stepInactiveInactiveTrackColor = lipgloss.Color("234")
-
-	stepTextBackgroundColor = lipgloss.Color("240")
-	stepTextColor           = lipgloss.Color("232")
 )
 
 var (
 	stepStyle = lipgloss.NewStyle().Margin(1, 2, 0, 0)
 	textStyle = lipgloss.NewStyle().
-			Foreground(stepTextColor).
+			Foreground(secondaryTextColor).
 			Padding(1, 2).
 			Bold(true)
 )
@@ -35,15 +24,15 @@ func (m mainModel) renderStep(step *sequencer.Step) string {
 	content := m.renderStepContent(step)
 	width, height := m.stepSize()
 
-	var currentColor, activeColor, inactiveColor lipgloss.Color
+	var stepCurrentColor, stepActiveColor, stepInactiveColor lipgloss.Color
 	if step.Track().IsActive() {
-		currentColor = stepCurrentColor
-		activeColor = stepActiveColor
-		inactiveColor = stepInactiveColor
+		stepCurrentColor = currentColor
+		stepActiveColor = activeColor
+		stepInactiveColor = inactiveColor
 	} else {
-		currentColor = stepCurrentInactiveTrackColor
-		activeColor = stepActiveInactiveTrackColor
-		inactiveColor = stepInactiveInactiveTrackColor
+		stepCurrentColor = currentDimmedColor
+		stepActiveColor = activeDimmedColor
+		stepInactiveColor = inactiveDimmedColor
 	}
 
 	if m.seq.IsPlaying() && step.IsCurrentStep() {
@@ -52,8 +41,8 @@ func (m mainModel) renderStep(step *sequencer.Step) string {
 			height,
 			lipgloss.Center,
 			lipgloss.Center,
-			textStyle.Background(currentColor).Render(content),
-			lipgloss.WithWhitespaceBackground(currentColor),
+			textStyle.Background(stepCurrentColor).Render(content),
+			lipgloss.WithWhitespaceBackground(stepCurrentColor),
 		))
 	}
 	if step.IsActive() {
@@ -62,8 +51,8 @@ func (m mainModel) renderStep(step *sequencer.Step) string {
 			height,
 			lipgloss.Center,
 			lipgloss.Center,
-			textStyle.Background(activeColor).Render(content),
-			lipgloss.WithWhitespaceBackground(activeColor),
+			textStyle.Background(stepActiveColor).Render(content),
+			lipgloss.WithWhitespaceBackground(stepActiveColor),
 		))
 	}
 
@@ -72,8 +61,8 @@ func (m mainModel) renderStep(step *sequencer.Step) string {
 		height,
 		lipgloss.Center,
 		lipgloss.Center,
-		textStyle.Background(inactiveColor).Render(content),
-		lipgloss.WithWhitespaceBackground(inactiveColor),
+		textStyle.Background(stepInactiveColor).Render(content),
+		lipgloss.WithWhitespaceBackground(stepInactiveColor),
 	))
 }
 
