@@ -3,14 +3,23 @@ package sequencer
 import "time"
 
 const (
-	pulsesPerStep       int = 6
-	stepsPerQuarterNote int = 4
+	pulsesPerStep       int     = 6
+	stepsPerQuarterNote int     = 4
+	tempoMin            float64 = 1.0
+	tempoMax            float64 = 300.0
 )
 
 type Clock struct {
 	ticker *time.Ticker
 	update chan float64
 	tempo  float64
+}
+
+func (c *Clock) SetTempo(tempo float64) {
+	if tempo > tempoMax || tempo < tempoMin {
+		return
+	}
+	c.update <- tempo
 }
 
 func NewClock(tempo float64, tick func()) *Clock {

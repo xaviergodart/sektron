@@ -24,6 +24,7 @@ type SequencerInterface interface {
 	ToggleTrack(track int)
 	ToggleStep(track int, step int)
 	Tempo() float64
+	SetTempo(tempo float64)
 }
 
 type Sequencer struct {
@@ -94,6 +95,10 @@ func (s *Sequencer) TogglePlay() {
 
 func (s *Sequencer) Tempo() float64 {
 	return s.clock.tempo
+}
+
+func (s *Sequencer) SetTempo(tempo float64) {
+	s.clock.SetTempo(tempo)
 }
 
 func (s *Sequencer) IsPlaying() bool {

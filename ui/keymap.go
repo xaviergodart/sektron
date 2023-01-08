@@ -21,6 +21,11 @@ type KeyMap struct {
 	TrackPageUp   key.Binding
 	TrackPageDown key.Binding
 
+	TempoUp       key.Binding
+	TempoDown     key.Binding
+	TempoFineUp   key.Binding
+	TempoFineDown key.Binding
+
 	ParamsIndex map[string]int
 	Params      key.Binding
 
@@ -47,6 +52,22 @@ func DefaultKeyMap() KeyMap {
 		TrackPageDown: key.NewBinding(
 			key.WithKeys("m"),
 			key.WithHelp("m", "track page down"),
+		),
+		TempoUp: key.NewBinding(
+			key.WithKeys("pgup"),
+			key.WithHelp("page up", "tempo up (1 bpm)"),
+		),
+		TempoDown: key.NewBinding(
+			key.WithKeys("pgdown"),
+			key.WithHelp("page down", "tempo down (1 bpm)"),
+		),
+		TempoFineUp: key.NewBinding(
+			key.WithKeys("alt+pgup"),
+			key.WithHelp("alt+page up", "tempo up (0.1 bpm)"),
+		),
+		TempoFineDown: key.NewBinding(
+			key.WithKeys("alt+pgdown"),
+			key.WithHelp("alt+page down", "tempo down (0.1 bpm)"),
 		),
 		ParamsIndex: map[string]int{},
 		Params: key.NewBinding(
