@@ -66,6 +66,7 @@ func (t *Track) trigger() {
 			step.reset()
 		}
 	}
+	// TODO: fix bug => first step not triggering when last step is active
 	t.pulse++
 	if t.pulse == pulsesPerStep*len(t.steps) {
 		t.reset()
