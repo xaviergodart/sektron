@@ -126,8 +126,11 @@ func (m mainModel) renderStatusMode() string {
 }
 
 func (m mainModel) renderStatusTrackPages() string {
-	text := "●"
 	pageNb := m.trackPagesNb()
+	if pageNb <= 1 {
+		return ""
+	}
+	text := "●"
 	pages := make([]string, pageNb)
 	for i := range pages {
 		if m.isActiveTrackOnQuarterNote() && m.playingTrackPage() == i {

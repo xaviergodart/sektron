@@ -13,7 +13,7 @@ const (
 	defaultVelocity      uint8   = 100
 	defaultProbability   int     = 100
 	defaultDevice        int     = 0
-	defaultStepsPerTrack int     = 64
+	defaultStepsPerTrack int     = 32
 )
 
 type SequencerInterface interface {
