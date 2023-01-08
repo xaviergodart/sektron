@@ -13,10 +13,14 @@ var (
 	trackActiveStepTriggerColor = lipgloss.Color("255")
 	trackStepTriggerColor       = lipgloss.Color("238")
 
-	tempoColor         = lipgloss.Color("27")
+	trackPageColor        = lipgloss.Color("240")
+	trackPageCurrentColor = lipgloss.Color("255")
+	trackPageActiveColor  = lipgloss.Color("197")
+
+	tempoColor         = lipgloss.Color("197")
 	tempoTickColor     = lipgloss.Color("159")
 	recModeColor       = lipgloss.Color("124")
-	playingStatusColor = lipgloss.Color("34")
+	playingStatusColor = lipgloss.Color("154")
 	stoppedStatusColor = lipgloss.Color("250")
 
 	statusBarStyle = lipgloss.NewStyle().
@@ -53,7 +57,14 @@ var (
 			Foreground(primaryTextColor).
 			Background(tempoTickColor)
 
-	statusText = lipgloss.NewStyle().Inherit(statusBarStyle)
+	statusTrackPage = lipgloss.NewStyle().
+			MarginLeft(8)
+	trackPage = statusBarStyle.Copy().
+			Foreground(trackPageColor)
+	trackPageActive = trackPage.Copy().
+			Foreground(trackPageActiveColor)
+	trackPageCurrent = trackPage.Copy().
+				Foreground(trackPageCurrentColor)
 
 	logoStyle = lipgloss.NewStyle().
 			Italic(true).
@@ -67,15 +78,21 @@ func (m mainModel) renderStatus() string {
 	statusMode := m.renderStatusMode()
 	statusTempo := m.renderStatusTempo()
 	statusPlayer := m.renderStatusPlayer()
+	statusTrackPages := m.renderStatusTrackPages()
 
-	logo := logoStyle.PaddingLeft((m.width/stepsPerLine-2)*stepsPerLine - w(statusMode) - w(statusTempo) - w(statusTrack) - w(statusPlayer) - w(sektron) + 13).
-		Render(sektron)
-
-	return lipgloss.JoinHorizontal(lipgloss.Center,
+	statusBar := lipgloss.JoinHorizontal(lipgloss.Center,
 		statusTempo,
 		statusPlayer,
 		statusMode,
 		statusTrack,
+		statusTrackPages,
+	)
+
+	logo := logoStyle.PaddingLeft((m.width/stepsPerLine-2)*stepsPerLine - w(statusBar) + 6).
+		Render(sektron)
+
+	return lipgloss.JoinHorizontal(lipgloss.Center,
+		statusBar,
 		logo,
 	)
 }
@@ -103,7 +120,7 @@ func (m mainModel) renderStatusTracks() string {
 
 func (m mainModel) renderStatusTempo() string {
 	text := fmt.Sprintf("⧗ %.1f", m.seq.Tempo())
-	if m.seq.IsPlaying() && m.seq.Tracks()[0].CurrentStep()%4 == 0 {
+	if m.isActiveTrackOnQuarterNote() {
 		return tempoTickStyle.Render(text)
 	}
 	return tempoStyle.Render(text)
@@ -122,4 +139,30 @@ func (m mainModel) renderStatusMode() string {
 		return statusModeStyle.Render(text)
 	}
 	return statusBarStyle.Render(text)
+}
+
+func (m mainModel) renderStatusTrackPages() string {
+	text := "●"
+	pageNb := m.trackPagesNb()
+	pages := make([]string, pageNb)
+	for i := range pages {
+		if m.isActiveTrackOnQuarterNote() && m.playingTrackPage() == i {
+			pages[i] = trackPageCurrent.Render(text)
+		} else if m.activeTrackPage == i {
+			pages[i] = trackPageActive.Render(text)
+		} else {
+			pages[i] = trackPage.Render(text)
+		}
+	}
+	return statusTrackPage.Render(
+		lipgloss.JoinHorizontal(lipgloss.Left, pages...),
+	)
+}
+
+func (m mainModel) isActiveTrackOnQuarterNote() bool {
+	return m.seq.IsPlaying() && m.seq.Tracks()[0].CurrentStep()%4 == 0
+}
+
+func (m mainModel) playingTrackPage() int {
+	return m.seq.Tracks()[m.activeTrack].CurrentStep() / stepsPerPage
 }

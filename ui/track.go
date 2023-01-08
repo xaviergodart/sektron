@@ -6,7 +6,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-var (
+const (
 	stepsPerPage = 16
 	stepsPerLine = 8
 )
