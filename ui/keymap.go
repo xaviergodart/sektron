@@ -13,6 +13,9 @@ var (
 )
 
 type KeyMap struct {
+	TogglePlay key.Binding
+	Mode       key.Binding
+
 	StepsIndex map[string]int
 	Steps      key.Binding
 
@@ -31,10 +34,37 @@ type KeyMap struct {
 
 	ParamValueUp   key.Binding
 	ParamValueDown key.Binding
+
+	Help key.Binding
+	Quit key.Binding
+}
+
+// ShortHelp returns keybindings to be shown in the mini help view. It's part
+// of the key.Map interface.
+func (k KeyMap) ShortHelp() []key.Binding {
+	return []key.Binding{k.Help, k.Quit}
+}
+
+// FullHelp returns keybindings for the expanded help view. It's part of the
+// key.Map interface.
+func (k KeyMap) FullHelp() [][]key.Binding {
+	return [][]key.Binding{
+		{k.TogglePlay, k.Mode},
+		{k.TempoUp, k.TempoDown, k.TempoFineUp, k.TempoFineDown},
+		{k.Help},
+	}
 }
 
 func DefaultKeyMap() KeyMap {
 	km := KeyMap{
+		TogglePlay: key.NewBinding(
+			key.WithKeys(" "),
+			key.WithHelp("space", "toggle play"),
+		),
+		Mode: key.NewBinding(
+			key.WithKeys("tab"),
+			key.WithHelp("tab", "toggle mode (track, record)"),
+		),
 		StepsIndex: map[string]int{},
 		Steps: key.NewBinding(
 			key.WithKeys(stepKeys...),
@@ -81,6 +111,14 @@ func DefaultKeyMap() KeyMap {
 		ParamValueDown: key.NewBinding(
 			key.WithKeys("down"),
 			key.WithHelp("↓", "decrease selected parameter value"),
+		),
+		Help: key.NewBinding(
+			key.WithKeys("?"),
+			key.WithHelp("?", "toggle help"),
+		),
+		Quit: key.NewBinding(
+			key.WithKeys("ctrl+c", "esc"),
+			key.WithHelp("ctrl+c/esc", "quit"),
 		),
 	}
 	for i, k := range stepKeys {

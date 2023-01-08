@@ -13,7 +13,7 @@ const (
 	defaultVelocity      uint8   = 100
 	defaultProbability   int     = 100
 	defaultDevice        int     = 0
-	defaultStepsPerTrack int     = 32
+	defaultStepsPerTrack int     = 16
 )
 
 type SequencerInterface interface {
@@ -107,7 +107,7 @@ func (s *Sequencer) IsPlaying() bool {
 
 func (s *Sequencer) Reset() {
 	for _, track := range s.tracks {
-		track.reset()
+		track.clear()
 	}
 }
 

@@ -4,6 +4,7 @@ import (
 	"sektron/sequencer"
 	"time"
 
+	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -32,6 +33,7 @@ type mainModel struct {
 	activeTrack     int
 	activeTrackPage int
 	activeParam     int
+	help            help.Model
 }
 
 func New(seq sequencer.SequencerInterface) mainModel {
@@ -66,27 +68,18 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, tick()
 
 	case tea.KeyMsg:
-		switch msg.String() {
-
-		case " ":
+		switch {
+		case key.Matches(msg, m.keymap.TogglePlay):
 			m.seq.TogglePlay()
 			return m, nil
 
-		case "tab":
+		case key.Matches(msg, m.keymap.Mode):
 			if m.mode == trackMode {
 				m.mode = recMode
 			} else {
 				m.mode = trackMode
 			}
 			return m, nil
-
-		// These keys should exit the program.
-		case "ctrl+c", "esc":
-			m.seq.Reset()
-			return m, tea.Quit
-		}
-
-		switch {
 		case key.Matches(msg, m.keymap.Steps):
 			m.stepPress(msg)
 			return m, nil
@@ -129,6 +122,14 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keymap.Params):
 			m.activeParam = m.keymap.ParamsIndex[msg.String()]
 			return m, nil
+
+		case key.Matches(msg, m.keymap.Help):
+			m.help.ShowAll = !m.help.ShowAll
+			return m, nil
+
+		case key.Matches(msg, m.keymap.Quit):
+			m.seq.Reset()
+			return m, tea.Quit
 		}
 	}
 	return m, nil
@@ -162,15 +163,18 @@ func (m mainModel) View() string {
 		m.renderSequencer(),
 	)
 
+	help := m.help.View(m.keymap)
+
 	// Cleanup gibber
 	cleanup := lipgloss.NewStyle().
 		Width(m.width).
-		Height(m.height - lipgloss.Height(mainView)).
+		Height(m.height - lipgloss.Height(mainView) - lipgloss.Height(help)).
 		Render("")
 
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
 		mainView,
 		cleanup,
+		help,
 	)
 }

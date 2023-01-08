@@ -56,10 +56,6 @@ func (t Track) isStepForNextPulseActive() bool {
 }
 
 func (t *Track) trigger() {
-	t.pulse++
-	if t.pulse == pulsesPerStep*len(t.steps) {
-		t.reset()
-	}
 	for i, step := range t.steps {
 		if t.active && step.isStartingPulse() {
 			step.trigger()
@@ -70,10 +66,18 @@ func (t *Track) trigger() {
 			step.reset()
 		}
 	}
+	t.pulse++
+	if t.pulse == pulsesPerStep*len(t.steps) {
+		t.reset()
+	}
 }
 
 func (t *Track) reset() {
 	t.pulse = 0
+}
+
+func (t *Track) clear() {
+	t.reset()
 	for _, step := range t.steps {
 		step.reset()
 	}
