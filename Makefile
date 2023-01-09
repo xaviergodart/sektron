@@ -9,7 +9,7 @@ GOLANG_BUILD_OPTS      += GOOS=$(GOLANG_OS)
 GOLANG_BUILD_OPTS      += GOARCH=$(GOLANG_ARCH)
 GOLANG_BUILD_OPTS      += CGO_ENABLED=$(CGO_ENABLED)
 GOLANG_LINT            := $(BIN)/golangci-lint
-ASEQDUMP_BIN           := aseqdump -p 14:0
+ASEQDUMP_BIN           := aseqdump -p 14:0 | ts '[%H:%M:%.S]'
 ASEQDUMP_NO_CLOCK_OPTS := | grep -v Clock
 
 $(BIN):
