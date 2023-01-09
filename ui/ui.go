@@ -130,6 +130,9 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Quit):
+			if m.seq.IsPlaying() {
+				m.seq.TogglePlay()
+			}
 			m.seq.Reset()
 			return m, tea.Quit
 		}

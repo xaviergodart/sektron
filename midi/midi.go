@@ -59,7 +59,9 @@ func (m *Midi) start() {
 			for {
 				select {
 				case <-done:
-					// TODO: purge output buffer
+					for len(output) > 0 {
+						send(<-output)
+					}
 					return
 				case msg := <-output:
 					err := send(msg)
