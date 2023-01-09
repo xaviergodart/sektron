@@ -44,7 +44,7 @@ func New() (*Midi, error) {
 	return instrument, nil
 }
 
-func (m *Midi) start() error {
+func (m *Midi) start() {
 	var wg sync.WaitGroup
 	wg.Add(len(m.devices))
 	m.done = make(chan struct{})
@@ -62,14 +62,16 @@ func (m *Midi) start() error {
 					// TODO: purge output buffer
 					return
 				case msg := <-output:
-					send(msg)
+					err := send(msg)
+					if err != nil {
+						log.Fatal(err)
+					}
 				}
 			}
 		}(device, m.done, m.outputs[i])
 	}
 	m.waitGroup = &wg
 	m.started = true
-	return nil
 }
 
 func (m *Midi) NoteOn(device int, channel uint8, note uint8, velocity uint8) {
