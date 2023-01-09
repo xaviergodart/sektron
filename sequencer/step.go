@@ -76,7 +76,7 @@ func (s Step) isStartingPulse() bool {
 }
 
 func (s Step) isEndingPulse() bool {
-	return s.relativePulse() >= s.Length()+s.offset
+	return s.relativePulse() == s.Length()-1+s.offset
 }
 
 func (s *Step) trigger() {
