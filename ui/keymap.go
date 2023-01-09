@@ -49,9 +49,9 @@ func (k KeyMap) ShortHelp() []key.Binding {
 // key.Map interface.
 func (k KeyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.TogglePlay, k.Mode},
-		{k.TempoUp, k.TempoDown, k.TempoFineUp, k.TempoFineDown},
-		{k.Help},
+		{k.TogglePlay, k.Mode, k.TempoUp, k.TempoDown, k.TempoFineUp, k.TempoFineDown},
+		{k.Steps, k.Tracks, k.TrackPageUp, k.TrackPageDown},
+		{k.Help, k.Quit},
 	}
 }
 
@@ -68,12 +68,12 @@ func DefaultKeyMap() KeyMap {
 		StepsIndex: map[string]int{},
 		Steps: key.NewBinding(
 			key.WithKeys(stepKeys...),
-			key.WithHelp(strings.Join(stepKeys, "/"), "track mode: select tracks 1 to 16 | record mode: toggle step 1 - 16"),
+			key.WithHelp("a...i | q...k", "track mode: select tracks 1 to 16 | record mode: toggle step 1 - 16"),
 		),
 		TracksIndex: map[string]int{},
 		Tracks: key.NewBinding(
 			key.WithKeys(trackKeys...),
-			key.WithHelp(strings.Join(stepKeys, "/"), "toggle tracks 1 to 16"),
+			key.WithHelp("A...I | Q...K", "toggle tracks 1 to 16"),
 		),
 		TrackPageUp: key.NewBinding(
 			key.WithKeys("p"),

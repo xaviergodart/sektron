@@ -43,6 +43,7 @@ func New(seq sequencer.SequencerInterface) mainModel {
 		activeTrack:     0,
 		activeTrackPage: 0,
 		activeParam:     0,
+		help:            help.New(),
 	}
 }
 
@@ -62,6 +63,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
 		m.height = msg.Height
+		m.help.Width = msg.Width
 		return m, nil
 
 	case TickMsg:
