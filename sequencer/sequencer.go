@@ -14,12 +14,18 @@ const (
 	defaultProbability   int     = 100
 	defaultDevice        int     = 0
 	defaultStepsPerTrack int     = 16
+
+	minTracks     int = 1
+	maxTracks     int = 16
+	defaultTracks int = 8
 )
 
 type SequencerInterface interface {
 	Reset()
 	TogglePlay()
 	IsPlaying() bool
+	AddTrack()
+	RemoveTrack()
 	Tracks() []*Track
 	ToggleTrack(track int)
 	ToggleStep(track int, step int)
@@ -37,49 +43,61 @@ type Sequencer struct {
 
 func New(midi midi.MidiInterface) *Sequencer {
 	rand.Seed(time.Now().UnixNano())
-	var tracks []*Track
-	for i := 0; i <= 7; i++ {
-		var steps []*Step
-		note := defaultNote + uint8(i*12) + uint8(i*5)
-		track := &Track{
-			pulse:       0,
-			chord:       []uint8{note, note + 5},
-			length:      pulsesPerStep,
-			velocity:    defaultVelocity,
-			probability: defaultProbability,
-			device:      defaultDevice,
-			channel:     uint8(i),
-			active:      i <= 3,
-		}
-		for j := 0; j < defaultStepsPerTrack; j++ {
-			steps = append(steps, &Step{
-				number: j,
-				midi:   midi,
-				track:  track,
-				active: j%4 == 0,
-				offset: i * pulsesPerStep,
-			})
-		}
-		track.steps = steps
-		tracks = append(tracks, track)
-	}
 	seq := &Sequencer{
 		midi:          midi,
 		midiClockSend: []int{defaultDevice},
-		tracks:        tracks,
 		isPlaying:     false,
 	}
+
+	for i := 0; i < defaultTracks; i++ {
+		seq.AddTrack()
+	}
+
 	seq.start()
 	return seq
 }
 
 func (s *Sequencer) start() {
-	for _, track := range s.tracks {
-		track.start()
-	}
 	s.clock = NewClock(defaultTempo, func() {
 		s.tick()
 	})
+}
+
+func (s *Sequencer) AddTrack() {
+	if len(s.tracks) == maxTracks {
+		return
+	}
+	channel := len(s.tracks)
+	track := &Track{
+		chord:       []uint8{defaultNote},
+		length:      pulsesPerStep,
+		velocity:    defaultVelocity,
+		probability: defaultProbability,
+		device:      defaultDevice,
+		channel:     uint8(channel),
+		active:      true,
+	}
+
+	var steps []*Step
+	for j := 0; j < defaultStepsPerTrack; j++ {
+		steps = append(steps, &Step{
+			number: j,
+			midi:   s.midi,
+			track:  track,
+			active: false,
+		})
+	}
+
+	track.steps = steps
+	track.start()
+	s.tracks = append(s.tracks, track)
+}
+
+func (s *Sequencer) RemoveTrack() {
+	if len(s.tracks) == minTracks {
+		return
+	}
+	s.tracks = s.tracks[:len(s.tracks)-1]
 }
 
 func (s *Sequencer) Tracks() []*Track {

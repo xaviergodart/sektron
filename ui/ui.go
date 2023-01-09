@@ -82,6 +82,18 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.mode = trackMode
 			}
 			return m, nil
+
+		case key.Matches(msg, m.keymap.Add):
+			m.seq.AddTrack()
+			return m, nil
+
+		case key.Matches(msg, m.keymap.Remove):
+			if m.activeTrack > 0 && m.activeTrack == len(m.seq.Tracks())-1 {
+				m.activeTrack--
+			}
+			m.seq.RemoveTrack()
+			return m, nil
+
 		case key.Matches(msg, m.keymap.Steps):
 			m.stepPress(msg)
 			return m, nil
