@@ -67,8 +67,13 @@ func (s *Sequencer) AddTrack() {
 	if len(s.tracks) == maxTracks {
 		return
 	}
+	pulse := 0
+	if len(s.tracks) > 0 {
+		pulse = s.tracks[0].pulse
+	}
 	channel := len(s.tracks)
 	track := &Track{
+		pulse:       pulse,
 		chord:       []uint8{defaultNote},
 		length:      pulsesPerStep,
 		velocity:    defaultVelocity,
