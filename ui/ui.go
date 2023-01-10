@@ -20,7 +20,7 @@ const (
 
 const (
 	sektron            = "SEKTRON"
-	refreshFrequency   = 16 * time.Millisecond
+	refreshFrequency   = 16 * time.Millisecond // TODO: should be ok up to 50ms
 	mainViewSideMargin = 2
 )
 
