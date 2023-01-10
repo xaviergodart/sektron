@@ -97,6 +97,7 @@ func (s *Sequencer) RemoveTrack() {
 	if len(s.tracks) == minTracks {
 		return
 	}
+	s.tracks[len(s.tracks)-1].close()
 	s.tracks = s.tracks[:len(s.tracks)-1]
 }
 

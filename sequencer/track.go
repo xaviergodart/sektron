@@ -11,15 +11,21 @@ type Track struct {
 	velocity    uint8
 	probability int
 	trig        chan struct{}
+	done        chan struct{}
 	active      bool
 }
 
 func (t *Track) start() {
 	t.trig = make(chan struct{})
+	t.done = make(chan struct{})
 	go func(track *Track) {
 		for {
-			<-track.trig
-			track.trigger()
+			select {
+			case <-track.trig:
+				track.trigger()
+			case <-track.done:
+				return
+			}
 		}
 	}(t)
 }
@@ -81,4 +87,10 @@ func (t *Track) clear() {
 	for _, step := range t.steps {
 		step.reset()
 	}
+}
+
+func (t *Track) close() {
+	defer close(t.done)
+	defer close(t.trig)
+	t.done <- struct{}{}
 }
