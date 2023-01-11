@@ -25,9 +25,11 @@ type step struct {
 	chord       *[]uint8
 	velocity    *uint8
 	probability *int
-	offset      int
-	active      bool
-	triggered   bool
+
+	offset int
+
+	active    bool
+	triggered bool
 }
 
 func (s step) Track() *track {

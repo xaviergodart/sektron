@@ -25,7 +25,7 @@ const (
 )
 
 type mainModel struct {
-	seq             sequencer.SequencerInterface
+	seq             sequencer.Sequencer
 	keymap          keyMap
 	width           int
 	height          int
@@ -36,7 +36,7 @@ type mainModel struct {
 	help            help.Model
 }
 
-func New(seq sequencer.SequencerInterface) mainModel {
+func New(seq sequencer.Sequencer) mainModel {
 	return mainModel{
 		seq:             seq,
 		keymap:          DefaultKeyMap(),

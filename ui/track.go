@@ -11,7 +11,7 @@ const (
 	stepsPerLine = 8
 )
 
-func (m mainModel) renderTrack(track sequencer.TrackInterface) string {
+func (m mainModel) renderTrack(track sequencer.Track) string {
 	pages := make([][]string, m.trackPagesNb())
 
 	for i := range pages {

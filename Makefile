@@ -1,4 +1,5 @@
 BIN                    := bin
+BIN_NAME               := sektron
 GOLANG_BIN             := go
 GOLANG_111MODULE       := on
 CGO_ENABLED            := 1
@@ -19,15 +20,15 @@ $(GOLANG_LINT): $(BIN)
 	GOBIN=$$(pwd)/$(BIN) go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.49.0
 
 clean:
-	-rm $(GOLANG_BUILD_OUT)
+	-rm $(BIN)/$(BIN_NAME)
 	-rm .coverage
 
 get:
 	$(GOLANG_BUILD_OPTS) $(GOLANG_BIN) get ./...
 
 build: $(BIN) get
-	$(GOLANG_BUILD_OPTS) $(GOLANG_BIN) build -o $(BIN)/sektron -tags sektron
-	chmod +x $(BIN)/sektron
+	$(GOLANG_BUILD_OPTS) $(GOLANG_BIN) build -o $(BIN)/sektron -tags $(BIN_NAME)
+	chmod +x $(BIN)/$(BIN_NAME)
 
 test: $(BIN) get
 	$(GOLANG_BIN) test ./... -coverprofile=.coverage
