@@ -1,7 +1,14 @@
 package sequencer
 
-type Track struct {
-	steps   []*Step
+type TrackInterface interface {
+	Steps() []*step
+	CurrentStep() int
+	IsActive() bool
+	IsCurrentStepActive() bool
+}
+
+type track struct {
+	steps   []*step
 	device  int
 	pulse   int
 	length  int
@@ -15,10 +22,29 @@ type Track struct {
 	active      bool
 }
 
-func (t *Track) start() {
+func (t track) Steps() []*step {
+	return t.steps
+}
+
+func (t track) CurrentStep() int {
+	return t.pulse / pulsesPerStep
+}
+
+func (t track) IsActive() bool {
+	return t.active
+}
+
+func (t track) IsCurrentStepActive() bool {
+	if !t.active || len(t.steps) < t.CurrentStep() {
+		return false
+	}
+	return t.steps[t.CurrentStep()].IsActive()
+}
+
+func (t *track) start() {
 	t.trig = make(chan struct{})
 	t.done = make(chan struct{})
-	go func(track *Track) {
+	go func(track *track) {
 		for {
 			select {
 			case <-track.trig:
@@ -30,38 +56,19 @@ func (t *Track) start() {
 	}(t)
 }
 
-func (t *Track) tick() {
+func (t *track) tick() {
 	t.trig <- struct{}{}
 }
 
-func (t Track) Steps() []*Step {
-	return t.steps
-}
-
-func (t Track) CurrentStep() int {
-	return t.pulse / pulsesPerStep
-}
-
-func (t Track) IsActive() bool {
-	return t.active
-}
-
-func (t Track) IsCurrentStepActive() bool {
-	if !t.active || len(t.steps) < t.CurrentStep() {
-		return false
-	}
-	return t.steps[t.CurrentStep()].IsActive()
-}
-
-func (t Track) stepForNextPulse() int {
+func (t track) stepForNextPulse() int {
 	return (t.pulse + 1) % (pulsesPerStep * len(t.steps)) / pulsesPerStep
 }
 
-func (t Track) isStepForNextPulseActive() bool {
+func (t track) isStepForNextPulseActive() bool {
 	return t.steps[t.stepForNextPulse()].active
 }
 
-func (t *Track) trigger() {
+func (t *track) trigger() {
 	for i, step := range t.steps {
 		if t.active && step.isStartingPulse() {
 			step.trigger()
@@ -74,22 +81,18 @@ func (t *Track) trigger() {
 	}
 	t.pulse++
 	if t.pulse == pulsesPerStep*len(t.steps) {
-		t.reset()
+		t.pulse = 0
 	}
 }
 
-func (t *Track) reset() {
+func (t *track) reset() {
 	t.pulse = 0
-}
-
-func (t *Track) clear() {
-	t.reset()
 	for _, step := range t.steps {
 		step.reset()
 	}
 }
 
-func (t *Track) close() {
+func (t *track) close() {
 	defer close(t.done)
 	defer close(t.trig)
 	t.done <- struct{}{}

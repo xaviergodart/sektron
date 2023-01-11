@@ -12,7 +12,7 @@ var (
 	paramKeys = []string{"&", "é", "\"", "'", "(", "-", "è", "_", "ç", "à"}
 )
 
-type KeyMap struct {
+type keyMap struct {
 	TogglePlay key.Binding
 	Mode       key.Binding
 
@@ -44,13 +44,13 @@ type KeyMap struct {
 
 // ShortHelp returns keybindings to be shown in the mini help view. It's part
 // of the key.Map interface.
-func (k KeyMap) ShortHelp() []key.Binding {
+func (k keyMap) ShortHelp() []key.Binding {
 	return []key.Binding{k.Help, k.Quit}
 }
 
 // FullHelp returns keybindings for the expanded help view. It's part of the
 // key.Map interface.
-func (k KeyMap) FullHelp() [][]key.Binding {
+func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
 		{k.TogglePlay, k.Mode, k.Add, k.Remove, k.TempoUp, k.TempoDown, k.TempoFineUp, k.TempoFineDown},
 		{k.Steps, k.Tracks, k.TrackPageUp, k.TrackPageDown},
@@ -58,8 +58,8 @@ func (k KeyMap) FullHelp() [][]key.Binding {
 	}
 }
 
-func DefaultKeyMap() KeyMap {
-	km := KeyMap{
+func DefaultKeyMap() keyMap {
+	km := keyMap{
 		TogglePlay: key.NewBinding(
 			key.WithKeys(" "),
 			key.WithHelp("space", "toggle play"),

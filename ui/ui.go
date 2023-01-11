@@ -10,7 +10,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-type TickMsg time.Time
+type tickMsg time.Time
 type mode uint8
 
 const (
@@ -20,13 +20,13 @@ const (
 
 const (
 	sektron            = "SEKTRON"
-	refreshFrequency   = 16 * time.Millisecond // TODO: should be ok up to 50ms
+	refreshFrequency   = 50 * time.Millisecond
 	mainViewSideMargin = 2
 )
 
 type mainModel struct {
 	seq             sequencer.SequencerInterface
-	keymap          KeyMap
+	keymap          keyMap
 	width           int
 	height          int
 	mode            mode
@@ -49,7 +49,7 @@ func New(seq sequencer.SequencerInterface) mainModel {
 
 func tick() tea.Cmd {
 	return tea.Tick(refreshFrequency, func(t time.Time) tea.Msg {
-		return TickMsg(t)
+		return tickMsg(t)
 	})
 }
 
@@ -66,7 +66,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.help.Width = msg.Width
 		return m, nil
 
-	case TickMsg:
+	case tickMsg:
 		return m, tick()
 
 	case tea.KeyMsg:
@@ -152,27 +152,6 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func (m *mainModel) stepPress(msg tea.KeyMsg) {
-	number := m.keymap.StepsIndex[msg.String()]
-	switch m.mode {
-	case trackMode:
-		if number >= len(m.seq.Tracks()) {
-			return
-		}
-		m.activeTrack = number
-	case recMode:
-		m.seq.ToggleStep(m.activeTrack, number+(m.activeTrackPage*stepsPerPage))
-	}
-}
-
-func (m mainModel) trackPagesNb() int {
-	pageNb := len(m.seq.Tracks()[m.activeTrack].Steps()) / stepsPerPage
-	if len(m.seq.Tracks()[m.activeTrack].Steps())%stepsPerPage > 0 {
-		pageNb++
-	}
-	return pageNb
-}
-
 func (m mainModel) View() string {
 	mainView := lipgloss.JoinVertical(
 		lipgloss.Left,
@@ -194,4 +173,17 @@ func (m mainModel) View() string {
 		cleanup,
 		help,
 	)
+}
+
+func (m *mainModel) stepPress(msg tea.KeyMsg) {
+	number := m.keymap.StepsIndex[msg.String()]
+	switch m.mode {
+	case trackMode:
+		if number >= len(m.seq.Tracks()) {
+			return
+		}
+		m.activeTrack = number
+	case recMode:
+		m.seq.ToggleStep(m.activeTrack, number+(m.activeTrackPage*stepsPerPage))
+	}
 }

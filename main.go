@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"sektron/midi"
+	"sektron/instrument"
 	"sektron/sequencer"
 	"sektron/ui"
 
@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	midi, err := midi.New()
+	midi, err := instrument.NewMidi()
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -2,13 +2,24 @@ package sequencer
 
 import (
 	"math/rand"
-	"sektron/midi"
+	"sektron/instrument"
 )
 
-type Step struct {
-	midi   midi.MidiInterface
-	track  *Track
-	number int
+type StepInterface interface {
+	Track() *track
+	Number() int
+	IsActive() bool
+	IsCurrentStep() bool
+	Chord() []uint8
+	Velocity() uint8
+	Length() int
+	Probability() int
+}
+
+type step struct {
+	instrument instrument.Instrument
+	track      *track
+	number     int
 
 	length      *int
 	chord       *[]uint8
@@ -19,82 +30,82 @@ type Step struct {
 	triggered   bool
 }
 
-func (s Step) Track() *Track {
+func (s step) Track() *track {
 	return s.track
 }
 
-func (s Step) Number() int {
+func (s step) Number() int {
 	return s.number
 }
 
-func (s Step) IsCurrentStep() bool {
+func (s step) IsActive() bool {
+	return s.active
+}
+
+func (s step) IsCurrentStep() bool {
 	return s.number == s.track.CurrentStep()
 }
 
-func (s Step) Chord() []uint8 {
+func (s step) Chord() []uint8 {
 	if s.chord == nil {
 		return s.track.chord
 	}
 	return *s.chord
 }
 
-func (s Step) Velocity() uint8 {
+func (s step) Velocity() uint8 {
 	if s.velocity == nil {
 		return s.track.velocity
 	}
 	return *s.velocity
 }
 
-func (s Step) Length() int {
+func (s step) Length() int {
 	if s.length == nil {
 		return s.track.length
 	}
 	return *s.length
 }
 
-func (s Step) Probability() int {
+func (s step) Probability() int {
 	if s.probability == nil {
 		return s.track.probability
 	}
 	return *s.probability
 }
 
-func (s Step) IsActive() bool {
-	return s.active
-}
-
-func (s Step) skip() bool {
+func (s step) skip() bool {
 	return s.Probability() < 100 && rand.Intn(100) > s.Probability()
 }
 
-func (s Step) relativePulse() int {
+func (s step) relativePulse() int {
 	return s.track.pulse - (s.number * pulsesPerStep)
 }
 
-func (s Step) isStartingPulse() bool {
+func (s step) isStartingPulse() bool {
 	return s.relativePulse() == s.offset
 }
 
-func (s Step) isEndingPulse() bool {
+func (s step) isEndingPulse() bool {
 	return s.relativePulse() == s.Length()-1+s.offset
 }
 
-func (s *Step) trigger() {
+func (s *step) trigger() {
 	if !s.active || s.triggered || s.skip() {
 		return
 	}
 	for _, note := range s.Chord() {
-		s.midi.NoteOn(s.track.device, s.track.channel, note, s.Velocity())
+		s.instrument.NoteOn(s.track.device, s.track.channel, note, s.Velocity())
 	}
 	s.triggered = true
 }
 
-func (s *Step) reset() {
+func (s *step) reset() {
 	if !s.triggered {
 		return
 	}
 	for _, note := range s.Chord() {
-		s.midi.NoteOff(s.track.device, s.track.channel, note)
+		s.instrument.NoteOff(s.track.device, s.track.channel, note)
 	}
 	s.triggered = false
 }

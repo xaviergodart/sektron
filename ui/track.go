@@ -11,9 +11,8 @@ const (
 	stepsPerLine = 8
 )
 
-func (m mainModel) renderTrack(track *sequencer.Track) string {
-	pageNb := len(m.seq.Tracks()[m.activeTrack].Steps())/stepsPerPage + 1
-	pages := make([][]string, pageNb)
+func (m mainModel) renderTrack(track sequencer.TrackInterface) string {
+	pages := make([][]string, m.trackPagesNb())
 
 	for i := range pages {
 		pages[i] = make([]string, stepsPerPage)
@@ -35,4 +34,12 @@ func (m mainModel) renderTrack(track *sequencer.Track) string {
 			pages[m.activeTrackPage][len(pages[m.activeTrackPage])-stepsPerLine:]...,
 		),
 	)
+}
+
+func (m mainModel) trackPagesNb() int {
+	pageNb := len(m.seq.Tracks()[m.activeTrack].Steps()) / stepsPerPage
+	if len(m.seq.Tracks()[m.activeTrack].Steps())%stepsPerPage > 0 {
+		pageNb++
+	}
+	return pageNb
 }
