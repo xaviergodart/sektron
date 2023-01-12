@@ -62,6 +62,9 @@ func (m mainModel) renderStatus() string {
 	statusMode := m.renderStatusMode()
 	statusTempo := m.renderStatusTempo()
 	statusPlayer := m.renderStatusPlayer()
+	statusMesure := trackActiveCurrentStepActiveStyle.Render(
+		fmt.Sprintf("%d/%d", len(m.seq.Tracks()[m.activeTrack].Steps()), m.trackPagesNb()*stepsPerPage),
+	)
 	statusTrackPages := m.renderStatusTrackPages()
 
 	statusBar := lipgloss.JoinHorizontal(lipgloss.Center,
@@ -69,6 +72,7 @@ func (m mainModel) renderStatus() string {
 		statusPlayer,
 		statusMode,
 		statusTrack,
+		statusMesure,
 		statusTrackPages,
 	)
 
