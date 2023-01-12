@@ -27,6 +27,8 @@ const (
 	defaultProbability   int     = 100
 	defaultDevice        int     = 0
 	defaultStepsPerTrack int     = 16
+	minSteps             int     = 1
+	maxSteps             int     = 128
 )
 
 // Sequencer contains the sequencer state.
@@ -37,6 +39,8 @@ type Sequencer interface {
 	RemoveTrack()
 	Tracks() []*track
 	ToggleTrack(track int)
+	AddStep(track int)
+	RemoveStep(track int)
 	ToggleStep(track int, step int)
 	Tempo() float64
 	SetTempo(tempo float64)
@@ -141,6 +145,35 @@ func (s *sequencer) RemoveTrack() {
 // Tracks returns all the sequencer tracks.
 func (s *sequencer) Tracks() []*track {
 	return s.tracks
+}
+
+// AddStep adds a new step to the given track with default values.
+// You can add up to 128 steps.
+func (s *sequencer) AddStep(track int) {
+	t := s.tracks[track]
+	if len(t.steps) == maxSteps {
+		return
+	}
+	t.steps = append(
+		t.steps,
+		&step{
+			position:   len(t.steps),
+			instrument: s.instrument,
+			track:      t,
+			active:     false,
+		},
+	)
+}
+
+// RemoveStep removes the last step of the given track. The first step
+// can't be removed.
+func (s *sequencer) RemoveStep(track int) {
+	t := s.tracks[track]
+	if len(t.steps) == minSteps {
+		return
+	}
+	t.steps[len(t.steps)-1].reset()
+	t.steps = t.steps[:len(t.steps)-1]
 }
 
 // Tempo returns the sequencer tempo.

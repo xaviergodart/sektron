@@ -97,14 +97,11 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Add):
-			m.seq.AddTrack()
+			m.addPress(msg)
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Remove):
-			if m.activeTrack > 0 && m.activeTrack == len(m.seq.Tracks())-1 {
-				m.activeTrack--
-			}
-			m.seq.RemoveTrack()
+			m.removePress(msg)
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Steps):
@@ -198,5 +195,30 @@ func (m *mainModel) stepPress(msg tea.KeyMsg) {
 		m.activeTrack = number
 	case recMode:
 		m.seq.ToggleStep(m.activeTrack, number+(m.activeTrackPage*stepsPerPage))
+	}
+}
+
+func (m *mainModel) addPress(msg tea.KeyMsg) {
+	switch m.mode {
+	case trackMode:
+		m.seq.AddTrack()
+	case recMode:
+		m.seq.AddStep(m.activeTrack)
+	}
+}
+
+func (m *mainModel) removePress(msg tea.KeyMsg) {
+	switch m.mode {
+	case trackMode:
+		if m.activeTrack > 0 && m.activeTrack == len(m.seq.Tracks())-1 {
+			m.activeTrack--
+		}
+		m.seq.RemoveTrack()
+	case recMode:
+		remainingStepsInPage := (len(m.seq.Tracks()[m.activeTrack].Steps()) - 1) % stepsPerPage
+		if m.activeTrackPage > 0 && remainingStepsInPage == 0 {
+			m.activeTrackPage--
+		}
+		m.seq.RemoveStep(m.activeTrack)
 	}
 }
