@@ -1,3 +1,7 @@
+// Packge ui handles the user interface for viewing and interacting with the
+// sequencer package.
+//
+// It uses the bubbletea tui framework and lipgloss to make things look good.
 package ui
 
 import (
@@ -10,18 +14,25 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+// tickMsg is a message that triggers ui rrefresh
 type tickMsg time.Time
+
+// mode represents the different modes of the ui
 type mode uint8
 
 const (
+	// trackMode allows the user to select the tracks using the step keys.
 	trackMode mode = iota
+
+	// recMode allows the user to activate/deactivate steps using the step keys.
 	recMode
 )
 
 const (
-	sektron            = "SEKTRON"
-	refreshFrequency   = 50 * time.Millisecond
-	mainViewSideMargin = 2
+	sektron = "SEKTRON"
+	// We don't need to refresh the ui as often as the sequencer.
+	// It saves some cpu. Right now we run it at 30 fps.
+	refreshFrequency = 33 * time.Millisecond
 )
 
 type mainModel struct {
@@ -36,6 +47,8 @@ type mainModel struct {
 	help            help.Model
 }
 
+// New creates a new mainModel that hols the ui state. It takes a new sequencer.
+// Check teh sequencer package.
 func New(seq sequencer.Sequencer) mainModel {
 	return mainModel{
 		seq:             seq,

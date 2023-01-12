@@ -30,8 +30,8 @@ type track struct {
 	trig chan struct{}
 	done chan struct{}
 
-	// An inactive will progression like an active track, but will not trigger
-	// any steps.
+	// An inactive track will progress like an active track, but will not
+	// trigger any steps.
 	active bool
 
 	// The next attributes defines the note parameters for the instrument and

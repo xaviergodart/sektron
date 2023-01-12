@@ -116,7 +116,7 @@ func (s *sequencer) AddTrack() {
 	var steps []*step
 	for j := 0; j < defaultStepsPerTrack; j++ {
 		steps = append(steps, &step{
-			number:     j,
+			position:   j,
 			instrument: s.instrument,
 			track:      track,
 			active:     false,

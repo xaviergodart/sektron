@@ -20,7 +20,7 @@ var (
 			Bold(true)
 )
 
-func (m mainModel) renderStep(step sequencer.StepInterface) string {
+func (m mainModel) renderStep(step sequencer.Step) string {
 	content := m.renderStepContent(step)
 	width, height := m.stepSize()
 
@@ -75,6 +75,6 @@ func (m mainModel) stepSize() (int, int) {
 	return width, height
 }
 
-func (m mainModel) renderStepContent(step sequencer.StepInterface) string {
-	return strconv.Itoa(step.Number() + 1)
+func (m mainModel) renderStepContent(step sequencer.Step) string {
+	return strconv.Itoa(step.Position() + 1)
 }

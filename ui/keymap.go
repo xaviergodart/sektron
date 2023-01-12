@@ -58,6 +58,7 @@ func (k keyMap) FullHelp() [][]key.Binding {
 	}
 }
 
+// DefaultKeyMap returns the default key mapping.
 func DefaultKeyMap() keyMap {
 	km := keyMap{
 		TogglePlay: key.NewBinding(
