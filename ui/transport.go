@@ -41,10 +41,9 @@ var (
 			Foreground(primaryTextColor).
 			Background(currentColor)
 
-	transportTrackPage = lipgloss.NewStyle().
-				MarginLeft(8)
-	trackPage = transportBarStyle.Copy().
-			Foreground(inactiveColor)
+	transportTrackPage = lipgloss.NewStyle()
+	trackPage          = transportBarStyle.Copy().
+				Foreground(inactiveColor)
 	trackPageActive = trackPage.Copy().
 			Foreground(primaryColor)
 	trackPageCurrent = trackPage.Copy().
@@ -62,7 +61,7 @@ func (m mainModel) renderTransport() string {
 	transportMode := m.renderTransportMode()
 	transportTempo := m.renderTransportTempo()
 	transportPlayer := m.renderTransportPlayer()
-	transportMesure := trackActiveCurrentStepActiveStyle.Render(
+	transportSignature := trackActiveCurrentStepActiveStyle.Render(
 		fmt.Sprintf("%d/%d", len(m.seq.Tracks()[m.activeTrack].Steps()), m.trackPagesNb()*stepsPerPage),
 	)
 	transportTrackPages := m.renderTransportTrackPages()
@@ -72,7 +71,7 @@ func (m mainModel) renderTransport() string {
 		transportPlayer,
 		transportMode,
 		transportTrack,
-		transportMesure,
+		transportSignature,
 		transportTrackPages,
 	)
 
