@@ -165,7 +165,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m mainModel) View() string {
 	mainView := lipgloss.JoinVertical(
 		lipgloss.Left,
-		m.renderStatus(),
+		m.renderTransport(),
 		m.renderSequencer(),
 	)
 

@@ -7,33 +7,33 @@ import (
 )
 
 var (
-	statusBarStyle = lipgloss.NewStyle().
-			Padding(1, 2).
-			Bold(true)
+	transportBarStyle = lipgloss.NewStyle().
+				Padding(1, 2).
+				Bold(true)
 
-	trackActiveStyle = statusBarStyle.Copy().
+	trackActiveStyle = transportBarStyle.Copy().
 				Foreground(secondaryTextColor).
 				Background(activeColor)
-	trackActiveCurrentStepActiveStyle = statusBarStyle.Copy().
+	trackActiveCurrentStepActiveStyle = transportBarStyle.Copy().
 						Foreground(secondaryTextColor).
 						Background(currentColor)
-	trackCurrentStepActiveStyle = statusBarStyle.Copy().
+	trackCurrentStepActiveStyle = transportBarStyle.Copy().
 					Background(currentDimmedColor)
-	trackInactive = statusBarStyle.Copy().
+	trackInactive = transportBarStyle.Copy().
 			Italic(true).
 			Foreground(secondaryDimmedColor)
 
-	statusPlayerStyle = statusBarStyle.Copy().
+	transportPlayerStyle = transportBarStyle.Copy().
 				Background(currentColor).
 				Foreground(secondaryTextColor)
-	statusPlayingStyle = statusPlayerStyle.Copy().
+	transportPlayingStyle = transportPlayerStyle.Copy().
 				Background(transportPlayColor)
 
-	statusModeStyle = statusBarStyle.Copy().
-			Foreground(primaryTextColor).
-			Background(transportRecColor)
+	transportModeStyle = transportBarStyle.Copy().
+				Foreground(primaryTextColor).
+				Background(transportRecColor)
 
-	tempoStyle = statusBarStyle.Copy().
+	tempoStyle = transportBarStyle.Copy().
 			Foreground(primaryTextColor).
 			Background(primaryColor)
 
@@ -41,9 +41,9 @@ var (
 			Foreground(primaryTextColor).
 			Background(currentColor)
 
-	statusTrackPage = lipgloss.NewStyle().
-			MarginLeft(8)
-	trackPage = statusBarStyle.Copy().
+	transportTrackPage = lipgloss.NewStyle().
+				MarginLeft(8)
+	trackPage = transportBarStyle.Copy().
 			Foreground(inactiveColor)
 	trackPageActive = trackPage.Copy().
 			Foreground(primaryColor)
@@ -52,40 +52,40 @@ var (
 
 	logoStyle = lipgloss.NewStyle().
 			Italic(true).
-			Inherit(statusBarStyle)
+			Inherit(transportBarStyle)
 )
 
-func (m mainModel) renderStatus() string {
+func (m mainModel) renderTransport() string {
 	w := lipgloss.Width
 
-	statusTrack := m.renderStatusTracks()
-	statusMode := m.renderStatusMode()
-	statusTempo := m.renderStatusTempo()
-	statusPlayer := m.renderStatusPlayer()
-	statusMesure := trackActiveCurrentStepActiveStyle.Render(
+	transportTrack := m.renderTransportTracks()
+	transportMode := m.renderTransportMode()
+	transportTempo := m.renderTransportTempo()
+	transportPlayer := m.renderTransportPlayer()
+	transportMesure := trackActiveCurrentStepActiveStyle.Render(
 		fmt.Sprintf("%d/%d", len(m.seq.Tracks()[m.activeTrack].Steps()), m.trackPagesNb()*stepsPerPage),
 	)
-	statusTrackPages := m.renderStatusTrackPages()
+	transportTrackPages := m.renderTransportTrackPages()
 
-	statusBar := lipgloss.JoinHorizontal(lipgloss.Center,
-		statusTempo,
-		statusPlayer,
-		statusMode,
-		statusTrack,
-		statusMesure,
-		statusTrackPages,
+	transportBar := lipgloss.JoinHorizontal(lipgloss.Center,
+		transportTempo,
+		transportPlayer,
+		transportMode,
+		transportTrack,
+		transportMesure,
+		transportTrackPages,
 	)
 
-	logo := logoStyle.PaddingLeft((m.width/stepsPerLine-2)*stepsPerLine - w(statusBar) + 6).
+	logo := logoStyle.PaddingLeft((m.width/stepsPerLine-2)*stepsPerLine - w(transportBar) + 6).
 		Render(sektron)
 
 	return lipgloss.JoinHorizontal(lipgloss.Center,
-		statusBar,
+		transportBar,
 		logo,
 	)
 }
 
-func (m mainModel) renderStatusTracks() string {
+func (m mainModel) renderTransportTracks() string {
 	var tracks []string
 	for i, track := range m.seq.Tracks() {
 		text := fmt.Sprintf("T%d", i+1)
@@ -98,7 +98,7 @@ func (m mainModel) renderStatusTracks() string {
 		} else if !track.IsActive() {
 			tracks = append(tracks, trackInactive.Render(text))
 		} else {
-			tracks = append(tracks, statusBarStyle.Render(text))
+			tracks = append(tracks, transportBarStyle.Render(text))
 		}
 
 	}
@@ -106,7 +106,7 @@ func (m mainModel) renderStatusTracks() string {
 	return lipgloss.JoinHorizontal(lipgloss.Center, tracks...)
 }
 
-func (m mainModel) renderStatusTempo() string {
+func (m mainModel) renderTransportTempo() string {
 	text := fmt.Sprintf("⧗ %.1f", m.seq.Tempo())
 	if m.isActiveTrackOnQuarterNote() {
 		return tempoTickStyle.Render(text)
@@ -114,22 +114,22 @@ func (m mainModel) renderStatusTempo() string {
 	return tempoStyle.Render(text)
 }
 
-func (m mainModel) renderStatusPlayer() string {
+func (m mainModel) renderTransportPlayer() string {
 	if m.seq.IsPlaying() {
-		return statusPlayingStyle.Render("▶")
+		return transportPlayingStyle.Render("▶")
 	}
-	return statusPlayerStyle.Render("■")
+	return transportPlayerStyle.Render("■")
 }
 
-func (m mainModel) renderStatusMode() string {
+func (m mainModel) renderTransportMode() string {
 	text := "●"
 	if m.mode == recMode {
-		return statusModeStyle.Render(text)
+		return transportModeStyle.Render(text)
 	}
-	return statusBarStyle.Render(text)
+	return transportBarStyle.Render(text)
 }
 
-func (m mainModel) renderStatusTrackPages() string {
+func (m mainModel) renderTransportTrackPages() string {
 	pageNb := m.trackPagesNb()
 	if pageNb <= 1 {
 		return ""
@@ -145,7 +145,7 @@ func (m mainModel) renderStatusTrackPages() string {
 			pages[i] = trackPage.Render(text)
 		}
 	}
-	return statusTrackPage.Render(
+	return transportTrackPage.Render(
 		lipgloss.JoinHorizontal(lipgloss.Left, pages...),
 	)
 }
