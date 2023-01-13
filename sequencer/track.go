@@ -69,6 +69,11 @@ func (t track) IsCurrentStepActive() bool {
 	return t.steps[t.CurrentStep()].IsActive()
 }
 
+// SetChord sets a new chord value.
+func (t *track) SetChord(chord []uint8) {
+	t.chord = chord
+}
+
 func (t *track) start() {
 	t.trig = make(chan struct{})
 	t.done = make(chan struct{})

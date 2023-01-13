@@ -37,6 +37,7 @@ const (
 
 type mainModel struct {
 	seq             sequencer.Sequencer
+	parameters      []parameter
 	keymap          keyMap
 	width           int
 	height          int
@@ -52,6 +53,7 @@ type mainModel struct {
 func New(seq sequencer.Sequencer) mainModel {
 	return mainModel{
 		seq:             seq,
+		parameters:      parameters(seq),
 		keymap:          DefaultKeyMap(),
 		activeTrack:     0,
 		activeTrackPage: 0,
@@ -147,6 +149,14 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.activeParam = m.keymap.ParamsIndex[msg.String()]
 			return m, nil
 
+		case key.Matches(msg, m.keymap.ParamValueUp):
+			m.parameters[m.activeParam].update(m.activeTrack, 1)
+			return m, nil
+
+		case key.Matches(msg, m.keymap.ParamValueDown):
+			m.parameters[m.activeParam].update(m.activeTrack, -1)
+			return m, nil
+
 		case key.Matches(msg, m.keymap.Help):
 			m.help.ShowAll = !m.help.ShowAll
 			return m, nil
@@ -167,6 +177,7 @@ func (m mainModel) View() string {
 		lipgloss.Left,
 		m.renderTransport(),
 		m.renderSequencer(),
+		m.renderParams(),
 	)
 
 	help := m.help.View(m.keymap)
