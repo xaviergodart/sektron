@@ -4,7 +4,7 @@
 // A sequencer instance is composed of:
 //   - a clock that handle time events
 //   - 1 to 16 tracks
-//   - up to 64 steps per track
+//   - up to 128 steps per track
 //
 // Uppon creation, a new sequencer should receive an instrument that is allowed
 // to play notes.

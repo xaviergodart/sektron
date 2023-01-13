@@ -63,7 +63,7 @@ func (t track) IsActive() bool {
 
 // IsCurrentStepActive returns true if the current step is active.
 func (t track) IsCurrentStepActive() bool {
-	if !t.active || len(t.steps) < t.CurrentStep() {
+	if !t.active || len(t.steps) <= t.CurrentStep() {
 		return false
 	}
 	return t.steps[t.CurrentStep()].IsActive()

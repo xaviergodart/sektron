@@ -219,8 +219,6 @@ func (m *mainModel) removePress(msg tea.KeyMsg) {
 		if m.activeTrackPage > 0 && remainingStepsInPage == 0 {
 			m.activeTrackPage--
 		}
-		// TODO: add some locks to the steps state to prevent panic when
-		// playing
 		m.seq.RemoveStep(m.activeTrack)
 	}
 }
