@@ -10,6 +10,12 @@ const (
 	updateBufferSize    int     = 128
 )
 
+// clock contains a clock state.
+// We use the standard time.ticker as the sequencer clock, ticking at the
+// standard midi 6 pulses per 16th note (one step).
+// The update chan is used to pass new tempo values and recreate a new ticker.
+//
+// Read more: http://midi.teragonaudio.com/tech/midispec/clock.htm
 type clock struct {
 	ticker *time.Ticker
 	update chan float64
@@ -35,6 +41,10 @@ func newClock(tempo float64, tick func()) *clock {
 			case <-c.ticker.C:
 				tick()
 			case newTempo := <-c.update:
+				// Re-creating a ticker at each update is not ideal because it
+				// creates jitter when updating the tempo while playing, but we
+				// can't update an existing ticker.
+				// Maybe there's a better way...
 				c.ticker.Stop()
 				c.ticker = time.NewTicker(newClockInterval(newTempo))
 				c.tempo = newTempo

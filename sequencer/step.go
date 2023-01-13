@@ -121,7 +121,7 @@ func (s step) skip() bool {
 
 // relativePulse returns the step pulse relative to the track one. If negative,
 // the track pulse is before the step. If zero, the track pulse is at the
-// first step pulse. It allows starting and ending steps calculation.
+// first step pulse. It allows starting and ending pulse calculation.
 func (s step) relativePulse() int {
 	return s.track.pulse - (s.position * pulsesPerStep)
 }
