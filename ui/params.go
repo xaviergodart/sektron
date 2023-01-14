@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	paramsPerLine = 3
+	paramsPerLine = 4
 	paramWidth    = stepWidth * 2
 	paramHeight   = stepWidth / 2
 )
@@ -16,6 +16,7 @@ const (
 var (
 	paramStyle = lipgloss.NewStyle().
 		Margin(1, 2, 0, 0).
+		Bold(true).
 		BorderStyle(lipgloss.NormalBorder()).
 		BorderForeground(lipgloss.Color("63"))
 )
@@ -32,7 +33,7 @@ type parameter struct {
 func parameters(seq sequencer.Sequencer) []parameter {
 	return []parameter{
 		{
-			name: "chord",
+			name: "note",
 			min:  21,
 			max:  108,
 			value: func(track int) int {
@@ -93,7 +94,7 @@ func (m mainModel) renderParams() string {
 
 func (m mainModel) paramSize() (int, int) {
 	width := m.width / paramsPerLine
-	height := width / 4
+	height := width / 6
 	if width < paramWidth || height < paramHeight {
 		return paramWidth, paramHeight
 	}
