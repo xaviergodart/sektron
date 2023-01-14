@@ -18,25 +18,25 @@ var (
 		Margin(1, 2, 0, 0).
 		BorderStyle(lipgloss.NormalBorder()).
 		BorderForeground(lipgloss.Color("63"))
-	/*textStyle  = lipgloss.NewStyle().
-	Foreground(secondaryTextColor).
-	Padding(1, 2).
-	Bold(true)*/
 )
 
 type parameter struct {
 	name        string
-	value       func(track int, step int, value int) int
+	min         int
+	max         int
+	value       func(track int) int
 	updateTrack func(track int, value int)
 	updateStep  func(track int, step int, value int)
 }
 
 func parameters(seq sequencer.Sequencer) []parameter {
 	return []parameter{
-		parameter{
+		{
 			name: "chord",
-			value: func() {
-				return 0
+			min:  21,
+			max:  108,
+			value: func(track int) int {
+				return int(seq.Tracks()[track].Chord()[0])
 			},
 			updateTrack: func(track int, value int) {
 				seq.Tracks()[track].SetChord([]uint8{
@@ -53,14 +53,19 @@ func parameters(seq sequencer.Sequencer) []parameter {
 }
 
 func (p *parameter) update(track int, step *int, add int) {
-	if step == nil {
-		p.updateTrack(track, p.value()+add)
+	newValue := p.value(track) + add
+	if newValue < p.min || newValue > p.max {
+		return
 	}
-	p.updateStep(track, *step, p.value()+add)
+	if step == nil {
+		p.updateTrack(track, newValue)
+	} else {
+		p.updateStep(track, *step, newValue)
+	}
 }
 
-func (p parameter) render() string {
-	return fmt.Sprintf("%s: %d", p.name, p.value)
+func (p parameter) render(track int) string {
+	return fmt.Sprintf("%s: %d", p.name, p.value(track))
 }
 
 func (m mainModel) renderParams() string {
@@ -75,7 +80,7 @@ func (m mainModel) renderParams() string {
 					height,
 					lipgloss.Center,
 					lipgloss.Center,
-					p.render(),
+					p.render(m.activeTrack),
 				),
 			),
 		)

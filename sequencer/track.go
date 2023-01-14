@@ -69,8 +69,29 @@ func (t track) IsCurrentStepActive() bool {
 	return t.steps[t.CurrentStep()].IsActive()
 }
 
+// Chord returns the track chord.
+func (t track) Chord() []uint8 {
+	return t.chord
+}
+
+// Velocity returns the track velocity.
+func (t track) Velocity() uint8 {
+	return t.velocity
+}
+
+// Length returns the track length.
+func (t track) Length() int {
+	return t.length
+}
+
+// Probability returns the track probability.
+func (t track) Probability() int {
+	return t.probability
+}
+
 // SetChord sets a new chord value.
 func (t *track) SetChord(chord []uint8) {
+	t.clear()
 	t.chord = chord
 }
 
@@ -137,6 +158,10 @@ func (t track) isStepForNextPulseActive() bool {
 // triggered steps.
 func (t *track) reset() {
 	t.pulse = 0
+	t.clear()
+}
+
+func (t *track) clear() {
 	for _, step := range t.steps {
 		step.reset()
 	}
