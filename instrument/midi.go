@@ -99,6 +99,11 @@ func (m *midiInstrument) SendClock(devices []int) {
 	}
 }
 
+// Note retruns the string representation of a note
+func (m *midiInstrument) Note(note uint8) string {
+	return midi.Note(note).String()
+}
+
 // Close terminates all the device goroutines gracefully.
 func (m *midiInstrument) Close() {
 	defer midi.CloseDriver()

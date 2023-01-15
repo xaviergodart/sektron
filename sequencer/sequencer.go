@@ -37,6 +37,7 @@ type Sequencer interface {
 	IsPlaying() bool
 	AddTrack()
 	RemoveTrack()
+	Instrument() instrument.Instrument
 	Tracks() []*track
 	ToggleTrack(track int)
 	AddStep(track int)
@@ -140,6 +141,11 @@ func (s *sequencer) RemoveTrack() {
 	}
 	s.tracks[len(s.tracks)-1].close()
 	s.tracks = s.tracks[:len(s.tracks)-1]
+}
+
+// Instrument returns the sequencer instrument
+func (s *sequencer) Instrument() instrument.Instrument {
+	return s.instrument
 }
 
 // Tracks returns all the sequencer tracks.

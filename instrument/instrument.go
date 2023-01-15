@@ -11,6 +11,7 @@ package instrument
 type Instrument interface {
 	NoteOn(device int, channel uint8, note uint8, velocity uint8)
 	NoteOff(device int, channel uint8, note uint8)
+	Note(note uint8) string
 	SendClock(devices []int)
 	Close()
 }

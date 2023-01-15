@@ -26,6 +26,7 @@ type parameter struct {
 	min         int
 	max         int
 	value       func(track int) int
+	string      func(track int) string
 	updateTrack func(track int, value int)
 	updateStep  func(track int, step int, value int)
 }
@@ -38,6 +39,9 @@ func parameters(seq sequencer.Sequencer) []parameter {
 			max:  108,
 			value: func(track int) int {
 				return int(seq.Tracks()[track].Chord()[0])
+			},
+			string: func(track int) string {
+				return seq.Instrument().Note(seq.Tracks()[track].Chord()[0])
 			},
 			updateTrack: func(track int, value int) {
 				seq.Tracks()[track].SetChord([]uint8{
@@ -66,7 +70,7 @@ func (p *parameter) update(track int, step *int, add int) {
 }
 
 func (p parameter) render(track int) string {
-	return fmt.Sprintf("%s: %d", p.name, p.value(track))
+	return fmt.Sprintf("%s: %s", p.name, p.string(track))
 }
 
 func (m mainModel) renderParams() string {
