@@ -14,10 +14,13 @@ const (
 
 var (
 	paramStyle = lipgloss.NewStyle().
-		Margin(1, 2, 0, 0).
-		Bold(true).
-		BorderStyle(lipgloss.NormalBorder()).
-		BorderForeground(lipgloss.Color("63"))
+			Margin(1, 2, 0, 0).
+			Bold(true).
+			BorderStyle(lipgloss.NormalBorder()).
+			BorderForeground(lipgloss.Color("63"))
+
+	selectedParamStyle = paramStyle.Copy().
+				BorderStyle(lipgloss.ThickBorder())
 )
 
 type parameter struct {
@@ -126,10 +129,16 @@ func (p parameter) render(track int) string {
 func (m mainModel) renderParams() string {
 	params := make([]string, len(m.parameters))
 	width, height := m.paramSize()
-	for _, p := range m.parameters {
+	for i, p := range m.parameters {
+		var style lipgloss.Style
+		if m.activeParam == i {
+			style = selectedParamStyle
+		} else {
+			style = paramStyle
+		}
 		params = append(
 			params,
-			paramStyle.Render(
+			style.Render(
 				lipgloss.Place(
 					width,
 					height,
