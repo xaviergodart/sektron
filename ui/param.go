@@ -2,13 +2,12 @@ package ui
 
 import (
 	"fmt"
-	"sektron/sequencer"
 
 	"github.com/charmbracelet/lipgloss"
 )
 
 const (
-	paramsPerLine = 4
+	paramsPerLine = 6
 	paramWidth    = stepWidth * 2
 	paramHeight   = stepWidth / 2
 )
@@ -31,27 +30,78 @@ type parameter struct {
 	updateStep  func(track int, step int, value int)
 }
 
-func parameters(seq sequencer.Sequencer) []parameter {
-	return []parameter{
+func (m *mainModel) initParameters() {
+	m.parameters = []parameter{
 		{
 			name: "note",
 			min:  21,
 			max:  108,
 			value: func(track int) int {
-				return int(seq.Tracks()[track].Chord()[0])
+				return int(m.seq.Tracks()[track].Chord()[0])
 			},
 			string: func(track int) string {
-				return seq.Instrument().Note(seq.Tracks()[track].Chord()[0])
+				return m.seq.Instrument().Note(m.seq.Tracks()[track].Chord()[0])
 			},
 			updateTrack: func(track int, value int) {
-				seq.Tracks()[track].SetChord([]uint8{
+				m.seq.Tracks()[track].SetChord([]uint8{
 					uint8(value),
 				})
 			},
 			updateStep: func(track int, step int, value int) {
-				seq.Tracks()[track].SetChord([]uint8{
+				m.seq.Tracks()[track].SetChord([]uint8{
 					uint8(value),
 				})
+			},
+		},
+		{
+			name: "length",
+			min:  1,
+			max:  128 * 6,
+			value: func(track int) int {
+				return int(m.seq.Tracks()[track].Length())
+			},
+			string: func(track int) string {
+				return fmt.Sprintf("%.1f/%d", float64(m.seq.Tracks()[track].Length())/6.0, m.trackPagesNb()*stepsPerPage)
+			},
+			updateTrack: func(track int, value int) {
+				m.seq.Tracks()[track].SetLength(value)
+			},
+			updateStep: func(track int, step int, value int) {
+				m.seq.Tracks()[track].SetLength(value)
+			},
+		},
+		{
+			name: "velocity",
+			min:  1,
+			max:  127,
+			value: func(track int) int {
+				return int(m.seq.Tracks()[track].Velocity())
+			},
+			string: func(track int) string {
+				return fmt.Sprintf("%d", m.seq.Tracks()[track].Velocity())
+			},
+			updateTrack: func(track int, value int) {
+				m.seq.Tracks()[track].SetVelocity(uint8(value))
+			},
+			updateStep: func(track int, step int, value int) {
+				m.seq.Tracks()[track].SetVelocity(uint8(value))
+			},
+		},
+		{
+			name: "probability",
+			min:  1,
+			max:  100,
+			value: func(track int) int {
+				return int(m.seq.Tracks()[track].Probability())
+			},
+			string: func(track int) string {
+				return fmt.Sprintf("%d", m.seq.Tracks()[track].Probability())
+			},
+			updateTrack: func(track int, value int) {
+				m.seq.Tracks()[track].SetProbability(value)
+			},
+			updateStep: func(track int, step int, value int) {
+				m.seq.Tracks()[track].SetProbability(value)
 			},
 		},
 	}

@@ -51,15 +51,16 @@ type mainModel struct {
 // New creates a new mainModel that hols the ui state. It takes a new sequencer.
 // Check teh sequencer package.
 func New(seq sequencer.Sequencer) mainModel {
-	return mainModel{
+	model := mainModel{
 		seq:             seq,
-		parameters:      parameters(seq),
 		keymap:          DefaultKeyMap(),
 		activeTrack:     0,
 		activeTrackPage: 0,
 		activeParam:     0,
 		help:            help.New(),
 	}
+	model.initParameters()
+	return model
 }
 
 func tick() tea.Cmd {

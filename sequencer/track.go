@@ -6,6 +6,10 @@ type Track interface {
 	CurrentStep() int
 	IsActive() bool
 	IsCurrentStepActive() bool
+	SetChord(chord []uint8)
+	SetLength(length int)
+	SetVelocity(velocity uint8)
+	SetProbability(probability int)
 }
 
 type track struct {
@@ -93,6 +97,21 @@ func (t track) Probability() int {
 func (t *track) SetChord(chord []uint8) {
 	t.clear()
 	t.chord = chord
+}
+
+// SetLength sets a new length value.
+func (t *track) SetLength(length int) {
+	t.length = length
+}
+
+// SetVelocity sets a new velocity value.
+func (t *track) SetVelocity(velocity uint8) {
+	t.velocity = velocity
+}
+
+// SetProbability sets a new probability value.
+func (t *track) SetProbability(probability int) {
+	t.probability = probability
 }
 
 func (t *track) start() {
