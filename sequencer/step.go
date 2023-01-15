@@ -15,6 +15,12 @@ type Step interface {
 	Velocity() uint8
 	Length() int
 	Probability() int
+	Offset() int
+	SetChord(chord []uint8)
+	SetLength(length int)
+	SetVelocity(velocity uint8)
+	SetProbability(probability int)
+	SetOffset(offset int)
 }
 
 type step struct {
@@ -101,6 +107,37 @@ func (s step) Probability() int {
 		return s.track.probability
 	}
 	return *s.probability
+}
+
+// Offset returns the current step offset value.
+func (s step) Offset() int {
+	return s.offset
+}
+
+// SetChord sets a new chord value.
+func (s *step) SetChord(chord []uint8) {
+	s.reset()
+	s.chord = &chord
+}
+
+// SetLength sets a new length value.
+func (s *step) SetLength(length int) {
+	s.length = &length
+}
+
+// SetVelocity sets a new velocity value.
+func (s *step) SetVelocity(velocity uint8) {
+	s.velocity = &velocity
+}
+
+// SetProbability sets a new probability value.
+func (s *step) SetProbability(probability int) {
+	s.probability = &probability
+}
+
+// SetOffset sets a new offset value
+func (s *step) SetOffset(offset int) {
+	s.offset = offset
 }
 
 // Here we send the note on signal to the instrument if all the conditions are

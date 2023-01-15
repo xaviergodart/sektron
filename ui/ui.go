@@ -44,6 +44,7 @@ type mainModel struct {
 	mode            mode
 	activeTrack     int
 	activeTrackPage int
+	activeStep      int
 	activeParam     int
 	help            help.Model
 }
@@ -56,6 +57,7 @@ func New(seq sequencer.Sequencer) mainModel {
 		keymap:          DefaultKeyMap(),
 		activeTrack:     0,
 		activeTrackPage: 0,
+		activeStep:      0,
 		activeParam:     0,
 		help:            help.New(),
 	}
@@ -113,7 +115,11 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case key.Matches(msg, m.keymap.Tracks):
 			number := m.keymap.TracksIndex[msg.String()]
-			m.seq.ToggleTrack(number)
+			if m.mode == trackMode {
+				m.seq.ToggleTrack(number)
+			} else if m.mode == recMode {
+				m.activeStep = number
+			}
 			return m, nil
 
 		case key.Matches(msg, m.keymap.TrackPageUp):

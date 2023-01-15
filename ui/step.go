@@ -76,5 +76,13 @@ func (m mainModel) stepSize() (int, int) {
 }
 
 func (m mainModel) renderStepContent(step sequencer.Step) string {
-	return strconv.Itoa(step.Position() + 1)
+	activeText := ""
+	if step.Position() == m.activeStep {
+		activeText = "▲"
+	}
+	return lipgloss.JoinVertical(
+		lipgloss.Left,
+		strconv.Itoa(step.Position()+1),
+		activeText,
+	)
 }

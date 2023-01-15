@@ -51,7 +51,7 @@ func (m *mainModel) initParameters() {
 				})
 			},
 			updateStep: func(track int, step int, value int) {
-				m.seq.Tracks()[track].SetChord([]uint8{
+				m.seq.Tracks()[track].Steps()[step].SetChord([]uint8{
 					uint8(value),
 				})
 			},
@@ -70,7 +70,7 @@ func (m *mainModel) initParameters() {
 				m.seq.Tracks()[track].SetLength(value)
 			},
 			updateStep: func(track int, step int, value int) {
-				m.seq.Tracks()[track].SetLength(value)
+				m.seq.Tracks()[track].Steps()[step].SetLength(value)
 			},
 		},
 		{
@@ -87,7 +87,7 @@ func (m *mainModel) initParameters() {
 				m.seq.Tracks()[track].SetVelocity(uint8(value))
 			},
 			updateStep: func(track int, step int, value int) {
-				m.seq.Tracks()[track].SetVelocity(uint8(value))
+				m.seq.Tracks()[track].Steps()[step].SetVelocity(uint8(value))
 			},
 		},
 		{
@@ -104,7 +104,7 @@ func (m *mainModel) initParameters() {
 				m.seq.Tracks()[track].SetProbability(value)
 			},
 			updateStep: func(track int, step int, value int) {
-				m.seq.Tracks()[track].SetProbability(value)
+				m.seq.Tracks()[track].Steps()[step].SetProbability(value)
 			},
 		},
 	}
