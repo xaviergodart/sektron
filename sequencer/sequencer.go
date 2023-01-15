@@ -180,6 +180,9 @@ func (s *sequencer) RemoveStep(track int) {
 	}
 	t.steps[len(t.steps)-1].reset()
 	t.steps = t.steps[:len(t.steps)-1]
+	if t.pulse >= len(t.steps)*pulsesPerStep-1 {
+		t.pulse = 0
+	}
 }
 
 // Tempo returns the sequencer tempo.
