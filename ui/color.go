@@ -3,6 +3,8 @@ package ui
 import "github.com/charmbracelet/lipgloss"
 
 const (
+	logoColor = lipgloss.Color("237")
+
 	primaryColor     = lipgloss.Color("197")
 	primaryTextColor = lipgloss.Color("15")
 

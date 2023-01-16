@@ -7,6 +7,17 @@ import (
 )
 
 var (
+	logoSmall = []string{
+		"█▀ █▀▀ █▄▀ ▀█▀ █▀█ █▀█ █▄░█",
+		"▄█ ██▄ █░█ ░█░ █▀▄ █▄█ █░▀█",
+	}
+
+	logoBig = []string{
+		"░▒█▀▀▀█░▒█▀▀▀░▒█░▄▀░▀▀█▀▀░▒█▀▀▄░▒█▀▀▀█░▒█▄░▒█",
+		"░░▀▀▀▄▄░▒█▀▀▀░▒█▀▄░░░▒█░░░▒█▄▄▀░▒█░░▒█░▒█▒█▒█",
+		"░▒█▄▄▄█░▒█▄▄▄░▒█░▒█░░▒█░░░▒█░▒█░▒█▄▄▄█░▒█░░▀█",
+	}
+
 	transportBarStyle = lipgloss.NewStyle().
 				Padding(1, 2).
 				Bold(true)
@@ -49,9 +60,7 @@ var (
 	trackPageCurrent = trackPage.Copy().
 				Foreground(activeColor)
 
-	logoStyle = lipgloss.NewStyle().
-			Italic(true).
-			Inherit(transportBarStyle)
+	logoStyle = lipgloss.NewStyle().Foreground(logoColor)
 )
 
 func (m mainModel) renderTransport() string {
@@ -75,8 +84,8 @@ func (m mainModel) renderTransport() string {
 		transportTrackPages,
 	)
 
-	logo := logoStyle.PaddingLeft((m.width/stepsPerLine-2)*stepsPerLine - w(transportBar) + 6).
-		Render(sektron)
+	logo := logoStyle.PaddingLeft((m.width/stepsPerLine-2)*stepsPerLine - w(transportBar) - w(logoBig[0]) + 14).
+		Render(lipgloss.JoinVertical(lipgloss.Left, logoBig...))
 
 	return lipgloss.JoinHorizontal(lipgloss.Center,
 		transportBar,
