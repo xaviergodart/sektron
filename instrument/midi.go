@@ -48,6 +48,11 @@ func NewMidi() (Instrument, error) {
 	return instrument, nil
 }
 
+// Note retruns the string representation of a note
+func Note(note uint8) string {
+	return midi.Note(note).String()
+}
+
 func (m *midiInstrument) start() {
 	var wg sync.WaitGroup
 	wg.Add(len(m.devices))
@@ -97,11 +102,6 @@ func (m *midiInstrument) SendClock(devices []int) {
 	for _, device := range devices {
 		m.outputs[device] <- midi.TimingClock()
 	}
-}
-
-// Note retruns the string representation of a note
-func (m *midiInstrument) Note(note uint8) string {
-	return midi.Note(note).String()
 }
 
 // Close terminates all the device goroutines gracefully.

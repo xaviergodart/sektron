@@ -9,7 +9,7 @@ import (
 const (
 	paramsPerLine = 6
 	paramWidth    = stepWidth * 2
-	paramHeight   = stepWidth / 2
+	paramHeight   = paramWidth / 2
 )
 
 var (
@@ -17,7 +17,7 @@ var (
 			Margin(1, 2, 0, 0).
 			Bold(true).
 			BorderStyle(lipgloss.NormalBorder()).
-			BorderForeground(lipgloss.Color("63"))
+			BorderForeground(secondaryColor)
 
 	selectedParamStyle = paramStyle.Copy().
 				BorderStyle(lipgloss.ThickBorder())
@@ -43,7 +43,7 @@ func (m *mainModel) initParameters() {
 				return int(m.seq.Tracks()[track].Chord()[0])
 			},
 			string: func(track int) string {
-				return m.seq.Instrument().Note(m.seq.Tracks()[track].Chord()[0])
+				return note(m.seq.Tracks()[track].Chord()[0]).String()
 			},
 			updateTrack: func(track int, value int) {
 				m.seq.Tracks()[track].SetChord([]uint8{

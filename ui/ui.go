@@ -29,7 +29,6 @@ const (
 )
 
 const (
-	sektron = "SEKTRON"
 	// We don't need to refresh the ui as often as the sequencer.
 	// It saves some cpu. Right now we run it at 30 fps.
 	refreshFrequency = 33 * time.Millisecond
@@ -109,16 +108,16 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.removePress(msg)
 			return m, nil
 
-		case key.Matches(msg, m.keymap.Steps):
-			m.stepPress(msg)
+		case key.Matches(msg, m.keymap.Select):
+			m.selectPress(msg)
 			return m, nil
 
-		case key.Matches(msg, m.keymap.Tracks):
-			number := m.keymap.TracksIndex[msg.String()]
+		case key.Matches(msg, m.keymap.Toggle):
+			number := m.keymap.ToggleIndex[msg.String()]
 			if m.mode == trackMode {
 				m.seq.ToggleTrack(number)
 			} else if m.mode == recMode {
-				m.activeStep = number
+				m.seq.ToggleStep(m.activeTrack, number+(m.activeTrackPage*stepsPerPage))
 			}
 			return m, nil
 
@@ -203,16 +202,18 @@ func (m mainModel) View() string {
 	)
 }
 
-func (m *mainModel) stepPress(msg tea.KeyMsg) {
-	number := m.keymap.StepsIndex[msg.String()]
+func (m *mainModel) selectPress(msg tea.KeyMsg) {
+	number := m.keymap.SelectIndex[msg.String()]
 	switch m.mode {
 	case trackMode:
 		if number >= len(m.seq.Tracks()) {
 			return
 		}
 		m.activeTrack = number
+		m.activeTrackPage = 0
+		m.activeStep = 0
 	case recMode:
-		m.seq.ToggleStep(m.activeTrack, number+(m.activeTrackPage*stepsPerPage))
+		m.activeStep = number + (m.activeTrackPage * stepsPerPage)
 	}
 }
 

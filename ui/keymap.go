@@ -7,9 +7,9 @@ import (
 )
 
 var (
-	stepKeys  = []string{"a", "z", "e", "r", "t", "y", "u", "i", "q", "s", "d", "f", "g", "h", "j", "k"}
-	trackKeys = []string{"A", "Z", "E", "R", "T", "Y", "U", "I", "Q", "S", "D", "F", "G", "H", "J", "K"}
-	paramKeys = []string{"&", "é", "\"", "'", "(", "-", "è", "_", "ç", "à"}
+	selectKeys = []string{"a", "z", "e", "r", "t", "y", "u", "i", "q", "s", "d", "f", "g", "h", "j", "k"}
+	toggleKeys = []string{"A", "Z", "E", "R", "T", "Y", "U", "I", "Q", "S", "D", "F", "G", "H", "J", "K"}
+	paramKeys  = []string{"&", "é", "\"", "'", "(", "-", "è", "_", "ç", "à"}
 )
 
 type keyMap struct {
@@ -19,11 +19,12 @@ type keyMap struct {
 	Add    key.Binding
 	Remove key.Binding
 
-	StepsIndex map[string]int
-	Steps      key.Binding
+	SelectIndex map[string]int
+	Select      key.Binding
 
-	TracksIndex   map[string]int
-	Tracks        key.Binding
+	ToggleIndex map[string]int
+	Toggle      key.Binding
+
 	TrackPageUp   key.Binding
 	TrackPageDown key.Binding
 
@@ -53,7 +54,7 @@ func (k keyMap) ShortHelp() []key.Binding {
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
 		{k.TogglePlay, k.Mode, k.Add, k.Remove, k.TempoUp, k.TempoDown, k.TempoFineUp, k.TempoFineDown},
-		{k.Steps, k.Tracks, k.TrackPageUp, k.TrackPageDown, k.Params, k.ParamValueUp, k.ParamValueDown},
+		{k.Select, k.Toggle, k.TrackPageUp, k.TrackPageDown, k.Params, k.ParamValueUp, k.ParamValueDown},
 		{k.Help, k.Quit},
 	}
 }
@@ -77,15 +78,15 @@ func DefaultKeyMap() keyMap {
 			key.WithKeys(")"),
 			key.WithHelp(")", "remove track|step"),
 		),
-		StepsIndex: map[string]int{},
-		Steps: key.NewBinding(
-			key.WithKeys(stepKeys...),
-			key.WithHelp("a...i | q...k", "select track|step 1 to 16"),
+		SelectIndex: map[string]int{},
+		Select: key.NewBinding(
+			key.WithKeys(selectKeys...),
+			key.WithHelp(strings.Join(selectKeys, "/"), "select track|step 1 to 16"),
 		),
-		TracksIndex: map[string]int{},
-		Tracks: key.NewBinding(
-			key.WithKeys(trackKeys...),
-			key.WithHelp("A...I | Q...K", "toggle track or select step 1 to 16"),
+		ToggleIndex: map[string]int{},
+		Toggle: key.NewBinding(
+			key.WithKeys(toggleKeys...),
+			key.WithHelp(strings.Join(toggleKeys, "/"), "toggle track|step 1 to 16"),
 		),
 		TrackPageUp: key.NewBinding(
 			key.WithKeys("p"),
@@ -133,11 +134,11 @@ func DefaultKeyMap() keyMap {
 			key.WithHelp("ctrl+c/esc", "quit"),
 		),
 	}
-	for i, k := range stepKeys {
-		km.StepsIndex[k] = i
+	for i, k := range selectKeys {
+		km.SelectIndex[k] = i
 	}
-	for i, k := range trackKeys {
-		km.TracksIndex[k] = i
+	for i, k := range toggleKeys {
+		km.ToggleIndex[k] = i
 	}
 	for i, k := range paramKeys {
 		km.ParamsIndex[k] = i
