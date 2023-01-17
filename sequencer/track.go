@@ -22,9 +22,7 @@ type track struct {
 	// are not always synchronized.
 	pulse int
 
-	// A track can be assigned to a specific instrument's device and channel.
-	// For a midi instrument, they are related to a specific midi device and
-	// a specific midi channel.
+	// A track can be assigned to a specific midi device and channel.
 	device  int
 	channel uint8
 
@@ -38,7 +36,7 @@ type track struct {
 	// trigger any steps.
 	active bool
 
-	// The next attributes defines the note parameters for the instrument and
+	// The next attributes defines the note parameters for the midi message and
 	// can be overriden per step (check step.go).
 	//  - length defines for how long (pulse value) the note should be played
 	//  - chord holds all the notes that should be played
