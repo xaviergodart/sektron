@@ -19,7 +19,8 @@ var (
 	stepActiveStyle = lipgloss.NewStyle().
 			Margin(1, 0, 0, 0)
 	stepVelocityStyle = lipgloss.NewStyle().
-				Margin(1, 1, 0, 0)
+				Margin(1, 1, 0, 0).
+				Foreground(secondaryColor)
 	textStyle = lipgloss.NewStyle().
 			Foreground(secondaryTextColor).
 			Padding(1, 1, 1, 2).
@@ -29,7 +30,6 @@ var (
 func (m mainModel) renderStep(step sequencer.Step) string {
 	content := m.renderStepContent(step)
 	var stepStr string
-	velocityIndicator := []string{}
 	width, height := m.stepSize()
 
 	var stepCurrentColor, stepActiveColor, stepInactiveColor lipgloss.Color
@@ -43,7 +43,16 @@ func (m mainModel) renderStep(step sequencer.Step) string {
 		stepInactiveColor = inactiveDimmedColor
 	}
 
-	if m.seq.IsPlaying() && step.IsCurrentStep() {
+	if m.seq.IsPlaying() && step.IsCurrentStep() && step.IsActive() {
+		stepStr = stepActiveStyle.Render(lipgloss.Place(
+			width,
+			height,
+			lipgloss.Left,
+			lipgloss.Top,
+			textStyle.Background(stepCurrentColor).Render(content),
+			lipgloss.WithWhitespaceBackground(stepCurrentColor),
+		))
+	} else if m.seq.IsPlaying() && step.IsCurrentStep() {
 		stepStr = stepStyle.Render(lipgloss.Place(
 			width,
 			height,
@@ -62,14 +71,6 @@ func (m mainModel) renderStep(step sequencer.Step) string {
 			lipgloss.WithWhitespaceBackground(stepActiveColor),
 		))
 
-		velocityValue := int(127-step.Velocity()) * lipgloss.Height(stepStr) / 127
-		for i := 1; i < lipgloss.Height(stepStr); i++ {
-			if velocityValue < i {
-				velocityIndicator = append(velocityIndicator, "█")
-			} else {
-				velocityIndicator = append(velocityIndicator, " ")
-			}
-		}
 	} else {
 		stepStr = stepStyle.Render(lipgloss.Place(
 			width,
@@ -84,7 +85,7 @@ func (m mainModel) renderStep(step sequencer.Step) string {
 	return lipgloss.JoinHorizontal(
 		lipgloss.Left,
 		stepStr,
-		stepVelocityStyle.Render(lipgloss.JoinVertical(lipgloss.Left, velocityIndicator...)),
+		m.renderVelocity(step, lipgloss.Height(stepStr)),
 	)
 }
 
@@ -118,4 +119,20 @@ func (m mainModel) renderStepContent(step sequencer.Step) string {
 				Render(fmt.Sprintf("%d%%", step.Probability())),
 		),
 	)
+}
+
+func (m mainModel) renderVelocity(step sequencer.Step, height int) string {
+	if !step.IsActive() {
+		return ""
+	}
+	velocityIndicator := []string{}
+	velocityValue := int(127-step.Velocity()) * height / 127
+	for i := 1; i < height; i++ {
+		if velocityValue < i {
+			velocityIndicator = append(velocityIndicator, "█")
+		} else {
+			velocityIndicator = append(velocityIndicator, " ")
+		}
+	}
+	return stepVelocityStyle.Render(lipgloss.JoinVertical(lipgloss.Left, velocityIndicator...))
 }
