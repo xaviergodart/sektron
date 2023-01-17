@@ -2,7 +2,7 @@ package sequencer
 
 import (
 	"math/rand"
-	"sektron/instrument"
+	"sektron/midi"
 )
 
 // Step contains a step state.
@@ -24,9 +24,9 @@ type Step interface {
 }
 
 type step struct {
-	instrument instrument.Instrument
-	track      *track
-	position   int
+	midi     midi.Midi
+	track    *track
+	position int
 
 	// An inactive step will progress like an active step, but will not
 	// trigger any notes.
@@ -35,7 +35,7 @@ type step struct {
 	// Once a step has been triggered, we prevent it from happening again.
 	triggered bool
 
-	// The next attributes defines the note parameters for the instrument.
+	// The next attributes defines the note parameters for the midi device.
 	// If nil, we should use the default ones defined at track level (see
 	// track.go)
 	//  - length defines for how long (pulse value) the note should be played
@@ -140,14 +140,14 @@ func (s *step) SetOffset(offset int) {
 	s.offset = offset
 }
 
-// Here we send the note on signal to the instrument if all the conditions are
+// Here we send the note on signal to the device if all the conditions are
 // met. And we flag the step as triggered.
 func (s *step) trigger() {
 	if !s.active || s.triggered || s.skip() {
 		return
 	}
 	for _, note := range s.Chord() {
-		s.instrument.NoteOn(s.track.device, s.track.channel, note, s.Velocity())
+		s.midi.NoteOn(s.track.device, s.track.channel, note, s.Velocity())
 	}
 	s.triggered = true
 }
@@ -179,7 +179,7 @@ func (s *step) reset() {
 		return
 	}
 	for _, note := range s.Chord() {
-		s.instrument.NoteOff(s.track.device, s.track.channel, note)
+		s.midi.NoteOff(s.track.device, s.track.channel, note)
 	}
 	s.triggered = false
 }

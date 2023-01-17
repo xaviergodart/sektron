@@ -6,14 +6,14 @@
 //   - 1 to 16 tracks
 //   - up to 128 steps per track
 //
-// Uppon creation, a new sequencer should receive an instrument that is allowed
-// to play notes.
+// Uppon creation, a new sequencer should receive a midi instance that is
+// allowed to play notes.
 package sequencer
 
 import (
 	"math/rand"
 
-	"sektron/instrument"
+	"sektron/midi"
 	"time"
 )
 
@@ -37,7 +37,6 @@ type Sequencer interface {
 	IsPlaying() bool
 	AddTrack()
 	RemoveTrack()
-	Instrument() instrument.Instrument
 	Tracks() []*track
 	ToggleTrack(track int)
 	AddStep(track int)
@@ -49,12 +48,11 @@ type Sequencer interface {
 }
 
 type sequencer struct {
-	instrument instrument.Instrument
-	tracks     []*track
-	clock      *clock
+	midi   midi.Midi
+	tracks []*track
+	clock  *clock
 
-	// Holds the devices to which we should send the clock.
-	// Useful for midi instrument.
+	// Holds the midi devices to which we should send the clock.
 	clockSend []int
 
 	isPlaying bool
@@ -62,15 +60,15 @@ type sequencer struct {
 
 // New creates a new sequencer. It also creates new tracks and calls the
 // start() method that starts the clock.
-func New(instrument instrument.Instrument) *sequencer {
+func New(midi midi.Midi) *sequencer {
 	// The randomizer will be used for step trigger probability.
 	// Check step.go.
 	rand.Seed(time.Now().UnixNano())
 
 	seq := &sequencer{
-		instrument: instrument,
-		clockSend:  []int{defaultDevice},
-		isPlaying:  false,
+		midi:      midi,
+		clockSend: []int{defaultDevice},
+		isPlaying: false,
 	}
 
 	for i := 0; i < defaultTracks; i++ {
@@ -121,10 +119,10 @@ func (s *sequencer) AddTrack() {
 	var steps []*step
 	for j := 0; j < defaultStepsPerTrack; j++ {
 		steps = append(steps, &step{
-			position:   j,
-			instrument: s.instrument,
-			track:      track,
-			active:     false,
+			position: j,
+			midi:     s.midi,
+			track:    track,
+			active:   false,
 		})
 	}
 
@@ -143,11 +141,6 @@ func (s *sequencer) RemoveTrack() {
 	s.tracks = s.tracks[:len(s.tracks)-1]
 }
 
-// Instrument returns the sequencer instrument
-func (s *sequencer) Instrument() instrument.Instrument {
-	return s.instrument
-}
-
 // Tracks returns all the sequencer tracks.
 func (s *sequencer) Tracks() []*track {
 	return s.tracks
@@ -163,10 +156,10 @@ func (s *sequencer) AddStep(track int) {
 	t.steps = append(
 		t.steps,
 		&step{
-			position:   len(t.steps),
-			instrument: s.instrument,
-			track:      t,
-			active:     false,
+			position: len(t.steps),
+			midi:     s.midi,
+			track:    t,
+			active:   false,
 		},
 	)
 }
@@ -227,9 +220,8 @@ func (s *sequencer) start() {
 }
 
 func (s *sequencer) tick() {
-	// We send clock tick to the instrument in case it can sync with it.
-	// Useful mainly for midi instrument.
-	s.instrument.SendClock(s.clockSend)
+	// We send clock tick to the midi devices.
+	s.midi.SendClock(s.clockSend)
 
 	if !s.isPlaying {
 		return

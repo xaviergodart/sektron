@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"sektron/instrument"
+	"sektron/midi"
 
 	"github.com/charmbracelet/lipgloss"
 )
@@ -148,7 +148,7 @@ var (
 type note uint8
 
 func (n note) String() string {
-	return instrument.Note(uint8(n))
+	return midi.Note(uint8(n))
 }
 
 func (n note) Display() string {
