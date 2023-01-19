@@ -11,15 +11,7 @@ type Step interface {
 	Position() int
 	IsActive() bool
 	IsCurrentStep() bool
-	Chord() []uint8
-	Velocity() uint8
-	Length() int
-	Probability() int
 	Offset() int
-	SetChord(chord []uint8)
-	SetLength(length int)
-	SetVelocity(velocity uint8)
-	SetProbability(probability int)
 	SetOffset(offset int)
 }
 

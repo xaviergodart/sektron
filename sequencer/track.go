@@ -6,10 +6,6 @@ type Track interface {
 	CurrentStep() int
 	IsActive() bool
 	IsCurrentStepActive() bool
-	SetChord(chord []uint8)
-	SetLength(length int)
-	SetVelocity(velocity uint8)
-	SetProbability(probability int)
 }
 
 type track struct {

@@ -113,7 +113,7 @@ func (m mainModel) renderStepContent(step sequencer.Step) string {
 		lipgloss.JoinHorizontal(
 			lipgloss.Left,
 			lipgloss.NewStyle().
-				Render(fmt.Sprintf("%.1f/%d", float64(step.Length())/6.0, m.trackPagesNb()*stepsPerPage)),
+				Render(sequencer.LengthString(step.Length())),
 			lipgloss.NewStyle().
 				MarginLeft(2).
 				Render(fmt.Sprintf("%d%%", step.Probability())),
