@@ -6,6 +6,7 @@ type Track interface {
 	CurrentStep() int
 	IsActive() bool
 	IsCurrentStepActive() bool
+	Parametrable
 }
 
 type track struct {

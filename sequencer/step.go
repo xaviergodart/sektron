@@ -13,6 +13,7 @@ type Step interface {
 	IsCurrentStep() bool
 	Offset() int
 	SetOffset(offset int)
+	Parametrable
 }
 
 type step struct {

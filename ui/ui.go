@@ -156,11 +156,11 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamValueUp):
-			m.parameters[m.activeParam].update(m.activeTrack, nil, 1)
+			m.parameters[m.activeParam].update(m.seq.Tracks()[m.activeTrack], 1)
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamValueDown):
-			m.parameters[m.activeParam].update(m.activeTrack, nil, -1)
+			m.parameters[m.activeParam].update(m.seq.Tracks()[m.activeTrack], -1)
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Help):

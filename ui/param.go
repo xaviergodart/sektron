@@ -25,12 +25,12 @@ var (
 )
 
 type parameter struct {
-	name   string
-	min    int
-	max    int
-	value  func(item sequencer.Parametrable) int
-	string func(item sequencer.Parametrable) string
-	update func(item sequencer.Parametrable, value int)
+	name        string
+	min         int
+	max         int
+	value       func(item sequencer.Parametrable) int
+	string      func(item sequencer.Parametrable) string
+	updateValue func(item sequencer.Parametrable, value int)
 }
 
 func (m *mainModel) initParameters() {
@@ -45,7 +45,7 @@ func (m *mainModel) initParameters() {
 			string: func(item sequencer.Parametrable) string {
 				return sequencer.ChordString(item.Chord())
 			},
-			update: func(item sequencer.Parametrable, value int) {
+			updateValue: func(item sequencer.Parametrable, value int) {
 				item.SetChord([]uint8{
 					uint8(value),
 				})
@@ -55,17 +55,14 @@ func (m *mainModel) initParameters() {
 			name: "length",
 			min:  1,
 			max:  128 * 6,
-			value: func(track int) int {
-				return int(m.seq.Tracks()[track].Length())
+			value: func(item sequencer.Parametrable) int {
+				return item.Length()
 			},
-			string: func(track int) string {
-				return fmt.Sprintf("%.1f/%d", float64(m.seq.Tracks()[track].Length())/6.0, m.trackPagesNb()*stepsPerPage)
+			string: func(item sequencer.Parametrable) string {
+				return sequencer.LengthString(item.Length())
 			},
-			updateTrack: func(track int, value int) {
-				m.seq.Tracks()[track].SetLength(value)
-			},
-			updateStep: func(track int, step int, value int) {
-				m.seq.Tracks()[track].Steps()[step].SetLength(value)
+			updateValue: func(item sequencer.Parametrable, value int) {
+				item.SetLength(value)
 			},
 		},
 		/*		{
@@ -105,20 +102,16 @@ func (m *mainModel) initParameters() {
 	}
 }
 
-func (p *parameter) update(track int, step *int, add int) {
-	newValue := p.value(track) + add
+func (p *parameter) update(item sequencer.Parametrable, add int) {
+	newValue := p.value(item) + add
 	if newValue < p.min || newValue > p.max {
 		return
 	}
-	if step == nil {
-		p.updateTrack(track, newValue)
-	} else {
-		p.updateStep(track, *step, newValue)
-	}
+	p.updateValue(item, newValue)
 }
 
-func (p parameter) render(track int) string {
-	return fmt.Sprintf("%s: %s", p.name, p.string(track))
+func (p parameter) render(item sequencer.Parametrable) string {
+	return fmt.Sprintf("%s: %s", p.name, p.string(item))
 }
 
 func (m mainModel) renderParams() string {
@@ -139,7 +132,7 @@ func (m mainModel) renderParams() string {
 					height,
 					lipgloss.Center,
 					lipgloss.Center,
-					p.render(m.activeTrack),
+					p.render(m.seq.Tracks()[m.activeTrack]),
 				),
 			),
 		)
