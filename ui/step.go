@@ -11,6 +11,8 @@ import (
 const (
 	stepWidth  = 15
 	stepHeight = stepWidth / 2
+
+	maxVelocityValue = 127
 )
 
 var (
@@ -116,7 +118,7 @@ func (m mainModel) renderStepContent(step sequencer.Step) string {
 				Render(sequencer.LengthString(step.Length())),
 			lipgloss.NewStyle().
 				MarginLeft(2).
-				Render(fmt.Sprintf("%d%%", step.Probability())),
+				Render(sequencer.ProbabilityString(step.Probability())),
 		),
 	)
 }
@@ -126,7 +128,7 @@ func (m mainModel) renderVelocity(step sequencer.Step, height int) string {
 		return ""
 	}
 	velocityIndicator := []string{}
-	velocityValue := int(127-step.Velocity()) * height / 127
+	velocityValue := int(maxVelocityValue-step.Velocity()) * height / maxVelocityValue
 	for i := 1; i < height; i++ {
 		if velocityValue < i {
 			velocityIndicator = append(velocityIndicator, "█")

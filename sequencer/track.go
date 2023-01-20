@@ -90,22 +90,36 @@ func (t track) Probability() int {
 
 // SetChord sets a new chord value.
 func (t *track) SetChord(chord []uint8) {
+	for _, note := range chord {
+		if note < minChordNote || note > maxChordNote {
+			return
+		}
+	}
 	t.clear()
 	t.chord = chord
 }
 
 // SetLength sets a new length value.
 func (t *track) SetLength(length int) {
+	if length < minLength || length > maxLength {
+		return
+	}
 	t.length = length
 }
 
 // SetVelocity sets a new velocity value.
 func (t *track) SetVelocity(velocity uint8) {
+	if velocity < minVelocity || velocity > maxVelocity {
+		return
+	}
 	t.velocity = velocity
 }
 
 // SetProbability sets a new probability value.
 func (t *track) SetProbability(probability int) {
+	if probability < minProbability || probability > maxProbability {
+		return
+	}
 	t.probability = probability
 }
 

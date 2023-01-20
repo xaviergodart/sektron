@@ -26,8 +26,6 @@ var (
 
 type parameter struct {
 	name        string
-	min         int
-	max         int
 	value       func(item sequencer.Parametrable) int
 	string      func(item sequencer.Parametrable) string
 	updateValue func(item sequencer.Parametrable, value int)
@@ -37,8 +35,6 @@ func (m *mainModel) initParameters() {
 	m.parameters = []parameter{
 		{
 			name: "note",
-			min:  21,
-			max:  108,
 			value: func(item sequencer.Parametrable) int {
 				return int(item.Chord()[0])
 			},
@@ -53,8 +49,6 @@ func (m *mainModel) initParameters() {
 		},
 		{
 			name: "length",
-			min:  1,
-			max:  128 * 6,
 			value: func(item sequencer.Parametrable) int {
 				return item.Length()
 			},
@@ -104,9 +98,6 @@ func (m *mainModel) initParameters() {
 
 func (p *parameter) update(item sequencer.Parametrable, add int) {
 	newValue := p.value(item) + add
-	if newValue < p.min || newValue > p.max {
-		return
-	}
 	p.updateValue(item, newValue)
 }
 

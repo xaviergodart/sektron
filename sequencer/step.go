@@ -109,17 +109,28 @@ func (s step) Offset() int {
 
 // SetChord sets a new chord value.
 func (s *step) SetChord(chord []uint8) {
+	for _, note := range chord {
+		if note < minChordNote || note > maxChordNote {
+			return
+		}
+	}
 	s.reset()
 	s.chord = &chord
 }
 
 // SetLength sets a new length value.
 func (s *step) SetLength(length int) {
+	if length < minLength || length > maxLength {
+		return
+	}
 	s.length = &length
 }
 
 // SetVelocity sets a new velocity value.
 func (s *step) SetVelocity(velocity uint8) {
+	if velocity < minVelocity || velocity > maxVelocity {
+		return
+	}
 	s.velocity = &velocity
 }
 
