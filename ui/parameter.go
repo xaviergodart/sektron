@@ -8,9 +8,7 @@ import (
 )
 
 const (
-	paramsPerLine = 6
-	paramWidth    = stepWidth * 2
-	paramHeight   = paramWidth / 2
+	paramsPerLine = 18
 )
 
 var (
@@ -85,6 +83,7 @@ func (m *mainModel) initParameters() {
 				return item.LengthString()
 			},
 			set: func(item sequencer.Track, value int) {
+				// TODO: update knob course
 				item.SetLength(value)
 			},
 		},
@@ -221,8 +220,5 @@ func (m mainModel) renderParams() string {
 func (m mainModel) paramSize() (int, int) {
 	width := m.width / paramsPerLine
 	height := width / 6
-	if width < paramWidth || height < paramHeight {
-		return paramWidth, paramHeight
-	}
 	return width, height
 }
