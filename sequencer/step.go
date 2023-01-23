@@ -207,6 +207,7 @@ func (s step) isStartingPulse() bool {
 }
 
 func (s step) isEndingPulse() bool {
+	// TODO: fix bug on last step
 	return s.relativePulse() == s.offset+s.Length()
 }
 
