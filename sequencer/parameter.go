@@ -10,7 +10,7 @@ const (
 	minChordNote   = 21
 	maxChordNote   = 108
 	minLength      = 1
-	maxLength      = pulsesPerStep*maxSteps + 1 // +1 for the infinity mode
+	maxLength      = pulsesPerStep*maxSteps + 1 // +1 for the infinity mode (TODO)
 	minVelocity    = 0
 	maxVelocity    = 127
 	minProbability = 0
