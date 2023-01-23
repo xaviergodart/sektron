@@ -93,6 +93,8 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Mode):
+			m.activeParam = 0
+			m.activeStep = 0
 			if m.mode == trackMode {
 				m.mode = recMode
 			} else {
@@ -156,11 +158,20 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamValueUp):
-			m.parameters.track[m.activeParam].update(m.seq.Tracks()[m.activeTrack], 1)
+			// TODO: ugly move that to specific function
+			if m.mode == recMode {
+				m.parameters.step[m.activeParam].update(m.seq.Tracks()[m.activeTrack].Steps()[m.activeStep], 1)
+			} else {
+				m.parameters.track[m.activeParam].update(m.seq.Tracks()[m.activeTrack], 1)
+			}
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamValueDown):
-			m.parameters.track[m.activeParam].update(m.seq.Tracks()[m.activeTrack], -1)
+			if m.mode == recMode {
+				m.parameters.step[m.activeParam].update(m.seq.Tracks()[m.activeTrack].Steps()[m.activeStep], -1)
+			} else {
+				m.parameters.track[m.activeParam].update(m.seq.Tracks()[m.activeTrack], -1)
+			}
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Help):
@@ -212,6 +223,7 @@ func (m *mainModel) selectPress(msg tea.KeyMsg) {
 		m.activeTrack = number
 		m.activeTrackPage = 0
 		m.activeStep = 0
+		m.activeParam = 0
 	case recMode:
 		m.activeStep = number + (m.activeTrackPage * stepsPerPage)
 	}

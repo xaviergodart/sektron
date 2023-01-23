@@ -190,27 +190,51 @@ func (p parameter[t]) render(item t) string {
 }
 
 func (m mainModel) renderParams() string {
-	params := make([]string, len(m.parameters.track))
+	var params []string
 	width, height := m.paramSize()
-	for i, p := range m.parameters.track {
-		var style lipgloss.Style
-		if m.activeParam == i {
-			style = selectedParamStyle
-		} else {
-			style = paramStyle
-		}
-		params = append(
-			params,
-			style.Render(
-				lipgloss.Place(
-					width,
-					height,
-					lipgloss.Center,
-					lipgloss.Center,
-					p.render(m.seq.Tracks()[m.activeTrack]),
+	// TODO: ugly. Cleanup that...
+	if m.mode == recMode {
+		for i, p := range m.parameters.step {
+			var style lipgloss.Style
+			if m.activeParam == i {
+				style = selectedParamStyle
+			} else {
+				style = paramStyle
+			}
+			params = append(
+				params,
+				style.Render(
+					lipgloss.Place(
+						width,
+						height,
+						lipgloss.Center,
+						lipgloss.Center,
+						p.render(m.seq.Tracks()[m.activeTrack].Steps()[m.activeStep]),
+					),
 				),
-			),
-		)
+			)
+		}
+	} else {
+		for i, p := range m.parameters.track {
+			var style lipgloss.Style
+			if m.activeParam == i {
+				style = selectedParamStyle
+			} else {
+				style = paramStyle
+			}
+			params = append(
+				params,
+				style.Render(
+					lipgloss.Place(
+						width,
+						height,
+						lipgloss.Center,
+						lipgloss.Center,
+						p.render(m.seq.Tracks()[m.activeTrack]),
+					),
+				),
+			)
+		}
 	}
 	return lipgloss.JoinHorizontal(
 		lipgloss.Left,
