@@ -3,6 +3,7 @@ package sequencer
 import (
 	"fmt"
 	"sektron/midi"
+	"strconv"
 )
 
 const (
@@ -10,12 +11,16 @@ const (
 	maxChordNote   = 108
 	minLength      = 1
 	maxLength      = pulsesPerStep*maxSteps + 1 // +1 for the infinity mode
-	minVelocity    = 1
+	minVelocity    = 0
 	maxVelocity    = 127
 	minProbability = 0
 	maxProbability = 100
+	minChannel     = 0
+	maxChannel     = 15
 )
 
+// Parametrable should be implemented by both step and track.
+// Represents common parameter methods between both elements.
 type Parametrable interface {
 	Chord() []uint8
 	Length() int
@@ -25,13 +30,17 @@ type Parametrable interface {
 	SetLength(length int)
 	SetVelocity(velocity uint8)
 	SetProbability(probability int)
+	ChordString() string
+	LengthString() string
+	VelocityString() string
+	ProbabilityString() string
 }
 
-func ChordString(chord []uint8) string {
+func chordString(chord []uint8) string {
 	return midi.Note(chord[0])
 }
 
-func LengthString(length int) string {
+func lengthString(length int) string {
 	switch length {
 	case pulsesPerStep / 2:
 		return "1/32"
@@ -48,10 +57,10 @@ func LengthString(length int) string {
 	}
 }
 
-func VelocityString(velocity uint8) string {
-	return string(velocity)
+func velocityString(velocity uint8) string {
+	return strconv.Itoa(int(velocity))
 }
 
-func ProbabilityString(probability int) string {
+func probabilityString(probability int) string {
 	return fmt.Sprintf("%d%%", probability)
 }

@@ -1,7 +1,18 @@
 package sequencer
 
+import (
+	"fmt"
+	"sektron/midi"
+)
+
 // Track contains a track state.
 type Track interface {
+	Device() int
+	DeviceString() string
+	SetDevice(device int)
+	Channel() uint8
+	ChannelString() string
+	SetChannel(channel uint8)
 	Steps() []*step
 	CurrentStep() int
 	IsActive() bool
@@ -10,6 +21,7 @@ type Track interface {
 }
 
 type track struct {
+	midi  midi.Midi
 	steps []*step
 
 	// The pulse defines the current position of the playhead in the track.
@@ -68,6 +80,26 @@ func (t track) IsCurrentStepActive() bool {
 	return t.steps[t.CurrentStep()].IsActive()
 }
 
+// Device returns the track device.
+func (t track) Device() int {
+	return t.device
+}
+
+// DeviceString returns the device name string.
+func (t track) DeviceString() string {
+	return t.midi.Devices()[t.device].String()
+}
+
+// Channel returns the track midi channel.
+func (t track) Channel() uint8 {
+	return t.channel
+}
+
+// ChannelString returns the midi channel string.
+func (t track) ChannelString() string {
+	return fmt.Sprintf("%d", t.channel+1)
+}
+
 // Chord returns the track chord.
 func (t track) Chord() []uint8 {
 	return t.chord
@@ -86,6 +118,44 @@ func (t track) Length() int {
 // Probability returns the track probability.
 func (t track) Probability() int {
 	return t.probability
+}
+
+// ChordString returns the string representation of the track chord.
+func (t track) ChordString() string {
+	return chordString(t.chord)
+}
+
+// VelocityString returns the string representation of the track velocity.
+func (t track) VelocityString() string {
+	return velocityString(t.velocity)
+}
+
+// LengthString returns the string representation of the track length.
+func (t track) LengthString() string {
+	return lengthString(t.length)
+}
+
+// ProbabilityString returns the string representation of the track probability.
+func (t track) ProbabilityString() string {
+	return probabilityString(t.probability)
+}
+
+// SetDevice selects a device.
+func (t *track) SetDevice(device int) {
+	if device < 0 || len(t.midi.Devices()) <= device {
+		return
+	}
+	t.clear()
+	t.device = device
+}
+
+// SetChannel sets the midi channel.
+func (t *track) SetChannel(channel uint8) {
+	if channel < minChannel || channel > maxChannel {
+		return
+	}
+	t.clear()
+	t.channel = channel
 }
 
 // SetChord sets a new chord value.

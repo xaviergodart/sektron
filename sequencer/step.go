@@ -3,6 +3,7 @@ package sequencer
 import (
 	"math/rand"
 	"sektron/midi"
+	"strconv"
 )
 
 // Step contains a step state.
@@ -12,6 +13,7 @@ type Step interface {
 	IsActive() bool
 	IsCurrentStep() bool
 	Offset() int
+	OffsetString() string
 	SetOffset(offset int)
 	Parametrable
 }
@@ -105,6 +107,31 @@ func (s step) Probability() int {
 // Offset returns the current step offset value.
 func (s step) Offset() int {
 	return s.offset
+}
+
+// ChordString returns the string representation of the step chord.
+func (s step) ChordString() string {
+	return chordString(s.Chord())
+}
+
+// VelocityString returns the string representation of the step velocity.
+func (s step) VelocityString() string {
+	return velocityString(s.Velocity())
+}
+
+// LengthString returns the string representation of the step length.
+func (s step) LengthString() string {
+	return lengthString(s.Length())
+}
+
+// ProbabilityString returns the string representation of the step probability.
+func (s step) ProbabilityString() string {
+	return probabilityString(s.Probability())
+}
+
+// OffsetString returns the string representation of the step offset.
+func (s step) OffsetString() string {
+	return strconv.Itoa(s.offset)
 }
 
 // SetChord sets a new chord value.

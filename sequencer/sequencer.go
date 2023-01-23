@@ -106,6 +106,7 @@ func (s *sequencer) AddTrack() {
 	}
 	channel := len(s.tracks)
 	track := &track{
+		midi:        s.midi,
 		pulse:       pulse,
 		chord:       []uint8{defaultNote},
 		length:      pulsesPerStep,

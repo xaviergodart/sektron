@@ -115,10 +115,10 @@ func (m mainModel) renderStepContent(step sequencer.Step) string {
 		lipgloss.JoinHorizontal(
 			lipgloss.Left,
 			lipgloss.NewStyle().
-				Render(sequencer.LengthString(step.Length())),
+				Render(step.LengthString()),
 			lipgloss.NewStyle().
 				MarginLeft(2).
-				Render(sequencer.ProbabilityString(step.Probability())),
+				Render(step.ProbabilityString()),
 		),
 	)
 }

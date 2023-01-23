@@ -36,7 +36,7 @@ const (
 
 type mainModel struct {
 	seq             sequencer.Sequencer
-	parameters      []parameter
+	parameters      parameters
 	keymap          keyMap
 	width           int
 	height          int
@@ -156,11 +156,11 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamValueUp):
-			m.parameters[m.activeParam].update(m.seq.Tracks()[m.activeTrack], 1)
+			m.parameters.track[m.activeParam].update(m.seq.Tracks()[m.activeTrack], 1)
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamValueDown):
-			m.parameters[m.activeParam].update(m.seq.Tracks()[m.activeTrack], -1)
+			m.parameters.track[m.activeParam].update(m.seq.Tracks()[m.activeTrack], -1)
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Help):
@@ -241,3 +241,5 @@ func (m *mainModel) removePress(msg tea.KeyMsg) {
 		m.seq.RemoveStep(m.activeTrack)
 	}
 }
+
+// TODO: make getTrack() and getStep() function

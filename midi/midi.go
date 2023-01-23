@@ -21,6 +21,7 @@ const (
 
 // Midi provides a way to interct with midi devices.
 type Midi interface {
+	Devices() gomidi.OutPorts
 	NoteOn(device int, channel uint8, note uint8, velocity uint8)
 	NoteOff(device int, channel uint8, note uint8)
 	SendClock(devices []int)
@@ -95,6 +96,11 @@ func (m *midi) start() {
 		}(device, m.done, m.outputs[i])
 	}
 	m.waitGroup = &wg
+}
+
+// Devices returns all out ports.
+func (m *midi) Devices() gomidi.OutPorts {
+	return m.devices
 }
 
 // NoteOn sends a Note On midi meessage to the given device.
