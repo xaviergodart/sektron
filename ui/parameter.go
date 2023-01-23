@@ -63,6 +63,7 @@ func (m *mainModel) initParameters() {
 		{
 			name: "note",
 			value: func(item sequencer.Track) int {
+				// TODO: make chords actual chords
 				return int(item.Chord()[0])
 			},
 			string: func(item sequencer.Track) string {
