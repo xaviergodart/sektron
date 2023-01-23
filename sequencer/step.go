@@ -163,11 +163,17 @@ func (s *step) SetVelocity(velocity uint8) {
 
 // SetProbability sets a new probability value.
 func (s *step) SetProbability(probability int) {
+	if probability < minProbability || probability > maxProbability {
+		return
+	}
 	s.probability = &probability
 }
 
 // SetOffset sets a new offset value
 func (s *step) SetOffset(offset int) {
+	if offset < minOffset || offset > maxOffset {
+		return
+	}
 	s.offset = offset
 }
 
@@ -201,7 +207,7 @@ func (s step) isStartingPulse() bool {
 }
 
 func (s step) isEndingPulse() bool {
-	return s.relativePulse() == s.Length()-1+s.offset
+	return s.relativePulse() == s.offset+s.Length()
 }
 
 // reset stops all the notes in the chord if the step has been triggered.

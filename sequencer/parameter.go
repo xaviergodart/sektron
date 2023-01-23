@@ -17,6 +17,8 @@ const (
 	maxProbability = 100
 	minChannel     = 0
 	maxChannel     = 15
+	minOffset      = 0
+	maxOffset      = 5
 )
 
 // Parametrable should be implemented by both step and track.
