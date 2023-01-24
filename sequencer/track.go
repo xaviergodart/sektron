@@ -226,12 +226,14 @@ func (t *track) trigger() {
 	for i, step := range t.steps {
 		if t.active && step.isStartingPulse() {
 			step.trigger()
+			continue
 		}
 
 		// To avoid 2 steps of the same track being triggered at the same time,
 		// we always check the next step. If it's active, we stop the current
 		// step, even if it's supposed to play longer.
-		if step.isEndingPulse() || (i != t.CurrentStep() && t.isStepForNextPulseActive()) {
+		// TODO: fix last step turning offset first step when last is offset by 5
+		if step.isEndingPulse() || (step.triggered && t.stepForNextPulse() != i && t.isStepForNextPulseActive()) {
 			step.reset()
 		}
 	}
