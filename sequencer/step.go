@@ -193,22 +193,20 @@ func (s step) skip() bool {
 	return s.Probability() < 100 && rand.Intn(100) > s.Probability()
 }
 
-// relativePulse returns the step pulse relative to the track one. If negative,
-// the track pulse is before the step. If zero, the track pulse is at the
-// first step pulse. It allows starting and ending pulse calculation.
-func (s step) relativePulse() int {
-	return s.track.pulse - (s.position * pulsesPerStep)
+func (s step) startingPulse() int {
+	return s.position*pulsesPerStep + s.offset
 }
 
-// Starting and ending pulse are 0 and step length-1 relative to the track
-// pulse. We can offset these to allow microtimed events.
+func (s step) endingPulse() int {
+	return (s.startingPulse() + s.Length() - 1) % (pulsesPerStep * len(s.track.steps))
+}
+
 func (s step) isStartingPulse() bool {
-	return s.relativePulse() == s.offset
+	return s.track.pulse == s.startingPulse()
 }
 
 func (s step) isEndingPulse() bool {
-	// TODO: fix bug on last step
-	return s.relativePulse() == s.offset+s.Length()
+	return s.track.pulse == s.endingPulse()
 }
 
 // reset stops all the notes in the chord if the step has been triggered.
