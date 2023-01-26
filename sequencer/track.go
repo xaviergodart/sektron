@@ -45,6 +45,11 @@ type track struct {
 	// trigger any steps.
 	active bool
 
+	// We store the last triggered step of each track in order to reset it
+	// if a new step is triggered. We avoid to steps being triggered at the same
+	// time.
+	lastTriggeredStep int
+
 	// The next attributes defines the note parameters for the midi message and
 	// can be overriden per step (check step.go).
 	//  - length defines for how long (pulse value) the note should be played
@@ -223,17 +228,17 @@ func (t *track) close() {
 // starting or ending pulse. They are calculated relative to the pulse, using
 // the length and offset parameters (check step.go)
 func (t *track) trigger() {
-	for i, step := range t.steps {
+	for _, step := range t.steps {
 		if t.active && step.isStartingPulse() {
+			// We reset the last triggered step to avoid 2 steps of the same
+			//track being triggered at the same time.
+			t.steps[t.lastTriggeredStep].reset()
+
 			step.trigger()
 			continue
 		}
 
-		// To avoid 2 steps of the same track being triggered at the same time,
-		// we always check the next step. If it's active, we stop the current
-		// step, even if it's supposed to play longer.
-		// TODO: fix last step turning offset first step when last is offset by 5
-		if step.isEndingPulse() || (step.triggered && t.stepForNextPulse() != i && t.isStepForNextPulseActive()) {
+		if step.isEndingPulse() {
 			step.reset()
 		}
 	}
@@ -244,14 +249,6 @@ func (t *track) trigger() {
 	if t.pulse == pulsesPerStep*len(t.steps) {
 		t.pulse = 0
 	}
-}
-
-func (t track) stepForNextPulse() int {
-	return (t.pulse + 1) % (pulsesPerStep * len(t.steps)) / pulsesPerStep
-}
-
-func (t track) isStepForNextPulseActive() bool {
-	return t.steps[t.stepForNextPulse()].active
 }
 
 // reset move back the pulse to the beginning, and stops all the already

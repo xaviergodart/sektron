@@ -187,6 +187,7 @@ func (s *step) trigger() {
 		s.midi.NoteOn(s.track.device, s.track.channel, note, s.Velocity())
 	}
 	s.triggered = true
+	s.track.lastTriggeredStep = s.position
 }
 
 func (s step) skip() bool {
