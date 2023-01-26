@@ -43,7 +43,7 @@ type step struct {
 	probability *int
 
 	// an offset relative to the first pulse on the step can be defined. It
-	// delays the step trigger from x pulses, from 0 to 5.
+	// delays the step trigger by x pulses, from 0 to 5.
 	offset int
 }
 
