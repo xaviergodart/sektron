@@ -160,17 +160,17 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keymap.ParamValueUp):
 			// TODO: ugly move that to specific function
 			if m.mode == recMode {
-				m.parameters.step[m.activeParam].update(m.seq.Tracks()[m.activeTrack].Steps()[m.activeStep], 1)
+				m.parameters.step[m.activeParam].update(m.getActiveStep(), 1)
 			} else {
-				m.parameters.track[m.activeParam].update(m.seq.Tracks()[m.activeTrack], 1)
+				m.parameters.track[m.activeParam].update(m.getActiveTrack(), 1)
 			}
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamValueDown):
 			if m.mode == recMode {
-				m.parameters.step[m.activeParam].update(m.seq.Tracks()[m.activeTrack].Steps()[m.activeStep], -1)
+				m.parameters.step[m.activeParam].update(m.getActiveStep(), -1)
 			} else {
-				m.parameters.track[m.activeParam].update(m.seq.Tracks()[m.activeTrack], -1)
+				m.parameters.track[m.activeParam].update(m.getActiveTrack(), -1)
 			}
 			return m, nil
 
@@ -246,7 +246,7 @@ func (m *mainModel) removePress(msg tea.KeyMsg) {
 		}
 		m.seq.RemoveTrack()
 	case recMode:
-		remainingStepsInPage := (len(m.seq.Tracks()[m.activeTrack].Steps()) - 1) % stepsPerPage
+		remainingStepsInPage := (len(m.getActiveTrack().Steps()) - 1) % stepsPerPage
 		if m.activeTrackPage > 0 && remainingStepsInPage == 0 {
 			m.activeTrackPage--
 		}
@@ -254,4 +254,10 @@ func (m *mainModel) removePress(msg tea.KeyMsg) {
 	}
 }
 
-// TODO: make getTrack() and getStep() function
+func (m *mainModel) getActiveTrack() sequencer.Track {
+	return m.seq.Tracks()[m.activeTrack]
+}
+
+func (m *mainModel) getActiveStep() sequencer.Step {
+	return m.seq.Tracks()[m.activeTrack].Steps()[m.activeStep]
+}

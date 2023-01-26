@@ -37,8 +37,8 @@ func (m mainModel) renderTrack(track sequencer.Track) string {
 }
 
 func (m mainModel) trackPagesNb() int {
-	pageNb := len(m.seq.Tracks()[m.activeTrack].Steps()) / stepsPerPage
-	if len(m.seq.Tracks()[m.activeTrack].Steps())%stepsPerPage > 0 {
+	pageNb := len(m.getActiveTrack().Steps()) / stepsPerPage
+	if len(m.getActiveTrack().Steps())%stepsPerPage > 0 {
 		pageNb++
 	}
 	return pageNb

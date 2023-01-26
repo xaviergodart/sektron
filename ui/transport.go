@@ -66,7 +66,7 @@ func (m mainModel) renderTransport() string {
 	transportTempo := m.renderTransportTempo()
 	transportPlayer := m.renderTransportPlayer()
 	transportSignature := trackActiveCurrentStepActiveStyle.Render(
-		fmt.Sprintf("%d/%d", len(m.seq.Tracks()[m.activeTrack].Steps()), m.trackPagesNb()*stepsPerPage),
+		fmt.Sprintf("%d/%d", len(m.getActiveTrack().Steps()), m.trackPagesNb()*stepsPerPage),
 	)
 	transportTrackPages := m.renderTransportTrackPages()
 
@@ -158,5 +158,5 @@ func (m mainModel) isActiveTrackOnQuarterNote() bool {
 }
 
 func (m mainModel) playingTrackPage() int {
-	return m.seq.Tracks()[m.activeTrack].CurrentStep() / stepsPerPage
+	return m.getActiveTrack().CurrentStep() / stepsPerPage
 }

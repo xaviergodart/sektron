@@ -209,7 +209,7 @@ func (m mainModel) renderParams() string {
 						height,
 						lipgloss.Center,
 						lipgloss.Center,
-						p.render(m.seq.Tracks()[m.activeTrack].Steps()[m.activeStep]),
+						p.render(m.getActiveStep()),
 					),
 				),
 			)
@@ -230,7 +230,7 @@ func (m mainModel) renderParams() string {
 						height,
 						lipgloss.Center,
 						lipgloss.Center,
-						p.render(m.seq.Tracks()[m.activeTrack]),
+						p.render(m.getActiveTrack()),
 					),
 				),
 			)

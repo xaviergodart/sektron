@@ -5,10 +5,8 @@ import (
 )
 
 func (m mainModel) renderSequencer() string {
-	track := m.seq.Tracks()[m.activeTrack]
-
 	return lipgloss.JoinVertical(
 		lipgloss.Center,
-		m.renderTrack(track),
+		m.renderTrack(m.getActiveTrack()),
 	)
 }
