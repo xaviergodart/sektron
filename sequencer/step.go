@@ -42,9 +42,8 @@ type step struct {
 	velocity    *uint8
 	probability *int
 
-	// an offset relative to the first pulse on the step can be defined, either
-	// positive or negative. It allows microtimed triggers of the note.
-	// 0 by default.
+	// an offset relative to the first pulse on the step can be defined. It
+	// delays the step trigger from x pulses, from 0 to 5.
 	offset int
 }
 
