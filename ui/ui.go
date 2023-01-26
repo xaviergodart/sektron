@@ -158,7 +158,6 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamValueUp):
-			// TODO: ugly move that to specific function
 			if m.mode == recMode {
 				m.parameters.step[m.activeParam].update(m.getActiveStep(), 1)
 			} else {
