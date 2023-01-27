@@ -119,7 +119,8 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.mode == trackMode {
 				m.seq.ToggleTrack(number)
 			} else if m.mode == recMode {
-				m.seq.ToggleStep(m.activeTrack, number+(m.activeTrackPage*stepsPerPage))
+				m.activeStep = number + (m.activeTrackPage * stepsPerPage)
+				m.seq.ToggleStep(m.activeTrack, m.activeStep)
 			}
 			return m, nil
 
@@ -249,6 +250,7 @@ func (m *mainModel) removePress(msg tea.KeyMsg) {
 		if m.activeTrackPage > 0 && remainingStepsInPage == 0 {
 			m.activeTrackPage--
 		}
+		m.activeStep = 0
 		m.seq.RemoveStep(m.activeTrack)
 	}
 }
