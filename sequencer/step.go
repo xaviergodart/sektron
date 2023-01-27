@@ -146,7 +146,13 @@ func (s *step) SetChord(chord []uint8) {
 
 // SetLength sets a new length value.
 func (s *step) SetLength(length int) {
-	if length < minLength || length > maxLength {
+	if length < minLength {
+		return
+	}
+	// Infinite mode
+	if length > maxLength {
+		length = maxLength
+		s.length = &length
 		return
 	}
 	s.length = &length
@@ -207,6 +213,13 @@ func (s step) isStartingPulse() bool {
 
 func (s step) isEndingPulse() bool {
 	return s.track.pulse == s.endingPulse()
+}
+
+func (s step) isInfinite() bool {
+	if s.length == nil {
+		return s.track.isInfinite()
+	}
+	return *s.length == maxLength
 }
 
 // reset stops all the notes in the chord if the step has been triggered.

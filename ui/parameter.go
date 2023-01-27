@@ -9,6 +9,8 @@ import (
 
 const (
 	paramsPerLine = 18
+	pulsesPerStep = 6
+	maxSteps      = 128
 )
 
 var (
@@ -31,7 +33,7 @@ type parameter[t sequencer.Parametrable] struct {
 	name   string
 	value  func(item t) int
 	string func(item t) string
-	set    func(item t, value int)
+	set    func(item t, value int, add int)
 }
 
 func (m *mainModel) initParameters() {
@@ -44,8 +46,8 @@ func (m *mainModel) initParameters() {
 			string: func(item sequencer.Track) string {
 				return item.DeviceString()
 			},
-			set: func(item sequencer.Track, value int) {
-				item.SetDevice(value)
+			set: func(item sequencer.Track, value int, add int) {
+				item.SetDevice(value + add)
 			},
 		},
 		{
@@ -56,8 +58,8 @@ func (m *mainModel) initParameters() {
 			string: func(item sequencer.Track) string {
 				return item.ChannelString()
 			},
-			set: func(item sequencer.Track, value int) {
-				item.SetChannel(uint8(value))
+			set: func(item sequencer.Track, value int, add int) {
+				item.SetChannel(uint8(value + add))
 			},
 		},
 		{
@@ -69,9 +71,9 @@ func (m *mainModel) initParameters() {
 			string: func(item sequencer.Track) string {
 				return item.ChordString()
 			},
-			set: func(item sequencer.Track, value int) {
+			set: func(item sequencer.Track, value int, add int) {
 				item.SetChord([]uint8{
-					uint8(value),
+					uint8(value + add),
 				})
 			},
 		},
@@ -83,9 +85,8 @@ func (m *mainModel) initParameters() {
 			string: func(item sequencer.Track) string {
 				return item.LengthString()
 			},
-			set: func(item sequencer.Track, value int) {
-				// TODO: update knob course
-				item.SetLength(value)
+			set: func(item sequencer.Track, value int, add int) {
+				setLengthParam(item, value, add)
 			},
 		},
 		{
@@ -96,8 +97,8 @@ func (m *mainModel) initParameters() {
 			string: func(item sequencer.Track) string {
 				return item.VelocityString()
 			},
-			set: func(item sequencer.Track, value int) {
-				item.SetVelocity(uint8(value))
+			set: func(item sequencer.Track, value int, add int) {
+				item.SetVelocity(uint8(value + add))
 			},
 		},
 		{
@@ -108,8 +109,8 @@ func (m *mainModel) initParameters() {
 			string: func(item sequencer.Track) string {
 				return item.ProbabilityString()
 			},
-			set: func(item sequencer.Track, value int) {
-				item.SetProbability(value)
+			set: func(item sequencer.Track, value int, add int) {
+				item.SetProbability(value + add)
 			},
 		},
 	}
@@ -123,9 +124,9 @@ func (m *mainModel) initParameters() {
 			string: func(item sequencer.Step) string {
 				return item.ChordString()
 			},
-			set: func(item sequencer.Step, value int) {
+			set: func(item sequencer.Step, value int, add int) {
 				item.SetChord([]uint8{
-					uint8(value),
+					uint8(value + add),
 				})
 			},
 		},
@@ -137,8 +138,8 @@ func (m *mainModel) initParameters() {
 			string: func(item sequencer.Step) string {
 				return item.LengthString()
 			},
-			set: func(item sequencer.Step, value int) {
-				item.SetLength(value)
+			set: func(item sequencer.Step, value int, add int) {
+				setLengthParam(item, value, add)
 			},
 		},
 		{
@@ -149,8 +150,8 @@ func (m *mainModel) initParameters() {
 			string: func(item sequencer.Step) string {
 				return item.VelocityString()
 			},
-			set: func(item sequencer.Step, value int) {
-				item.SetVelocity(uint8(value))
+			set: func(item sequencer.Step, value int, add int) {
+				item.SetVelocity(uint8(value + add))
 			},
 		},
 		{
@@ -161,8 +162,8 @@ func (m *mainModel) initParameters() {
 			string: func(item sequencer.Step) string {
 				return item.ProbabilityString()
 			},
-			set: func(item sequencer.Step, value int) {
-				item.SetProbability(value)
+			set: func(item sequencer.Step, value int, add int) {
+				item.SetProbability(value + add)
 			},
 		},
 		{
@@ -173,16 +174,19 @@ func (m *mainModel) initParameters() {
 			string: func(item sequencer.Step) string {
 				return item.OffsetString()
 			},
-			set: func(item sequencer.Step, value int) {
-				item.SetOffset(value)
+			set: func(item sequencer.Step, value int, add int) {
+				item.SetOffset(value + add)
 			},
 		},
 	}
 }
 
-func (p *parameter[t]) update(item t, add int) {
-	newValue := p.value(item) + add
-	p.set(item, newValue)
+func (p *parameter[t]) increase(item t) {
+	p.set(item, p.value(item), 1)
+}
+
+func (p *parameter[t]) decrease(item t) {
+	p.set(item, p.value(item), -1)
 }
 
 func (p parameter[t]) render(item t) string {
@@ -246,4 +250,22 @@ func (m mainModel) paramSize() (int, int) {
 	width := m.width / paramsPerLine
 	height := width / 6
 	return width, height
+}
+
+func setLengthParam(item sequencer.Parametrable, value int, add int) {
+	switch {
+	case value < pulsesPerStep*4:
+		item.SetLength(value + add)
+	case value < pulsesPerStep*8:
+		item.SetLength(value + 3*add)
+	case value < pulsesPerStep*16:
+		item.SetLength(value + 6*add)
+	case value < pulsesPerStep*32:
+		item.SetLength(value + 12*add)
+	case value == pulsesPerStep*maxSteps+pulsesPerStep && add < 0:
+		item.SetLength(pulsesPerStep * maxSteps)
+	default:
+		item.SetLength(value + 24*add)
+
+	}
 }

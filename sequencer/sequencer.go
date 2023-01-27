@@ -172,6 +172,9 @@ func (s *sequencer) RemoveStep(track int) {
 	if len(t.steps) == minSteps {
 		return
 	}
+	if t.lastTriggeredStep == len(t.steps)-1 {
+		t.lastTriggeredStep = 0
+	}
 	t.steps[len(t.steps)-1].reset()
 	t.steps = t.steps[:len(t.steps)-1]
 	if t.pulse >= len(t.steps)*pulsesPerStep-1 {

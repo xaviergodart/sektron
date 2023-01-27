@@ -9,8 +9,8 @@ import (
 const (
 	minChordNote   = 21
 	maxChordNote   = 108
-	minLength      = 1
-	maxLength      = pulsesPerStep*maxSteps + 1 // +1 for the infinity mode (TODO)
+	minLength      = 2
+	maxLength      = pulsesPerStep*maxSteps + pulsesPerStep // +1 step for the infinity mode
 	minVelocity    = 0
 	maxVelocity    = 127
 	minProbability = 0
@@ -54,6 +54,8 @@ func lengthString(length int) string {
 		return "1/4"
 	case pulsesPerStep * stepsPerQuarterNote * 2:
 		return "1/2"
+	case maxLength:
+		return "INF"
 	default:
 		return fmt.Sprintf("%.1f", float64(length)/float64(pulsesPerStep))
 	}

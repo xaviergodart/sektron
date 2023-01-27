@@ -159,17 +159,17 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case key.Matches(msg, m.keymap.ParamValueUp):
 			if m.mode == recMode {
-				m.parameters.step[m.activeParam].update(m.getActiveStep(), 1)
+				m.parameters.step[m.activeParam].increase(m.getActiveStep())
 			} else {
-				m.parameters.track[m.activeParam].update(m.getActiveTrack(), 1)
+				m.parameters.track[m.activeParam].increase(m.getActiveTrack())
 			}
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamValueDown):
 			if m.mode == recMode {
-				m.parameters.step[m.activeParam].update(m.getActiveStep(), -1)
+				m.parameters.step[m.activeParam].decrease(m.getActiveStep())
 			} else {
-				m.parameters.track[m.activeParam].update(m.getActiveTrack(), -1)
+				m.parameters.track[m.activeParam].decrease(m.getActiveTrack())
 			}
 			return m, nil
 

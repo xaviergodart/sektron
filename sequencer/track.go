@@ -176,7 +176,12 @@ func (t *track) SetChord(chord []uint8) {
 
 // SetLength sets a new length value.
 func (t *track) SetLength(length int) {
-	if length < minLength || length > maxLength {
+	if length < minLength {
+		return
+	}
+	// Infinite mode
+	if length > maxLength {
+		t.length = maxLength
 		return
 	}
 	t.length = length
@@ -231,14 +236,16 @@ func (t *track) trigger() {
 	for _, step := range t.steps {
 		if t.active && step.isStartingPulse() {
 			// We reset the last triggered step to avoid 2 steps of the same
-			//track being triggered at the same time.
-			t.steps[t.lastTriggeredStep].reset()
+			// track being triggered at the same time.
+			if step.active && !t.steps[t.lastTriggeredStep].isInfinite() {
+				t.steps[t.lastTriggeredStep].reset()
+			}
 
 			step.trigger()
 			continue
 		}
 
-		if step.isEndingPulse() {
+		if step.isEndingPulse() && !step.isInfinite() {
 			step.reset()
 		}
 	}
@@ -249,6 +256,10 @@ func (t *track) trigger() {
 	if t.pulse == pulsesPerStep*len(t.steps) {
 		t.pulse = 0
 	}
+}
+
+func (t track) isInfinite() bool {
+	return t.length == maxLength
 }
 
 // reset move back the pulse to the beginning, and stops all the already
