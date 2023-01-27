@@ -1,9 +1,9 @@
 package sequencer
 
 import (
+	"fmt"
 	"math/rand"
 	"sektron/midi"
-	"strconv"
 )
 
 // Step contains a step state.
@@ -130,7 +130,10 @@ func (s step) ProbabilityString() string {
 
 // OffsetString returns the string representation of the step offset.
 func (s step) OffsetString() string {
-	return strconv.Itoa(s.offset)
+	if s.offset == 0 {
+		return ""
+	}
+	return fmt.Sprintf("+%d", s.offset)
 }
 
 // SetChord sets a new chord value.

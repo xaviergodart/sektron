@@ -114,11 +114,13 @@ func (m mainModel) renderStepContent(step sequencer.Step) string {
 		note(step.Chord()[0]).Display(),
 		lipgloss.JoinHorizontal(
 			lipgloss.Left,
+			step.LengthString(),
 			lipgloss.NewStyle().
-				Render(step.LengthString()),
-			lipgloss.NewStyle().
-				MarginLeft(2).
+				MarginLeft(1).
 				Render(step.ProbabilityString()),
+			lipgloss.NewStyle().
+				MarginLeft(1).
+				Render(step.OffsetString()),
 		),
 	)
 }
