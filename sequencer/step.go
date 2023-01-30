@@ -131,7 +131,7 @@ func (s step) ProbabilityString() string {
 // OffsetString returns the string representation of the step offset.
 func (s step) OffsetString() string {
 	if s.offset == 0 {
-		return ""
+		return fmt.Sprintf("%d", s.offset)
 	}
 	return fmt.Sprintf("+%d", s.offset)
 }

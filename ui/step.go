@@ -111,7 +111,7 @@ func (m mainModel) renderStepContent(step sequencer.Step) string {
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
 		fmt.Sprintf("%d%s", step.Position()+1, activeText),
-		note(step.Chord()[0]).Display(),
+		toASCIIFont(step.ChordString()),
 		lipgloss.JoinHorizontal(
 			lipgloss.Left,
 			step.LengthString(),
