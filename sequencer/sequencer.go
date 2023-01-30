@@ -3,7 +3,7 @@
 //
 // A sequencer instance is composed of:
 //   - a clock that handle time events
-//   - 1 to 16 tracks
+//   - 1 to 10 tracks
 //   - up to 128 steps per track
 //
 // Uppon creation, a new sequencer should receive a midi instance that is
@@ -19,9 +19,9 @@ import (
 
 const (
 	defaultTempo         float64 = 120.0
-	defaultTracks        int     = 8
+	defaultTracks        int     = 4
 	minTracks            int     = 1
-	maxTracks            int     = 16
+	maxTracks            int     = 10
 	defaultNote          uint8   = 60
 	defaultVelocity      uint8   = 100
 	defaultProbability   int     = 100

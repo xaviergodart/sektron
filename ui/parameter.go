@@ -39,30 +39,6 @@ type parameter[t sequencer.Parametrable] struct {
 func (m *mainModel) initParameters() {
 	m.parameters.track = []parameter[sequencer.Track]{
 		{
-			name: "device",
-			value: func(item sequencer.Track) int {
-				return item.Device()
-			},
-			string: func(item sequencer.Track) string {
-				return item.DeviceString()
-			},
-			set: func(item sequencer.Track, value int, add int) {
-				item.SetDevice(value + add)
-			},
-		},
-		{
-			name: "channel",
-			value: func(item sequencer.Track) int {
-				return int(item.Channel())
-			},
-			string: func(item sequencer.Track) string {
-				return item.ChannelString()
-			},
-			set: func(item sequencer.Track, value int, add int) {
-				item.SetChannel(uint8(value + add))
-			},
-		},
-		{
 			name: "note",
 			value: func(item sequencer.Track) int {
 				// TODO: make chords actual chords
@@ -111,6 +87,30 @@ func (m *mainModel) initParameters() {
 			},
 			set: func(item sequencer.Track, value int, add int) {
 				item.SetProbability(value + add)
+			},
+		},
+		{
+			name: "device",
+			value: func(item sequencer.Track) int {
+				return item.Device()
+			},
+			string: func(item sequencer.Track) string {
+				return item.DeviceString()
+			},
+			set: func(item sequencer.Track, value int, add int) {
+				item.SetDevice(value + add)
+			},
+		},
+		{
+			name: "channel",
+			value: func(item sequencer.Track) int {
+				return int(item.Channel())
+			},
+			string: func(item sequencer.Track) string {
+				return item.ChannelString()
+			},
+			set: func(item sequencer.Track, value int, add int) {
+				item.SetChannel(uint8(value + add))
 			},
 		},
 	}
