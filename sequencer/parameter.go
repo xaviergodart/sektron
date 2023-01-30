@@ -10,7 +10,7 @@ const (
 	minChordNote   = 21
 	maxChordNote   = 108
 	minLength      = 2
-	maxLength      = pulsesPerStep*maxSteps + pulsesPerStep // +1 step for the infinity mode
+	maxLength      = pulsesPerStep*maxSteps + pulsesPerStep // +1 step for the infinity mode (TODO: fix INF on multiple tracks)
 	minVelocity    = 0
 	maxVelocity    = 127
 	minProbability = 0
