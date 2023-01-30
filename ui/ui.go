@@ -129,6 +129,8 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.activeStep = number + (m.activeTrackPage * stepsPerPage)
 			m.mode = stepMode
 			m.stepModeTimer = 0
+			// TODO: fix panic when switching from track to step
+			// and activeParam does not exists
 			return m, nil
 
 		case key.Matches(msg, m.keymap.StepToggle):

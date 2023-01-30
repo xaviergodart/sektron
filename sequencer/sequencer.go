@@ -213,6 +213,7 @@ func (s *sequencer) ToggleStep(track int, step int) {
 		return
 	}
 	s.tracks[track].steps[step].active = !s.tracks[track].steps[step].active
+	// TODO: clear overridden parameters
 }
 
 func (s *sequencer) start() {

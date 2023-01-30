@@ -142,7 +142,7 @@ func (m *mainModel) initParameters() {
 					lipgloss.Center,
 					toASCIIFont(item.ChannelString()),
 					"",
-					"midi channel",
+					"channel",
 				)
 			},
 			set: func(item sequencer.Track, value int, add int) {

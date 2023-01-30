@@ -41,73 +41,73 @@ var (
 		"A": lipgloss.JoinVertical(
 			lipgloss.Left,
 			[]string{
-				"█▀▀█",
-				"█▄▄█",
-				"█  █",
+				"█▀█",
+				"█▄█",
+				"█ █",
 			}...,
 		),
 		"B": lipgloss.JoinVertical(
 			lipgloss.Left,
 			[]string{
-				"█▀▀█",
-				"█▀▀▄",
-				"█▄▄█",
+				"█▀█",
+				"█▀▄",
+				"█▄█",
 			}...,
 		),
 		"C": lipgloss.JoinVertical(
 			lipgloss.Left,
 			[]string{
-				"█▀▀█",
-				"█   ",
-				"█▄▄█",
+				"█▀█",
+				"█  ",
+				"█▄█",
 			}...,
 		),
 		"D": lipgloss.JoinVertical(
 			lipgloss.Left,
 			[]string{
-				"█▀▀▄",
-				"█  █",
-				"█▄▄▀",
+				"█▀▄",
+				"█ █",
+				"█▄▀",
 			}...,
 		),
 		"E": lipgloss.JoinVertical(
 			lipgloss.Left,
 			[]string{
-				"█▀▀▀",
-				"█▀▀▀",
-				"█▄▄▄",
+				"█▀▀",
+				"█▀",
+				"█▄▄",
 			}...,
 		),
 		"F": lipgloss.JoinVertical(
 			lipgloss.Left,
 			[]string{
-				"█▀▀▀",
-				"█▀▀▀",
-				"█   ",
+				"█▀▀",
+				"█▀",
+				"█  ",
 			}...,
 		),
 		"G": lipgloss.JoinVertical(
 			lipgloss.Left,
 			[]string{
-				"█▀▀█",
-				"█ ▄▄",
-				"█▄▄█",
+				"█▀▀",
+				"█ ▄",
+				"█▄█",
 			}...,
 		),
 		"S": lipgloss.JoinVertical(
 			lipgloss.Left,
 			[]string{
-				"█▀▀█",
-				"▀▀▄▄",
-				"█▄▄█",
+				"█▀█",
+				"▀▄▄",
+				"█▄█",
 			}...,
 		),
 		"T": lipgloss.JoinVertical(
 			lipgloss.Left,
 			[]string{
-				"▀█▀ ",
-				" █  ",
-				" █  ",
+				"▀█▀",
+				" █ ",
+				" █ ",
 			}...,
 		),
 		"b": lipgloss.JoinVertical(
