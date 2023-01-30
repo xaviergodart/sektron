@@ -20,14 +20,18 @@ var (
 	trackActiveStyle = transportBarStyle.Copy().
 				Foreground(secondaryTextColor).
 				Background(activeColor)
+	trackActiveInactiveStyle = transportBarStyle.Copy().
+					Italic(true).
+					Foreground(secondaryTextColor).
+					Background(activeColor)
 	trackActiveCurrentStepActiveStyle = transportBarStyle.Copy().
 						Foreground(secondaryTextColor).
 						Background(currentColor)
 	trackCurrentStepActiveStyle = transportBarStyle.Copy().
 					Background(currentDimmedColor)
-	trackInactive = transportBarStyle.Copy().
-			Italic(true).
-			Foreground(secondaryDimmedColor)
+	trackInactiveStyle = transportBarStyle.Copy().
+				Italic(true).
+				Foreground(secondaryDimmedColor)
 
 	transportPlayerStyle = transportBarStyle.Copy().
 				Background(currentColor).
@@ -97,10 +101,12 @@ func (m mainModel) renderTransportTracks() string {
 			tracks = append(tracks, trackActiveCurrentStepActiveStyle.Render(text))
 		} else if m.seq.IsPlaying() && track.IsCurrentStepActive() {
 			tracks = append(tracks, trackCurrentStepActiveStyle.Render(text))
+		} else if i == m.activeTrack && !track.IsActive() {
+			tracks = append(tracks, trackActiveInactiveStyle.Render(text))
 		} else if i == m.activeTrack {
 			tracks = append(tracks, trackActiveStyle.Render(text))
 		} else if !track.IsActive() {
-			tracks = append(tracks, trackInactive.Render(text))
+			tracks = append(tracks, trackInactiveStyle.Render(text))
 		} else {
 			tracks = append(tracks, transportBarStyle.Render(text))
 		}
