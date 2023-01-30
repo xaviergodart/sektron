@@ -5,6 +5,7 @@ import (
 )
 
 var (
+	// TODO: add char for infinity mode
 	asciiCharTable = map[string]string{
 		" ": lipgloss.JoinVertical(
 			lipgloss.Left,
