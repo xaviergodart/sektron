@@ -136,8 +136,8 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if number >= len(m.getActiveTrack().Steps()) {
 				return m, nil
 			}
-			m.seq.ToggleStep(m.activeTrack, m.activeStep)
 			m.activeStep = number + (m.activeTrackPage * stepsPerPage)
+			m.seq.ToggleStep(m.activeTrack, m.activeStep)
 			m.mode = stepMode
 			m.stepModeTimer = 0
 			return m, nil
@@ -209,18 +209,18 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamValueUp):
-			if m.mode == stepMode {
+			if m.mode == stepMode && m.getActiveStep().IsActive() {
 				m.parameters.step[m.activeParam].increase(m.getActiveStep())
-			} else {
+			} else if m.mode == trackMode {
 				m.parameters.track[m.activeParam].increase(m.getActiveTrack())
 			}
 			m.stepModeTimer = 0
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamValueDown):
-			if m.mode == stepMode {
+			if m.mode == stepMode && m.getActiveStep().IsActive() {
 				m.parameters.step[m.activeParam].decrease(m.getActiveStep())
-			} else {
+			} else if m.mode == trackMode {
 				m.parameters.track[m.activeParam].decrease(m.getActiveTrack())
 			}
 			m.stepModeTimer = 0

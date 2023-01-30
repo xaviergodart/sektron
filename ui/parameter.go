@@ -249,17 +249,19 @@ func (m mainModel) renderParams() string {
 	var params []string
 	if m.mode == stepMode {
 		params = append(params, paramStepTitleStyle.Render(toASCIIFont(fmt.Sprintf("S%d", m.activeStep+1))))
-		for i, p := range m.parameters.step {
-			var style lipgloss.Style
-			if m.activeParam == i {
-				style = selectedParamStyle
-			} else {
-				style = paramStyle
+		if m.getActiveStep().IsActive() {
+			for i, p := range m.parameters.step {
+				var style lipgloss.Style
+				if m.activeParam == i {
+					style = selectedParamStyle
+				} else {
+					style = paramStyle
+				}
+				params = append(
+					params,
+					style.Render(p.string(m.getActiveStep())),
+				)
 			}
-			params = append(
-				params,
-				style.Render(p.string(m.getActiveStep())),
-			)
 		}
 	} else {
 		params = append(params, paramTrackTitleStyle.Render(toASCIIFont(fmt.Sprintf("T%d", m.activeTrack+1))))
