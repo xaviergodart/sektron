@@ -174,7 +174,13 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamSelectRight):
-			if m.activeParam < len(m.parameters.track)-1 {
+			max := 0
+			if m.mode == trackMode {
+				max = len(m.parameters.track) - 1
+			} else {
+				max = len(m.parameters.step) - 1
+			}
+			if m.activeParam < max {
 				m.activeParam++
 			}
 			return m, nil
