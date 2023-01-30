@@ -18,6 +18,9 @@ const (
 var (
 	stepStyle = lipgloss.NewStyle().
 			Margin(1, 2, 0, 0)
+	stepSelectedStyle = lipgloss.NewStyle().
+				Margin(1, 2, 0, 0).
+				Foreground(primaryColor)
 	stepActiveStyle = lipgloss.NewStyle().
 			Margin(1, 0, 0, 0)
 	stepVelocityStyle = lipgloss.NewStyle().
@@ -35,7 +38,11 @@ func (m mainModel) renderStep(step sequencer.Step) string {
 	width, height := m.stepSize()
 
 	var stepCurrentColor, stepActiveColor, stepInactiveColor lipgloss.Color
-	if step.Track().IsActive() {
+	if m.mode == stepMode && m.activeStep == step.Position() {
+		stepCurrentColor = currentColor
+		stepActiveColor = primaryColor
+		stepInactiveColor = primaryColor
+	} else if step.Track().IsActive() {
 		stepCurrentColor = currentColor
 		stepActiveColor = activeColor
 		stepInactiveColor = inactiveColor
@@ -101,16 +108,12 @@ func (m mainModel) stepSize() (int, int) {
 }
 
 func (m mainModel) renderStepContent(step sequencer.Step) string {
-	activeText := ""
-	if step.Position() == m.activeStep {
-		activeText = "♦"
-	}
 	if !step.IsActive() {
 		return strconv.Itoa(step.Position() + 1)
 	}
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
-		fmt.Sprintf("%d%s", step.Position()+1, activeText),
+		fmt.Sprintf("%d", step.Position()+1),
 		toASCIIFont(step.ChordString()),
 		lipgloss.JoinHorizontal(
 			lipgloss.Left,

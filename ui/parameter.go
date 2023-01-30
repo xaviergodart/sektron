@@ -14,11 +14,14 @@ const (
 )
 
 var (
-	paramTitleStyle = lipgloss.NewStyle().
-			Padding(1, 1, 1, 2).
-			MarginRight(2).
-			BorderStyle(lipgloss.DoubleBorder()).
-			BorderForeground(primaryColor)
+	paramTrackTitleStyle = lipgloss.NewStyle().
+				Padding(1, 1, 1, 2).
+				MarginRight(2).
+				BorderStyle(lipgloss.HiddenBorder())
+
+	paramStepTitleStyle = paramTrackTitleStyle.Copy().
+				BorderStyle(lipgloss.DoubleBorder()).
+				BorderForeground(primaryColor)
 
 	paramStyle = lipgloss.NewStyle().
 			Align(lipgloss.Center).
@@ -244,9 +247,8 @@ func (p *parameter[t]) decrease(item t) {
 
 func (m mainModel) renderParams() string {
 	var params []string
-	// TODO: ugly. Cleanup that...
 	if m.mode == stepMode {
-		params = append(params, paramTitleStyle.Render(toASCIIFont(fmt.Sprintf("S%d", m.activeStep+1))))
+		params = append(params, paramStepTitleStyle.Render(toASCIIFont(fmt.Sprintf("S%d", m.activeStep+1))))
 		for i, p := range m.parameters.step {
 			var style lipgloss.Style
 			if m.activeParam == i {
@@ -260,7 +262,7 @@ func (m mainModel) renderParams() string {
 			)
 		}
 	} else {
-		params = append(params, paramTitleStyle.Render(toASCIIFont(fmt.Sprintf("T%d", m.activeTrack+1))))
+		params = append(params, paramTrackTitleStyle.Render(toASCIIFont(fmt.Sprintf("T%d", m.activeTrack+1))))
 		for i, p := range m.parameters.track {
 			var style lipgloss.Style
 			if m.activeParam == i {
