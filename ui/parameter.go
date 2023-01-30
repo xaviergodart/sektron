@@ -195,7 +195,6 @@ func (p parameter[t]) render(item t) string {
 
 func (m mainModel) renderParams() string {
 	var params []string
-	width, height := m.paramSize()
 	// TODO: ugly. Cleanup that...
 	if m.mode == recMode {
 		for i, p := range m.parameters.step {
@@ -207,15 +206,7 @@ func (m mainModel) renderParams() string {
 			}
 			params = append(
 				params,
-				style.Render(
-					lipgloss.Place(
-						width,
-						height,
-						lipgloss.Center,
-						lipgloss.Center,
-						p.render(m.getActiveStep()),
-					),
-				),
+				style.Render(p.render(m.getActiveStep())),
 			)
 		}
 	} else {
@@ -228,15 +219,7 @@ func (m mainModel) renderParams() string {
 			}
 			params = append(
 				params,
-				style.Render(
-					lipgloss.Place(
-						width,
-						height,
-						lipgloss.Center,
-						lipgloss.Center,
-						p.render(m.getActiveTrack()),
-					),
-				),
+				style.Render(p.render(m.getActiveTrack())),
 			)
 		}
 	}
@@ -244,12 +227,6 @@ func (m mainModel) renderParams() string {
 		lipgloss.Left,
 		params...,
 	)
-}
-
-func (m mainModel) paramSize() (int, int) {
-	width := m.width / paramsPerLine
-	height := width / 6
-	return width, height
 }
 
 func setLengthParam(item sequencer.Parametrable, value int, add int) {
