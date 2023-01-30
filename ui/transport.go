@@ -61,8 +61,9 @@ var (
 func (m mainModel) renderTransport() string {
 	w := lipgloss.Width
 
+	// TODO: cleanup mode if useless
 	transportTrack := m.renderTransportTracks()
-	transportMode := m.renderTransportMode()
+	//transportMode := m.renderTransportMode()
 	transportTempo := m.renderTransportTempo()
 	transportPlayer := m.renderTransportPlayer()
 	transportSignature := trackActiveCurrentStepActiveStyle.Render(
@@ -73,7 +74,7 @@ func (m mainModel) renderTransport() string {
 	transportBar := lipgloss.JoinHorizontal(lipgloss.Center,
 		transportTempo,
 		transportPlayer,
-		transportMode,
+		//transportMode,
 		transportTrack,
 		transportSignature,
 		transportTrackPages,
@@ -126,7 +127,7 @@ func (m mainModel) renderTransportPlayer() string {
 
 func (m mainModel) renderTransportMode() string {
 	text := "●"
-	if m.mode == recMode {
+	if m.mode == stepMode {
 		return transportModeStyle.Render(text)
 	}
 	return transportBarStyle.Render(text)

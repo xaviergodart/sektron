@@ -245,7 +245,7 @@ func (p *parameter[t]) decrease(item t) {
 func (m mainModel) renderParams() string {
 	var params []string
 	// TODO: ugly. Cleanup that...
-	if m.mode == recMode {
+	if m.mode == stepMode {
 		params = append(params, paramTitleStyle.Render(toASCIIFont(fmt.Sprintf("S%d", m.activeStep+1))))
 		for i, p := range m.parameters.step {
 			var style lipgloss.Style

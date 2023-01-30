@@ -24,14 +24,16 @@ const (
 	// trackMode allows the user to select the tracks using the step keys.
 	trackMode mode = iota
 
-	// recMode allows the user to activate/deactivate steps using the step keys.
-	recMode
+	// stepMode allows the user to activate/deactivate steps using the step keys.
+	stepMode
 )
 
 const (
 	// We don't need to refresh the ui as often as the sequencer.
 	// It saves some cpu. Right now we run it at 30 fps.
 	refreshFrequency = 33 * time.Millisecond
+
+	stepModeTimeout = 90
 )
 
 type mainModel struct {
@@ -45,6 +47,7 @@ type mainModel struct {
 	activeTrackPage int
 	activeStep      int
 	activeParam     int
+	stepModeTimer   int
 	help            help.Model
 }
 
@@ -58,6 +61,7 @@ func New(seq sequencer.Sequencer) mainModel {
 		activeTrackPage: 0,
 		activeStep:      0,
 		activeParam:     0,
+		stepModeTimer:   0,
 		help:            help.New(),
 	}
 	model.initParameters()
@@ -84,6 +88,13 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case tickMsg:
+		if m.mode == stepMode {
+			m.stepModeTimer++
+		}
+		if m.stepModeTimer > stepModeTimeout {
+			m.stepModeTimer = 0
+			m.mode = trackMode
+		}
 		return m, tick()
 
 	case tea.KeyMsg:
@@ -96,7 +107,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.activeParam = 0
 			m.activeStep = 0
 			if m.mode == trackMode {
-				m.mode = recMode
+				m.mode = stepMode
 			} else {
 				m.mode = trackMode
 			}
@@ -113,12 +124,16 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keymap.StepSelect):
 			number := m.keymap.StepSelectIndex[msg.String()]
 			m.activeStep = number + (m.activeTrackPage * stepsPerPage)
+			m.mode = stepMode
+			m.stepModeTimer = 0
 			return m, nil
 
 		case key.Matches(msg, m.keymap.StepToggle):
 			number := m.keymap.StepToggleIndex[msg.String()]
 			m.activeStep = number + (m.activeTrackPage * stepsPerPage)
 			m.seq.ToggleStep(m.activeTrack, m.activeStep)
+			m.mode = stepMode
+			m.stepModeTimer = 0
 			return m, nil
 
 		case key.Matches(msg, m.keymap.TrackSelect):
@@ -171,6 +186,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.activeParam > 0 {
 				m.activeParam--
 			}
+			m.stepModeTimer = 0
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamSelectRight):
@@ -183,22 +199,25 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.activeParam < max {
 				m.activeParam++
 			}
+			m.stepModeTimer = 0
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamValueUp):
-			if m.mode == recMode {
+			if m.mode == stepMode {
 				m.parameters.step[m.activeParam].increase(m.getActiveStep())
 			} else {
 				m.parameters.track[m.activeParam].increase(m.getActiveTrack())
 			}
+			m.stepModeTimer = 0
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamValueDown):
-			if m.mode == recMode {
+			if m.mode == stepMode {
 				m.parameters.step[m.activeParam].decrease(m.getActiveStep())
 			} else {
 				m.parameters.track[m.activeParam].decrease(m.getActiveTrack())
 			}
+			m.stepModeTimer = 0
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Help):
@@ -244,7 +263,7 @@ func (m *mainModel) addPress(msg tea.KeyMsg) {
 	switch m.mode {
 	case trackMode:
 		m.seq.AddTrack()
-	case recMode:
+	case stepMode:
 		m.seq.AddStep(m.activeTrack)
 	}
 }
@@ -256,7 +275,7 @@ func (m *mainModel) removePress(msg tea.KeyMsg) {
 			m.activeTrack--
 		}
 		m.seq.RemoveTrack()
-	case recMode:
+	case stepMode:
 		remainingStepsInPage := (len(m.getActiveTrack().Steps()) - 1) % stepsPerPage
 		if m.activeTrackPage > 0 && remainingStepsInPage == 0 {
 			m.activeTrackPage--
