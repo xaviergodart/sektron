@@ -14,6 +14,7 @@ var (
 			[]string{
 				" ",
 				" ",
+				" ",
 			}...,
 		),
 		"A": lipgloss.JoinVertical(
