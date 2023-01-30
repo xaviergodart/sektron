@@ -123,6 +123,9 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case key.Matches(msg, m.keymap.StepSelect):
 			number := m.keymap.StepSelectIndex[msg.String()]
+			if number >= len(m.getActiveTrack().Steps()) {
+				return m, nil
+			}
 			m.activeStep = number + (m.activeTrackPage * stepsPerPage)
 			m.mode = stepMode
 			m.stepModeTimer = 0
@@ -130,8 +133,11 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case key.Matches(msg, m.keymap.StepToggle):
 			number := m.keymap.StepToggleIndex[msg.String()]
-			m.activeStep = number + (m.activeTrackPage * stepsPerPage)
+			if number >= len(m.getActiveTrack().Steps()) {
+				return m, nil
+			}
 			m.seq.ToggleStep(m.activeTrack, m.activeStep)
+			m.activeStep = number + (m.activeTrackPage * stepsPerPage)
 			m.mode = stepMode
 			m.stepModeTimer = 0
 			return m, nil
@@ -222,7 +228,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case key.Matches(msg, m.keymap.Help):
 			m.help.ShowAll = !m.help.ShowAll
-			return m, nil
+			return m, tea.ClearScreen
 
 		case key.Matches(msg, m.keymap.Quit):
 			if m.seq.IsPlaying() {
