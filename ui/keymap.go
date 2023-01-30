@@ -6,7 +6,6 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 )
 
-// TODO: implement left and right for parameters
 var (
 	stepSelectKeys  = []string{"a", "z", "e", "r", "t", "y", "u", "i", "q", "s", "d", "f", "g", "h", "j", "k"}
 	stepToggleKeys  = []string{"A", "Z", "E", "R", "T", "Y", "U", "I", "Q", "S", "D", "F", "G", "H", "J", "K"}
