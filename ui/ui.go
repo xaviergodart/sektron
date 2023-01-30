@@ -110,18 +110,31 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.removePress(msg)
 			return m, nil
 
-		case key.Matches(msg, m.keymap.Select):
-			m.selectPress(msg)
+		case key.Matches(msg, m.keymap.StepSelect):
+			number := m.keymap.StepSelectIndex[msg.String()]
+			m.activeStep = number + (m.activeTrackPage * stepsPerPage)
 			return m, nil
 
-		case key.Matches(msg, m.keymap.Toggle):
-			number := m.keymap.ToggleIndex[msg.String()]
-			if m.mode == trackMode {
-				m.seq.ToggleTrack(number)
-			} else if m.mode == recMode {
-				m.activeStep = number + (m.activeTrackPage * stepsPerPage)
-				m.seq.ToggleStep(m.activeTrack, m.activeStep)
+		case key.Matches(msg, m.keymap.StepToggle):
+			number := m.keymap.StepToggleIndex[msg.String()]
+			m.activeStep = number + (m.activeTrackPage * stepsPerPage)
+			m.seq.ToggleStep(m.activeTrack, m.activeStep)
+			return m, nil
+
+		case key.Matches(msg, m.keymap.TrackSelect):
+			number := m.keymap.TrackSelectIndex[msg.String()]
+			if number >= len(m.seq.Tracks()) {
+				return m, nil
 			}
+			m.activeTrack = number
+			m.activeTrackPage = 0
+			m.activeStep = 0
+			m.activeParam = 0
+			return m, nil
+
+		case key.Matches(msg, m.keymap.TrackToggle):
+			number := m.keymap.TrackToggleIndex[msg.String()]
+			m.seq.ToggleTrack(number)
 			return m, nil
 
 		case key.Matches(msg, m.keymap.TrackPageUp):
@@ -154,8 +167,16 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.seq.SetTempo(m.seq.Tempo() - 0.1)
 			return m, nil
 
-		case key.Matches(msg, m.keymap.Params):
-			m.activeParam = m.keymap.ParamsIndex[msg.String()]
+		case key.Matches(msg, m.keymap.ParamSelectLeft):
+			if m.activeParam > 0 {
+				m.activeParam--
+			}
+			return m, nil
+
+		case key.Matches(msg, m.keymap.ParamSelectRight):
+			if m.activeParam < len(m.parameters.track)-1 {
+				m.activeParam++
+			}
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamValueUp):
@@ -211,22 +232,6 @@ func (m mainModel) View() string {
 		cleanup,
 		help,
 	)
-}
-
-func (m *mainModel) selectPress(msg tea.KeyMsg) {
-	number := m.keymap.SelectIndex[msg.String()]
-	switch m.mode {
-	case trackMode:
-		if number >= len(m.seq.Tracks()) {
-			return
-		}
-		m.activeTrack = number
-		m.activeTrackPage = 0
-		m.activeStep = 0
-		m.activeParam = 0
-	case recMode:
-		m.activeStep = number + (m.activeTrackPage * stepsPerPage)
-	}
 }
 
 func (m *mainModel) addPress(msg tea.KeyMsg) {
