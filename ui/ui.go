@@ -123,6 +123,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case key.Matches(msg, m.keymap.StepSelect):
 			number := m.keymap.StepSelectIndex[msg.String()]
+			// TODO: fix a panic when selecting a non existing step
 			if number >= len(m.getActiveTrack().Steps()) {
 				return m, nil
 			}
