@@ -5,7 +5,6 @@ import (
 )
 
 var (
-	// TODO: add char for infinity mode
 	asciiCharTable = map[string]string{
 		" ": lipgloss.JoinVertical(
 			lipgloss.Left,
@@ -95,11 +94,27 @@ var (
 				"█▄█",
 			}...,
 		),
+		"I": lipgloss.JoinVertical(
+			lipgloss.Left,
+			[]string{
+				"▀█▀",
+				" █ ",
+				"▄█▄",
+			}...,
+		),
+		"N": lipgloss.JoinVertical(
+			lipgloss.Left,
+			[]string{
+				"█▀█",
+				"█ █",
+				"█ █",
+			}...,
+		),
 		"S": lipgloss.JoinVertical(
 			lipgloss.Left,
 			[]string{
 				"█▀█",
-				"▀▄▄",
+				"▀▀▄",
 				"█▄█",
 			}...,
 		),
