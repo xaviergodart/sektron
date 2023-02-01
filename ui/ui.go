@@ -123,15 +123,12 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case key.Matches(msg, m.keymap.StepSelect):
 			number := m.keymap.StepSelectIndex[msg.String()]
-			// TODO: fix a panic when selecting a non existing step
-			if number >= len(m.getActiveTrack().Steps()) {
+			if number >= len(m.getActiveTrack().Steps())-(m.activeTrackPage*stepsPerPage) {
 				return m, nil
 			}
 			m.activeStep = number + (m.activeTrackPage * stepsPerPage)
 			m.mode = stepMode
 			m.stepModeTimer = 0
-			// TODO: fix panic when switching from track to step
-			// and activeParam does not exists
 			return m, nil
 
 		case key.Matches(msg, m.keymap.StepToggle):
