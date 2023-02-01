@@ -13,6 +13,7 @@ var (
 	trackToggleKeys = []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "0"}
 )
 
+// TODO: add control for separate add/remove step
 type keyMap struct {
 	TogglePlay key.Binding
 	Mode       key.Binding
