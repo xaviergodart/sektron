@@ -78,7 +78,7 @@ func DefaultKeyMap() keyMap {
 		),
 		Mode: key.NewBinding(
 			key.WithKeys("tab"),
-			key.WithHelp("tab", "toggle mode (track, record)"),
+			key.WithHelp("tab", "toggle parameter mode (track, record)"),
 		),
 		AddTrack: key.NewBinding(
 			key.WithKeys("="),
@@ -99,12 +99,12 @@ func DefaultKeyMap() keyMap {
 		StepSelectIndex: map[string]int{},
 		StepSelect: key.NewBinding(
 			key.WithKeys(stepSelectKeys...),
-			key.WithHelp(strings.Join(stepSelectKeys, "/"), "select track|step 1 to 16"),
+			key.WithHelp(strings.Join(stepSelectKeys, "/"), "select step 1 to 16"),
 		),
 		StepToggleIndex: map[string]int{},
 		StepToggle: key.NewBinding(
 			key.WithKeys(stepToggleKeys...),
-			key.WithHelp(strings.Join(stepToggleKeys, "/"), "toggle track|step 1 to 16"),
+			key.WithHelp(strings.Join(stepToggleKeys, "/"), "toggle step 1 to 16"),
 		),
 		TrackSelectIndex: map[string]int{},
 		TrackSelect: key.NewBinding(
@@ -114,7 +114,7 @@ func DefaultKeyMap() keyMap {
 		TrackToggleIndex: map[string]int{},
 		TrackToggle: key.NewBinding(
 			key.WithKeys(trackToggleKeys...),
-			key.WithHelp(strings.Join(trackToggleKeys, "/"), "select track 1 to 10"),
+			key.WithHelp(strings.Join(trackToggleKeys, "/"), "toggle track 1 to 10"),
 		),
 		TrackPageUp: key.NewBinding(
 			key.WithKeys("p"),
