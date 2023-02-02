@@ -205,6 +205,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamSelectLeft):
+			// TODO: differenciate step active param from track active param
 			if m.activeParam > 0 {
 				m.activeParam--
 			}
