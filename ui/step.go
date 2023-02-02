@@ -18,9 +18,6 @@ const (
 var (
 	stepStyle = lipgloss.NewStyle().
 			Margin(1, 2, 0, 0)
-	stepSelectedStyle = lipgloss.NewStyle().
-				Margin(1, 2, 0, 0).
-				Foreground(primaryColor)
 	stepActiveStyle = lipgloss.NewStyle().
 			Margin(1, 0, 0, 0)
 	stepVelocityStyle = lipgloss.NewStyle().

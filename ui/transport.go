@@ -39,10 +39,6 @@ var (
 	transportPlayingStyle = transportPlayerStyle.Copy().
 				Background(transportPlayColor)
 
-	transportModeStyle = transportBarStyle.Copy().
-				Foreground(primaryTextColor).
-				Background(transportRecColor)
-
 	tempoStyle = transportBarStyle.Copy().
 			Foreground(primaryTextColor).
 			Background(primaryColor)
@@ -65,9 +61,7 @@ var (
 func (m mainModel) renderTransport() string {
 	w := lipgloss.Width
 
-	// TODO: cleanup mode if useless
 	transportTrack := m.renderTransportTracks()
-	//transportMode := m.renderTransportMode()
 	transportTempo := m.renderTransportTempo()
 	transportPlayer := m.renderTransportPlayer()
 	transportSignature := trackActiveCurrentStepActiveStyle.Render(
@@ -78,7 +72,6 @@ func (m mainModel) renderTransport() string {
 	transportBar := lipgloss.JoinHorizontal(lipgloss.Center,
 		transportTempo,
 		transportPlayer,
-		//transportMode,
 		transportTrack,
 		transportSignature,
 		transportTrackPages,
@@ -129,14 +122,6 @@ func (m mainModel) renderTransportPlayer() string {
 		return transportPlayingStyle.Render("▶")
 	}
 	return transportPlayerStyle.Render("■")
-}
-
-func (m mainModel) renderTransportMode() string {
-	text := "●"
-	if m.mode == stepMode {
-		return transportModeStyle.Render(text)
-	}
-	return transportBarStyle.Render(text)
 }
 
 func (m mainModel) renderTransportTrackPages() string {
