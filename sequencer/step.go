@@ -225,6 +225,15 @@ func (s step) isInfinite() bool {
 	return *s.length == maxLength
 }
 
+func (s *step) clearParameters() {
+	s.reset()
+	s.length = nil
+	s.chord = nil
+	s.velocity = nil
+	s.probability = nil
+	s.offset = 0
+}
+
 // reset stops all the notes in the chord if the step has been triggered.
 func (s *step) reset() {
 	if !s.triggered {
