@@ -13,13 +13,15 @@ var (
 	trackToggleKeys = []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "0"}
 )
 
-// TODO: add control for separate add/remove step
 type keyMap struct {
 	TogglePlay key.Binding
 	Mode       key.Binding
 
-	Add    key.Binding
-	Remove key.Binding
+	AddTrack    key.Binding
+	RemoveTrack key.Binding
+
+	AddStep    key.Binding
+	RemoveStep key.Binding
 
 	StepSelectIndex map[string]int
 	StepSelect      key.Binding
@@ -61,7 +63,7 @@ func (k keyMap) ShortHelp() []key.Binding {
 // key.Map interface.
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.TogglePlay, k.Mode, k.Add, k.Remove, k.TempoUp, k.TempoDown, k.TempoFineUp, k.TempoFineDown},
+		{k.TogglePlay, k.Mode, k.AddTrack, k.RemoveTrack, k.AddStep, k.RemoveStep, k.TempoUp, k.TempoDown, k.TempoFineUp, k.TempoFineDown},
 		{k.StepSelect, k.StepToggle, k.TrackSelect, k.TrackToggle, k.TrackPageUp, k.TrackPageDown, k.ParamValueUp, k.ParamValueDown},
 		{k.Help, k.Quit},
 	}
@@ -78,13 +80,21 @@ func DefaultKeyMap() keyMap {
 			key.WithKeys("tab"),
 			key.WithHelp("tab", "toggle mode (track, record)"),
 		),
-		Add: key.NewBinding(
+		AddTrack: key.NewBinding(
 			key.WithKeys("="),
-			key.WithHelp("=", "add track|step"),
+			key.WithHelp("=", "add track"),
 		),
-		Remove: key.NewBinding(
+		RemoveTrack: key.NewBinding(
 			key.WithKeys(")"),
-			key.WithHelp(")", "remove track|step"),
+			key.WithHelp(")", "remove track"),
+		),
+		AddStep: key.NewBinding(
+			key.WithKeys("+"),
+			key.WithHelp("+", "add step"),
+		),
+		RemoveStep: key.NewBinding(
+			key.WithKeys("°"),
+			key.WithHelp("°", "remove track"),
 		),
 		StepSelectIndex: map[string]int{},
 		StepSelect: key.NewBinding(
