@@ -74,7 +74,7 @@ var (
 			lipgloss.Left,
 			[]string{
 				"█▀▀",
-				"█▀",
+				"█▀ ",
 				"█▄▄",
 			}...,
 		),
@@ -82,7 +82,7 @@ var (
 			lipgloss.Left,
 			[]string{
 				"█▀▀",
-				"█▀",
+				"█▀ ",
 				"█  ",
 			}...,
 		),
@@ -105,7 +105,7 @@ var (
 		"N": lipgloss.JoinVertical(
 			lipgloss.Left,
 			[]string{
-				"█▀█",
+				"█▀▄",
 				"█ █",
 				"█ █",
 			}...,
