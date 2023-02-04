@@ -26,8 +26,8 @@ const (
 type Controllable interface {
 	Device() int
 	Channel() uint8
-	Controls() []*Control
-	IsActiveControl(control uint8) bool
+	Controls() []Control
+	IsActiveControl(control int) bool
 }
 
 type Control struct {
@@ -38,8 +38,8 @@ type Control struct {
 	value      int16
 }
 
-func NewControls(midi Midi, parent Controllable) []*Control {
-	controls := []*Control{
+func NewControls(midi Midi, parent Controllable) []Control {
+	controls := []Control{
 		{
 			midi:    midi,
 			parent:  parent,
@@ -58,7 +58,7 @@ func NewControls(midi Midi, parent Controllable) []*Control {
 	}
 
 	for i := 0; i <= 127; i++ {
-		controls = append(controls, &Control{
+		controls = append(controls, Control{
 			midi:       midi,
 			parent:     parent,
 			msgType:    controlChange,

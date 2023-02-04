@@ -8,9 +8,10 @@ import (
 )
 
 const (
-	paramsPerLine = 18
-	pulsesPerStep = 6
-	maxSteps      = 128
+	paramsPerLine  = 18
+	pulsesPerStep  = 6
+	maxSteps       = 128
+	midiParameters = 131
 )
 
 var (
@@ -45,6 +46,28 @@ type parameter[t sequencer.Parametrable] struct {
 	string func(item t) string
 	set    func(item t, value int, add int)
 	active func(item t) bool
+}
+
+func NewMidiParameter[t sequencer.Parametrable](nb int) parameter[t] {
+	return parameter[t]{
+		value: func(item t) int {
+			return int(item.Controls()[nb].Value())
+		},
+		string: func(item t) string {
+			return lipgloss.JoinVertical(
+				lipgloss.Center,
+				toASCIIFont(item.Controls()[nb].String()),
+				"",
+				item.Controls()[nb].Name(),
+			)
+		},
+		set: func(item t, value int, add int) {
+			item.Controls()[nb].Set(int16(value + add))
+		},
+		active: func(item t) bool {
+			return item.IsActiveControl(nb)
+		},
+	}
 }
 
 func (m *mainModel) initParameters() {
@@ -168,25 +191,10 @@ func (m *mainModel) initParameters() {
 				return true
 			},
 		},
-		{
-			value: func(item sequencer.Track) int {
-				return int(item.Controls()[0].Value())
-			},
-			string: func(item sequencer.Track) string {
-				return lipgloss.JoinVertical(
-					lipgloss.Center,
-					toASCIIFont(item.Controls()[0].String()),
-					"",
-					item.Controls()[0].Name(),
-				)
-			},
-			set: func(item sequencer.Track, value int, add int) {
-				item.Controls()[0].Set(int16(value + add))
-			},
-			active: func(item sequencer.Track) bool {
-				return item.IsActiveControl(0)
-			},
-		},
+	}
+
+	for i := 0; i <= midiParameters; i++ {
+		m.parameters.track = append(m.parameters.track, NewMidiParameter[sequencer.Track](i))
 	}
 
 	m.parameters.step = []parameter[sequencer.Step]{

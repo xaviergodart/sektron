@@ -30,6 +30,9 @@ type step struct {
 	// Once a step has been triggered, we prevent it from happening again.
 	triggered bool
 
+	// A step can send multiple midi control changes.
+	controls []midi.Control
+
 	// The next attributes defines the note parameters for the midi device.
 	// If nil, we should use the default ones defined at track level (see
 	// track.go)
@@ -57,6 +60,16 @@ func (s step) Position() int {
 	return s.position
 }
 
+// Device returns the step device.
+func (s step) Device() int {
+	return s.track.device
+}
+
+// Channel returns the step midi channel.
+func (s step) Channel() uint8 {
+	return s.track.channel
+}
+
 // IsActive returns true if the step is active.
 func (s step) IsActive() bool {
 	return s.active
@@ -65,6 +78,17 @@ func (s step) IsActive() bool {
 // IsCurrentStep returns true if the track pulse is on the current step.
 func (s step) IsCurrentStep() bool {
 	return s.position == s.track.CurrentStep()
+}
+
+// Controls returns the midi controls parameters.
+func (s step) Controls() []midi.Control {
+	return s.controls
+}
+
+// IsActiveControl checks if a given control is active.
+func (s step) IsActiveControl(control int) bool {
+	_, active := s.track.activeControls[control]
+	return active
 }
 
 // Chord returns the current step chord, or the one defined on the track if

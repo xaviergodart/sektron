@@ -12,8 +12,6 @@ type Track interface {
 	SetDevice(device int)
 	Channel() uint8
 	ChannelString() string
-	Controls() []*midi.Control
-	IsActiveControl(control uint8) bool
 	SetChannel(channel uint8)
 	Steps() []*step
 	CurrentStep() int
@@ -38,8 +36,8 @@ type track struct {
 	channel uint8
 
 	// A track can send multiple midi control changes.
-	controls       []*midi.Control
-	activeControls map[uint8]struct{}
+	controls       []midi.Control
+	activeControls map[int]struct{}
 
 	// Each track starts a goroutine to handle its pulse progression and step
 	// triggering, by using the trig chan at each clock tick.
@@ -112,12 +110,12 @@ func (t track) ChannelString() string {
 }
 
 // Controls returns the midi controls parameters.
-func (t track) Controls() []*midi.Control {
+func (t track) Controls() []midi.Control {
 	return t.controls
 }
 
 // IsActiveControl checks if a given control is active.
-func (t track) IsActiveControl(control uint8) bool {
+func (t track) IsActiveControl(control int) bool {
 	_, active := t.activeControls[control]
 	return active
 }

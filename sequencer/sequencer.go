@@ -114,7 +114,7 @@ func (s *sequencer) AddTrack() {
 		probability: defaultProbability,
 		device:      defaultDevice,
 		channel:     uint8(channel),
-		activeControls: map[uint8]struct{}{
+		activeControls: map[int]struct{}{
 			0: {},
 			1: {},
 			2: {},

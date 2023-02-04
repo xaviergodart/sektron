@@ -36,6 +36,7 @@ type Parametrable interface {
 	LengthString() string
 	VelocityString() string
 	ProbabilityString() string
+	midi.Controllable
 }
 
 func chordString(chord []uint8) string {
