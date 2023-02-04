@@ -77,7 +77,16 @@ func (c Control) String() string {
 }
 
 func (c Control) Name() string {
-	return gomidi.ControlChangeName[c.controller]
+	switch c.msgType {
+	case programChange:
+		return "Program"
+	case pitchBend:
+		return "Pitchbend"
+	case afterTouch:
+		return "After Touch"
+	default:
+		return gomidi.ControlChangeName[c.controller]
+	}
 }
 
 func (c *Control) Set(value int16) {
