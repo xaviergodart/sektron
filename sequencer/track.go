@@ -114,6 +114,15 @@ func (t track) Controls() []midi.Control {
 	return t.controls
 }
 
+// ActiveControls returns the midi active controls parameters.
+func (t track) ActiveControls() []midi.Control {
+	var controls []midi.Control
+	for c := range t.activeControls {
+		controls = append(controls, t.controls[c])
+	}
+	return controls
+}
+
 // IsActiveControl checks if a given control is active.
 func (t track) IsActiveControl(control int) bool {
 	_, active := t.activeControls[control]
@@ -270,6 +279,12 @@ func (t *track) trigger() {
 	// Go back to the beginning if we reach the end of the track.
 	if t.pulse == pulsesPerStep*len(t.steps) {
 		t.pulse = 0
+	}
+}
+
+func (t track) sendControlMessages() {
+	for _, c := range t.ActiveControls() {
+		c.Send()
 	}
 }
 

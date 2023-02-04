@@ -86,6 +86,8 @@ func (s *sequencer) TogglePlay() {
 	s.isPlaying = !s.isPlaying
 	if !s.isPlaying {
 		s.Reset()
+	} else {
+		s.sendControlMessages()
 	}
 }
 
@@ -240,5 +242,11 @@ func (s *sequencer) tick() {
 	}
 	for _, track := range s.tracks {
 		track.tick()
+	}
+}
+
+func (s sequencer) sendControlMessages() {
+	for _, track := range s.tracks {
+		track.sendControlMessages()
 	}
 }

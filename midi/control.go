@@ -100,14 +100,11 @@ func (c *Control) Set(value int16) {
 			return
 		}
 	}
-	shouldTrig := value != c.value
 	c.value = value
-	if shouldTrig {
-		c.Trigger()
-	}
+	c.Send()
 }
 
-func (c Control) Trigger() {
+func (c Control) Send() {
 	switch c.msgType {
 	case controlChange:
 		c.midi.ControlChange(c.parent.Device(), c.parent.Channel(), c.controller, uint8(c.value))
