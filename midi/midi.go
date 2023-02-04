@@ -24,6 +24,10 @@ type Midi interface {
 	Devices() gomidi.OutPorts
 	NoteOn(device int, channel uint8, note uint8, velocity uint8)
 	NoteOff(device int, channel uint8, note uint8)
+	ControlChange(device int, channel, controller, value uint8)
+	ProgramChange(device int, channel uint8, value uint8)
+	Pitchbend(device int, channel uint8, value int16)
+	AfterTouch(device int, channel uint8, value uint8)
 	SendClock(devices []int)
 	Close()
 }
@@ -111,6 +115,26 @@ func (m *midi) NoteOn(device int, channel uint8, note uint8, velocity uint8) {
 // NoteOff sends a Note Off midi meessage to the given device.
 func (m *midi) NoteOff(device int, channel uint8, note uint8) {
 	m.outputs[device] <- gomidi.NoteOff(channel, note)
+}
+
+// ControlChange sends a Control Change messages to the given device.
+func (m *midi) ControlChange(device int, channel, controller, value uint8) {
+	m.outputs[device] <- gomidi.ControlChange(channel, controller, value)
+}
+
+// ProgramChange sends a Program Change messages to the given device.
+func (m *midi) ProgramChange(device int, channel uint8, value uint8) {
+	m.outputs[device] <- gomidi.ProgramChange(channel, value)
+}
+
+// Pitchbend sends a Pitch Bend messages to the given device.
+func (m *midi) Pitchbend(device int, channel uint8, value int16) {
+	m.outputs[device] <- gomidi.Pitchbend(channel, value)
+}
+
+// AfterTouch sends a After Touch messages to the given device.
+func (m *midi) AfterTouch(device int, channel uint8, value uint8) {
+	m.outputs[device] <- gomidi.AfterTouch(channel, value)
 }
 
 // SendClock sends a Clock midi meessage to given devices.

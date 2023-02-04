@@ -181,7 +181,7 @@ func (m *mainModel) initParameters() {
 				)
 			},
 			set: func(item sequencer.Track, value int, add int) {
-				item.Controls()[0].Set(uint8(value + add))
+				item.Controls()[0].Set(int16(value + add))
 			},
 			active: func(item sequencer.Track) bool {
 				return item.IsActiveControl(0)
