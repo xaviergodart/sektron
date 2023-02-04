@@ -44,6 +44,7 @@ type parameter[t sequencer.Parametrable] struct {
 	value  func(item t) int
 	string func(item t) string
 	set    func(item t, value int, add int)
+	active func(item t) bool
 }
 
 func (m *mainModel) initParameters() {
@@ -66,6 +67,9 @@ func (m *mainModel) initParameters() {
 					uint8(value + add),
 				})
 			},
+			active: func(item sequencer.Track) bool {
+				return true
+			},
 		},
 		{
 			value: func(item sequencer.Track) int {
@@ -81,6 +85,9 @@ func (m *mainModel) initParameters() {
 			},
 			set: func(item sequencer.Track, value int, add int) {
 				setLengthParam(item, value, add)
+			},
+			active: func(item sequencer.Track) bool {
+				return true
 			},
 		},
 		{
@@ -98,6 +105,9 @@ func (m *mainModel) initParameters() {
 			set: func(item sequencer.Track, value int, add int) {
 				item.SetVelocity(uint8(value + add))
 			},
+			active: func(item sequencer.Track) bool {
+				return true
+			},
 		},
 		{
 			value: func(item sequencer.Track) int {
@@ -113,6 +123,9 @@ func (m *mainModel) initParameters() {
 			},
 			set: func(item sequencer.Track, value int, add int) {
 				item.SetProbability(value + add)
+			},
+			active: func(item sequencer.Track) bool {
+				return true
 			},
 		},
 		{
@@ -132,6 +145,9 @@ func (m *mainModel) initParameters() {
 			set: func(item sequencer.Track, value int, add int) {
 				item.SetDevice(value + add)
 			},
+			active: func(item sequencer.Track) bool {
+				return true
+			},
 		},
 		{
 			value: func(item sequencer.Track) int {
@@ -147,6 +163,28 @@ func (m *mainModel) initParameters() {
 			},
 			set: func(item sequencer.Track, value int, add int) {
 				item.SetChannel(uint8(value + add))
+			},
+			active: func(item sequencer.Track) bool {
+				return true
+			},
+		},
+		{
+			value: func(item sequencer.Track) int {
+				return int(item.Controls()[0].Value())
+			},
+			string: func(item sequencer.Track) string {
+				return lipgloss.JoinVertical(
+					lipgloss.Center,
+					toASCIIFont(item.Controls()[0].String()),
+					"",
+					item.Controls()[0].Name(),
+				)
+			},
+			set: func(item sequencer.Track, value int, add int) {
+				item.Controls()[0].Set(uint8(value + add))
+			},
+			active: func(item sequencer.Track) bool {
+				return item.IsActiveControl(0)
 			},
 		},
 	}
@@ -169,6 +207,9 @@ func (m *mainModel) initParameters() {
 					uint8(value + add),
 				})
 			},
+			active: func(item sequencer.Step) bool {
+				return true
+			},
 		},
 		{
 			value: func(item sequencer.Step) int {
@@ -184,6 +225,9 @@ func (m *mainModel) initParameters() {
 			},
 			set: func(item sequencer.Step, value int, add int) {
 				setLengthParam(item, value, add)
+			},
+			active: func(item sequencer.Step) bool {
+				return true
 			},
 		},
 		{
@@ -201,6 +245,9 @@ func (m *mainModel) initParameters() {
 			set: func(item sequencer.Step, value int, add int) {
 				item.SetVelocity(uint8(value + add))
 			},
+			active: func(item sequencer.Step) bool {
+				return true
+			},
 		},
 		{
 			value: func(item sequencer.Step) int {
@@ -217,6 +264,9 @@ func (m *mainModel) initParameters() {
 			set: func(item sequencer.Step, value int, add int) {
 				item.SetProbability(value + add)
 			},
+			active: func(item sequencer.Step) bool {
+				return true
+			},
 		},
 		{
 			value: func(item sequencer.Step) int {
@@ -232,6 +282,9 @@ func (m *mainModel) initParameters() {
 			},
 			set: func(item sequencer.Step, value int, add int) {
 				item.SetOffset(value + add)
+			},
+			active: func(item sequencer.Step) bool {
+				return true
 			},
 		},
 	}
@@ -251,6 +304,9 @@ func (m mainModel) renderParams() string {
 		params = append(params, paramStepTitleStyle.Render(toASCIIFont(fmt.Sprintf("S%d", m.activeStep+1))))
 		if m.getActiveStep().IsActive() {
 			for i, p := range m.parameters.step {
+				if !p.active(m.getActiveStep()) {
+					continue
+				}
 				var style lipgloss.Style
 				if m.activeParam == i {
 					style = selectedParamStyle
@@ -266,6 +322,9 @@ func (m mainModel) renderParams() string {
 	} else {
 		params = append(params, paramTrackTitleStyle.Render(toASCIIFont(fmt.Sprintf("T%d", m.activeTrack+1))))
 		for i, p := range m.parameters.track {
+			if !p.active(m.getActiveTrack()) {
+				continue
+			}
 			var style lipgloss.Style
 			if m.activeParam == i {
 				style = selectedParamStyle

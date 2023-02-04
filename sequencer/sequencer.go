@@ -114,7 +114,14 @@ func (s *sequencer) AddTrack() {
 		probability: defaultProbability,
 		device:      defaultDevice,
 		channel:     uint8(channel),
-		active:      true,
+		controls:    midi.NewControls(),
+		activeControls: map[uint8]struct{}{
+			0: {},
+			1: {},
+			2: {},
+			3: {},
+		},
+		active: true,
 	}
 
 	var steps []*step
