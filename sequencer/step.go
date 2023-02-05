@@ -30,8 +30,8 @@ type step struct {
 	// Once a step has been triggered, we prevent it from happening again.
 	triggered bool
 
-	// A step can send multiple midi control changes.
-	controls []midi.Control
+	// A step can override multiple midi control from the track.
+	controls map[int]*midi.Control
 
 	// The next attributes defines the note parameters for the midi device.
 	// If nil, we should use the default ones defined at track level (see
@@ -70,6 +70,15 @@ func (s step) Channel() uint8 {
 	return s.track.channel
 }
 
+// Control returns the midi control from the number.
+func (s step) Control(nb int) midi.Control {
+	control, ok := s.controls[nb]
+	if !ok {
+		return s.track.controls[nb]
+	}
+	return *control
+}
+
 // IsActive returns true if the step is active.
 func (s step) IsActive() bool {
 	return s.active
@@ -78,11 +87,6 @@ func (s step) IsActive() bool {
 // IsCurrentStep returns true if the track pulse is on the current step.
 func (s step) IsCurrentStep() bool {
 	return s.position == s.track.CurrentStep()
-}
-
-// Controls returns the midi controls parameters.
-func (s step) Controls() []midi.Control {
-	return s.controls
 }
 
 // IsActiveControl checks if a given control is active.
@@ -160,6 +164,16 @@ func (s step) OffsetString() string {
 	return fmt.Sprintf("+%d", s.offset)
 }
 
+// SetControl sets the given midi control.
+func (s *step) SetControl(nb int, value int16) {
+	_, ok := s.controls[nb]
+	if !ok {
+		control := s.track.controls[nb]
+		s.controls[nb] = &control
+	}
+	s.controls[nb].Set(value)
+}
+
 // SetChord sets a new chord value.
 func (s *step) SetChord(chord []uint8) {
 	for _, note := range chord {
@@ -215,6 +229,7 @@ func (s *step) trigger() {
 	if !s.active || s.triggered || s.skip() {
 		return
 	}
+	s.sendControlMessages()
 	for _, note := range s.Chord() {
 		s.midi.NoteOn(s.track.device, s.track.channel, note, s.Velocity())
 	}
@@ -222,8 +237,24 @@ func (s *step) trigger() {
 	s.track.lastTriggeredStep = s.position
 }
 
+// sendControlMessages sends midi control messages if there step value are
+// different from the previous step, to avoid sending the same messages
+// multiple times.
+func (s step) sendControlMessages() {
+	for c := range s.track.activeControls {
+		if !s.isFirstStepPlayed() && s.Control(c).Value() == s.track.previousStep().Control(c).Value() {
+			continue
+		}
+		s.Control(c).Send()
+	}
+}
+
 func (s step) skip() bool {
 	return s.Probability() < 100 && rand.Intn(100) > s.Probability()
+}
+
+func (s step) isFirstStepPlayed() bool {
+	return s.track.lastTriggeredStep == s.Position()
 }
 
 func (s step) startingPulse() int {

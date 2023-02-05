@@ -35,7 +35,9 @@ type track struct {
 	device  int
 	channel uint8
 
-	// A track can send multiple midi control changes.
+	// A track can send multiple midi control changes. All possible midi
+	// controls are initialized in the controls slice. But actual messages
+	// will be sent only for those that are activated.
 	controls       []midi.Control
 	activeControls map[int]struct{}
 
@@ -54,8 +56,8 @@ type track struct {
 	// time.
 	lastTriggeredStep int
 
-	// The next attributes defines the note parameters for the midi message and
-	// can be overriden per step (check step.go).
+	// The next attributes defines the note parameters for the midi note on/off
+	// messages and can be overriden per step (check step.go).
 	//  - length defines for how long (pulse value) the note should be played
 	//  - chord holds all the notes that should be played
 	//  - velocity defines how loud a note should be played
@@ -109,9 +111,9 @@ func (t track) ChannelString() string {
 	return fmt.Sprintf("%d", t.channel+1)
 }
 
-// Controls returns the midi controls parameters.
-func (t track) Controls() []midi.Control {
-	return t.controls
+// Control returns the midi control from the number.
+func (t track) Control(nb int) midi.Control {
+	return t.controls[nb]
 }
 
 // ActiveControls returns the midi active controls parameters.
@@ -187,6 +189,11 @@ func (t *track) SetChannel(channel uint8) {
 	t.channel = channel
 }
 
+// SetControl sets the given midi control.
+func (t *track) SetControl(nb int, value int16) {
+	t.controls[nb].Set(value)
+}
+
 // SetChord sets a new chord value.
 func (t *track) SetChord(chord []uint8) {
 	for _, note := range chord {
@@ -253,6 +260,10 @@ func (t *track) close() {
 	t.done <- struct{}{}
 }
 
+func (t track) previousStep() *step {
+	return t.steps[t.lastTriggeredStep]
+}
+
 // trigger goes over each steps and trigger them or stop them if we're at their
 // starting or ending pulse. They are calculated relative to the pulse, using
 // the length and offset parameters (check step.go)
@@ -261,8 +272,8 @@ func (t *track) trigger() {
 		if t.active && step.isStartingPulse() {
 			// We reset the last triggered step to avoid 2 steps of the same
 			// track being triggered at the same time.
-			if step.active && !t.steps[t.lastTriggeredStep].isInfinite() {
-				t.steps[t.lastTriggeredStep].reset()
+			if step.active && !t.previousStep().isInfinite() {
+				t.previousStep().reset()
 			}
 
 			step.trigger()
@@ -282,12 +293,6 @@ func (t *track) trigger() {
 	}
 }
 
-func (t track) sendControlMessages() {
-	for _, c := range t.ActiveControls() {
-		c.Send()
-	}
-}
-
 func (t track) isInfinite() bool {
 	return t.length == maxLength
 }
@@ -296,6 +301,7 @@ func (t track) isInfinite() bool {
 // triggered steps.
 func (t *track) reset() {
 	t.pulse = 0
+	t.lastTriggeredStep = 0
 	t.clear()
 }
 

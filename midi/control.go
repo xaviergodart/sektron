@@ -23,21 +23,39 @@ const (
 	afterTouch
 )
 
+// Controllable defines struct that can hold midi controls.
 type Controllable interface {
 	Device() int
 	Channel() uint8
-	Controls() []Control
+	Control(nb int) Control
+	SetControl(nb int, value int16)
 	IsActiveControl(control int) bool
 }
 
+// Control represents a midi control.
+// It can represent 4 types of message (see msgType):
+//   - Control Change (midi cc)
+//   - Program Change
+//   - Pitchbend
+//   - Aftertouch
 type Control struct {
-	midi       Midi
-	parent     Controllable
-	msgType    msgType
+	midi Midi
+
+	// We keep a reference to the parent item to known in which device and
+	// channel we need to send the message.
+	parent  Controllable
+	msgType msgType
+
+	// The controller value is used only for controlChange type.
 	controller uint8
 	value      int16
 }
 
+// NewControls create every possible midi controls:
+//   - 127 Control Changes
+//   - 1 Programe Change
+//   - 1 Pichbend
+//   - 1 Aftertouch
 func NewControls(midi Midi, parent Controllable) []Control {
 	controls := []Control{
 		{
@@ -68,14 +86,17 @@ func NewControls(midi Midi, parent Controllable) []Control {
 	return controls
 }
 
+// Value returns the control value.
 func (c Control) Value() int16 {
 	return c.value
 }
 
+// String returns the string representation of the control value.
 func (c Control) String() string {
 	return fmt.Sprintf("%d", c.value)
 }
 
+// Name returns the name of the control.
 func (c Control) Name() string {
 	switch c.msgType {
 	case programChange:
@@ -89,6 +110,7 @@ func (c Control) Name() string {
 	}
 }
 
+// Set sets the control value.
 func (c *Control) Set(value int16) {
 	switch c.msgType {
 	case pitchBend:
@@ -101,15 +123,24 @@ func (c *Control) Set(value int16) {
 		}
 	}
 	c.value = value
-	c.Send()
 }
 
+// Send sends the actual midi message.s
 func (c Control) Send() {
 	switch c.msgType {
 	case controlChange:
-		c.midi.ControlChange(c.parent.Device(), c.parent.Channel(), c.controller, uint8(c.value))
+		c.midi.ControlChange(
+			c.parent.Device(),
+			c.parent.Channel(),
+			c.controller,
+			uint8(c.value),
+		)
 	case programChange:
-		c.midi.ProgramChange(c.parent.Device(), c.parent.Channel(), uint8(c.value))
+		c.midi.ProgramChange(
+			c.parent.Device(),
+			c.parent.Channel(),
+			uint8(c.value),
+		)
 	case pitchBend:
 		c.midi.Pitchbend(c.parent.Device(), c.parent.Channel(), c.value)
 	case afterTouch:

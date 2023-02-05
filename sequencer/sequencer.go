@@ -86,8 +86,6 @@ func (s *sequencer) TogglePlay() {
 	s.isPlaying = !s.isPlaying
 	if !s.isPlaying {
 		s.Reset()
-	} else {
-		s.sendControlMessages()
 	}
 }
 
@@ -128,12 +126,14 @@ func (s *sequencer) AddTrack() {
 
 	var steps []*step
 	for j := 0; j < defaultStepsPerTrack; j++ {
-		steps = append(steps, &step{
+		step := &step{
 			position: j,
 			midi:     s.midi,
 			track:    track,
 			active:   false,
-		})
+			controls: map[int]*midi.Control{},
+		}
+		steps = append(steps, step)
 	}
 
 	track.steps = steps
@@ -242,11 +242,5 @@ func (s *sequencer) tick() {
 	}
 	for _, track := range s.tracks {
 		track.tick()
-	}
-}
-
-func (s sequencer) sendControlMessages() {
-	for _, track := range s.tracks {
-		track.sendControlMessages()
 	}
 }

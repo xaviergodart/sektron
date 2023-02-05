@@ -48,21 +48,21 @@ type parameter[t sequencer.Parametrable] struct {
 	active func(item t) bool
 }
 
-func NewMidiParameter[t sequencer.Parametrable](nb int) parameter[t] {
+func newMidiParameter[t sequencer.Parametrable](nb int) parameter[t] {
 	return parameter[t]{
 		value: func(item t) int {
-			return int(item.Controls()[nb].Value())
+			return int(item.Control(nb).Value())
 		},
 		string: func(item t) string {
 			return lipgloss.JoinVertical(
 				lipgloss.Center,
-				toASCIIFont(item.Controls()[nb].String()),
+				toASCIIFont(item.Control(nb).String()),
 				"",
-				item.Controls()[nb].Name(),
+				item.Control(nb).Name(),
 			)
 		},
 		set: func(item t, value int, add int) {
-			item.Controls()[nb].Set(int16(value + add))
+			item.SetControl(nb, int16(value+add))
 		},
 		active: func(item t) bool {
 			return item.IsActiveControl(nb)
@@ -194,7 +194,7 @@ func (m *mainModel) initParameters() {
 	}
 
 	for i := 0; i <= midiParameters; i++ {
-		m.parameters.track = append(m.parameters.track, NewMidiParameter[sequencer.Track](i))
+		m.parameters.track = append(m.parameters.track, newMidiParameter[sequencer.Track](i))
 	}
 
 	m.parameters.step = []parameter[sequencer.Step]{
@@ -295,6 +295,10 @@ func (m *mainModel) initParameters() {
 				return true
 			},
 		},
+	}
+
+	for i := 0; i <= midiParameters; i++ {
+		m.parameters.step = append(m.parameters.step, newMidiParameter[sequencer.Step](i))
 	}
 }
 
