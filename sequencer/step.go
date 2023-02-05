@@ -229,7 +229,7 @@ func (s *step) trigger() {
 	if !s.active || s.triggered || s.skip() {
 		return
 	}
-	s.sendControlMessages()
+	s.sendControls()
 	for _, note := range s.Chord() {
 		s.midi.NoteOn(s.track.device, s.track.channel, note, s.Velocity())
 	}
@@ -237,12 +237,14 @@ func (s *step) trigger() {
 	s.track.lastTriggeredStep = s.position
 }
 
-// sendControlMessages sends midi control messages if there step value are
+// sendControls sends midi control messages if there step value are
 // different from the previous step, to avoid sending the same messages
 // multiple times.
-func (s step) sendControlMessages() {
+func (s step) sendControls() {
 	for c := range s.track.activeControls {
-		if !s.isFirstStepPlayed() && s.Control(c).Value() == s.track.previousStep().Control(c).Value() {
+		if s.isSameStepPlayed() && s.Control(c).Value() == s.track.Control(c).Value() {
+			continue
+		} else if !s.isSameStepPlayed() && s.Control(c).Value() == s.track.previousStep().Control(c).Value() {
 			continue
 		}
 		s.Control(c).Send()
@@ -253,7 +255,7 @@ func (s step) skip() bool {
 	return s.Probability() < 100 && rand.Intn(100) > s.Probability()
 }
 
-func (s step) isFirstStepPlayed() bool {
+func (s step) isSameStepPlayed() bool {
 	return s.track.lastTriggeredStep == s.Position()
 }
 

@@ -116,15 +116,6 @@ func (t track) Control(nb int) midi.Control {
 	return t.controls[nb]
 }
 
-// ActiveControls returns the midi active controls parameters.
-func (t track) ActiveControls() []midi.Control {
-	var controls []midi.Control
-	for c := range t.activeControls {
-		controls = append(controls, t.controls[c])
-	}
-	return controls
-}
-
 // IsActiveControl checks if a given control is active.
 func (t track) IsActiveControl(control int) bool {
 	_, active := t.activeControls[control]
@@ -295,6 +286,13 @@ func (t *track) trigger() {
 
 func (t track) isInfinite() bool {
 	return t.length == maxLength
+}
+
+// sendControls sends track's active midi control messages.
+func (t track) sendControls() {
+	for c := range t.activeControls {
+		t.Control(c).Send()
+	}
 }
 
 // reset move back the pulse to the beginning, and stops all the already

@@ -86,6 +86,8 @@ func (s *sequencer) TogglePlay() {
 	s.isPlaying = !s.isPlaying
 	if !s.isPlaying {
 		s.Reset()
+	} else {
+		s.sendControls()
 	}
 }
 
@@ -242,5 +244,12 @@ func (s *sequencer) tick() {
 	}
 	for _, track := range s.tracks {
 		track.tick()
+	}
+}
+
+// sendControls sends all track's active midi control messages.
+func (s sequencer) sendControls() {
+	for _, track := range s.tracks {
+		track.sendControls()
 	}
 }
