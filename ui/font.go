@@ -22,6 +22,14 @@ var (
 				"▄",
 			}...,
 		),
+		"-": lipgloss.JoinVertical(
+			lipgloss.Left,
+			[]string{
+				"  ",
+				"▄▄",
+				"  ",
+			}...,
+		),
 		"/": lipgloss.JoinVertical(
 			lipgloss.Left,
 			[]string{

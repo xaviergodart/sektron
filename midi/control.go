@@ -19,7 +19,7 @@ type msgType uint8
 const (
 	controlChange msgType = iota
 	programChange
-	pitchBend
+	pitchBend // TODO: handle better parameter set
 	afterTouch
 )
 

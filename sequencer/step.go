@@ -242,6 +242,7 @@ func (s *step) trigger() {
 // multiple times.
 func (s step) sendControls() {
 	for c := range s.track.activeControls {
+		// TODO: maybe this could be improved.
 		if s.isSameStepPlayed() && s.Control(c).Value() == s.track.Control(c).Value() {
 			continue
 		} else if !s.isSameStepPlayed() && s.Control(c).Value() == s.track.previousStep().Control(c).Value() {
