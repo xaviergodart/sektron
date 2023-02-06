@@ -320,7 +320,7 @@ func (m mainModel) renderParams() string {
 					continue
 				}
 				var style lipgloss.Style
-				if m.activeParam == i {
+				if m.getActiveParam() == i {
 					style = selectedParamStyle
 				} else {
 					style = paramStyle
@@ -338,7 +338,7 @@ func (m mainModel) renderParams() string {
 				continue
 			}
 			var style lipgloss.Style
-			if m.activeParam == i {
+			if m.getActiveParam() == i {
 				style = selectedParamStyle
 			} else {
 				style = paramStyle
@@ -353,6 +353,28 @@ func (m mainModel) renderParams() string {
 		lipgloss.Left,
 		params...,
 	))
+}
+
+func (m mainModel) trackParamCount() int {
+	count := 0
+	for _, param := range m.parameters.track {
+		if !param.active(m.getActiveTrack()) {
+			continue
+		}
+		count++
+	}
+	return count
+}
+
+func (m mainModel) stepParamCount() int {
+	count := 0
+	for _, param := range m.parameters.step {
+		if !param.active(m.getActiveStep()) {
+			continue
+		}
+		count++
+	}
+	return count
 }
 
 func setLengthParam(item sequencer.Parametrable, value int, add int) {

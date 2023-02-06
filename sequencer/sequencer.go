@@ -108,21 +108,16 @@ func (s *sequencer) AddTrack() {
 	}
 	channel := len(s.tracks)
 	track := &track{
-		midi:        s.midi,
-		pulse:       pulse,
-		chord:       []uint8{defaultNote},
-		length:      pulsesPerStep,
-		velocity:    defaultVelocity,
-		probability: defaultProbability,
-		device:      defaultDevice,
-		channel:     uint8(channel),
-		activeControls: map[int]struct{}{
-			0: {},
-			1: {},
-			2: {},
-			3: {},
-		},
-		active: true,
+		midi:           s.midi,
+		pulse:          pulse,
+		chord:          []uint8{defaultNote},
+		length:         pulsesPerStep,
+		velocity:       defaultVelocity,
+		probability:    defaultProbability,
+		device:         defaultDevice,
+		channel:        uint8(channel),
+		activeControls: map[int]struct{}{},
+		active:         true,
 	}
 	track.controls = midi.NewControls(s.midi, track)
 

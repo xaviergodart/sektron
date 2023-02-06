@@ -106,7 +106,8 @@ func (c Control) Name() string {
 	case afterTouch:
 		return "After Touch"
 	default:
-		return gomidi.ControlChangeName[c.controller]
+		name := gomidi.ControlChangeName[c.controller]
+		return fmt.Sprintf("CC%d %s", c.controller, name)
 	}
 }
 

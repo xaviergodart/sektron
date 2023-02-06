@@ -16,6 +16,7 @@ var (
 type keyMap struct {
 	TogglePlay key.Binding
 	Mode       key.Binding
+	Validate   key.Binding
 
 	AddTrack    key.Binding
 	RemoveTrack key.Binding
@@ -43,6 +44,8 @@ type keyMap struct {
 	TempoFineUp   key.Binding
 	TempoFineDown key.Binding
 
+	AddParam         key.Binding
+	RemoveParam      key.Binding
 	ParamSelectLeft  key.Binding
 	ParamSelectRight key.Binding
 
@@ -79,6 +82,10 @@ func DefaultKeyMap() keyMap {
 		Mode: key.NewBinding(
 			key.WithKeys("tab"),
 			key.WithHelp("tab", "toggle parameter mode (track, record)"),
+		),
+		Validate: key.NewBinding(
+			key.WithKeys("enter"),
+			key.WithHelp("enter", "validate selection"),
 		),
 		AddTrack: key.NewBinding(
 			key.WithKeys("="),
@@ -139,6 +146,14 @@ func DefaultKeyMap() keyMap {
 		TempoFineDown: key.NewBinding(
 			key.WithKeys("alt+pgdown"),
 			key.WithHelp("alt+page down", "tempo down (0.1 bpm)"),
+		),
+		AddParam: key.NewBinding(
+			key.WithKeys("ctrl+up"),
+			key.WithHelp("ctrl+↑", "add midi control"),
+		),
+		RemoveParam: key.NewBinding(
+			key.WithKeys("ctrl+down"),
+			key.WithHelp("ctrl+↓", "remove midi control"),
 		),
 		ParamSelectLeft: key.NewBinding(
 			key.WithKeys("left"),

@@ -10,6 +10,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -26,6 +27,8 @@ const (
 
 	// stepMode allows the user to activate/deactivate steps using the step keys.
 	stepMode
+
+	paramSelectMode
 )
 
 const (
@@ -39,6 +42,7 @@ const (
 type mainModel struct {
 	seq             sequencer.Sequencer
 	parameters      parameters
+	paramMidiTable  table.Model
 	keymap          keyMap
 	width           int
 	height          int
@@ -46,7 +50,7 @@ type mainModel struct {
 	activeTrack     int
 	activeTrackPage int
 	activeStep      int
-	activeParam     int
+	activeParams    []struct{ track, step int }
 	stepModeTimer   int
 	help            help.Model
 }
@@ -55,16 +59,24 @@ type mainModel struct {
 // Check teh sequencer package.
 func New(seq sequencer.Sequencer) mainModel {
 	model := mainModel{
-		seq:             seq,
-		keymap:          DefaultKeyMap(),
-		activeTrack:     0,
-		activeTrackPage: 0,
-		activeStep:      0,
-		activeParam:     0,
-		stepModeTimer:   0,
-		help:            help.New(),
+		seq:          seq,
+		keymap:       DefaultKeyMap(),
+		activeParams: make([]struct{ track, step int }, 10),
+		help:         help.New(),
+	}
+	rows := []table.Row{}
+	for _, c := range seq.Tracks()[0].Controls() {
+		rows = append(rows, table.Row{c.Name()})
 	}
 	model.initParameters()
+	model.paramMidiTable = table.New(
+		table.WithColumns([]table.Column{
+			{Title: "midi message", Width: 40},
+		}),
+		table.WithRows(rows),
+		table.WithFocused(true),
+		table.WithKeyMap(table.DefaultKeyMap()),
+	)
 	return model
 }
 
@@ -85,6 +97,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width = msg.Width
 		m.height = msg.Height
 		m.help.Width = msg.Width
+		m.paramMidiTable.SetWidth(msg.Width)
 		return m, nil
 
 	case tickMsg:
@@ -104,11 +117,17 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Mode):
-			m.activeParam = 0
 			m.activeStep = 0
 			if m.mode == trackMode {
 				m.mode = stepMode
 			} else {
+				m.mode = trackMode
+			}
+			return m, nil
+
+		case key.Matches(msg, m.keymap.Validate):
+			if m.mode == paramSelectMode {
+				m.getActiveTrack().AddControl(m.paramMidiTable.Cursor())
 				m.mode = trackMode
 			}
 			return m, nil
@@ -166,7 +185,6 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.activeTrack = number
 			m.activeTrackPage = 0
 			m.activeStep = 0
-			m.activeParam = 0
 			return m, nil
 
 		case key.Matches(msg, m.keymap.TrackToggle):
@@ -204,41 +222,48 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.seq.SetTempo(m.seq.Tempo() - 0.1)
 			return m, nil
 
+		case key.Matches(msg, m.keymap.AddParam):
+			m.mode = paramSelectMode
+			return m, nil
+
+		case key.Matches(msg, m.keymap.RemoveParam):
+			// TODO: Not working
+			m.getActiveTrack().RemoveControl(m.getActiveParam())
+			return m, nil
+
 		case key.Matches(msg, m.keymap.ParamSelectLeft):
-			// TODO: differenciate step active param from track active param
-			if m.activeParam > 0 {
-				m.activeParam--
-			}
+			// TODO: Not working with added parameters
+			m.setActiveParam(m.getActiveParam() - 1)
 			m.stepModeTimer = 0
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamSelectRight):
-			max := 0
-			if m.mode == trackMode {
-				max = len(m.parameters.track) - 1
-			} else {
-				max = len(m.parameters.step) - 1
-			}
-			if m.activeParam < max {
-				m.activeParam++
-			}
+			m.setActiveParam(m.getActiveParam() + 1)
 			m.stepModeTimer = 0
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamValueUp):
 			if m.mode == stepMode && m.getActiveStep().IsActive() {
-				m.parameters.step[m.activeParam].increase(m.getActiveStep())
+				m.parameters.step[m.getActiveParam()].increase(m.getActiveStep())
 			} else if m.mode == trackMode {
-				m.parameters.track[m.activeParam].increase(m.getActiveTrack())
+				m.parameters.track[m.getActiveParam()].increase(m.getActiveTrack())
+			} else if m.mode == paramSelectMode {
+				var cmd tea.Cmd
+				m.paramMidiTable, cmd = m.paramMidiTable.Update(msg)
+				return m, cmd
 			}
 			m.stepModeTimer = 0
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamValueDown):
 			if m.mode == stepMode && m.getActiveStep().IsActive() {
-				m.parameters.step[m.activeParam].decrease(m.getActiveStep())
+				m.parameters.step[m.getActiveParam()].decrease(m.getActiveStep())
 			} else if m.mode == trackMode {
-				m.parameters.track[m.activeParam].decrease(m.getActiveTrack())
+				m.parameters.track[m.getActiveParam()].decrease(m.getActiveTrack())
+			} else if m.mode == paramSelectMode {
+				var cmd tea.Cmd
+				m.paramMidiTable, cmd = m.paramMidiTable.Update(msg)
+				return m, cmd
 			}
 			m.stepModeTimer = 0
 			return m, nil
@@ -259,11 +284,17 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m mainModel) View() string {
+	var params string
+	if m.mode == paramSelectMode {
+		params = m.paramMidiTable.View()
+	} else {
+		params = m.renderParams()
+	}
 	mainView := lipgloss.JoinVertical(
 		lipgloss.Left,
 		m.renderTransport(),
 		m.renderSequencer(),
-		m.renderParams(),
+		params,
 	)
 
 	help := m.help.View(m.keymap)
@@ -288,4 +319,26 @@ func (m *mainModel) getActiveTrack() sequencer.Track {
 
 func (m *mainModel) getActiveStep() sequencer.Step {
 	return m.seq.Tracks()[m.activeTrack].Steps()[m.activeStep]
+}
+
+func (m mainModel) getActiveParam() int {
+	if m.mode == stepMode {
+		return m.activeParams[m.activeTrack].step
+	}
+	return m.activeParams[m.activeTrack].track
+}
+
+func (m *mainModel) setActiveParam(value int) {
+	min := 0
+	if m.mode == stepMode {
+		max := m.stepParamCount()
+		if value >= min && value < max {
+			m.activeParams[m.activeTrack].step = value
+		}
+		return
+	}
+	max := m.trackParamCount()
+	if value >= min && value < max {
+		m.activeParams[m.activeTrack].track = value
+	}
 }

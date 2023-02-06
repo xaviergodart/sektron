@@ -17,6 +17,8 @@ type Track interface {
 	CurrentStep() int
 	IsActive() bool
 	IsCurrentStepActive() bool
+	AddControl(nb int)
+	RemoveControl(nb int)
 	Parametrable
 }
 
@@ -111,6 +113,11 @@ func (t track) ChannelString() string {
 	return fmt.Sprintf("%d", t.channel+1)
 }
 
+// Controls returns all available midi controls for the track.
+func (t track) Controls() []midi.Control {
+	return t.controls
+}
+
 // Control returns the midi control from the number.
 func (t track) Control(nb int) midi.Control {
 	return t.controls[nb]
@@ -178,6 +185,16 @@ func (t *track) SetChannel(channel uint8) {
 	}
 	t.clear()
 	t.channel = channel
+}
+
+// AddControl activayes a control.
+func (t *track) AddControl(nb int) {
+	t.activeControls[nb] = struct{}{}
+}
+
+// RemoveControl desactivates a control.
+func (t *track) RemoveControl(nb int) {
+	delete(t.activeControls, nb)
 }
 
 // SetControl sets the given midi control.
