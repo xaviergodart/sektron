@@ -284,20 +284,27 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m mainModel) View() string {
-	var params string
-	if m.mode == paramSelectMode {
-		params = m.paramMidiTable.View()
-	} else {
-		params = m.renderParams()
-	}
 	mainView := lipgloss.JoinVertical(
 		lipgloss.Left,
 		m.renderTransport(),
 		m.renderSequencer(),
-		params,
 	)
 
 	help := m.help.View(m.keymap)
+
+	var params string
+	if m.mode == paramSelectMode {
+		m.paramMidiTable.SetHeight(m.height - lipgloss.Height(mainView) - lipgloss.Height(help) - 2)
+		params = m.paramMidiTable.View()
+	} else {
+		params = m.renderParams()
+	}
+
+	mainView = lipgloss.JoinVertical(
+		lipgloss.Left,
+		mainView,
+		params,
+	)
 
 	// Cleanup gibber
 	cleanup := lipgloss.NewStyle().
