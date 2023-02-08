@@ -324,6 +324,7 @@ func (m *mainModel) nextParam() {
 	if m.mode == stepMode {
 		for i := current; i < len(m.parameters.step); i++ {
 			if m.parameters.step[i].active(m.getActiveStep()) {
+				// TODO: fix panic happening here
 				m.activeParams[m.activeStep].step = i
 				return
 			}
