@@ -37,8 +37,9 @@ var (
 )
 
 type parameters struct {
-	track []parameter[sequencer.Track]
-	step  []parameter[sequencer.Step]
+	track        []parameter[sequencer.Track]
+	step         []parameter[sequencer.Step]
+	fixedParamNb int
 }
 
 type parameter[t sequencer.Parametrable] struct {
@@ -192,6 +193,8 @@ func (m *mainModel) initParameters() {
 			},
 		},
 	}
+
+	m.parameters.fixedParamNb = len(m.parameters.track)
 
 	for i := 0; i <= midiParameters; i++ {
 		m.parameters.track = append(m.parameters.track, newMidiParameter[sequencer.Track](i))
@@ -353,28 +356,6 @@ func (m mainModel) renderParams() string {
 		lipgloss.Left,
 		params...,
 	))
-}
-
-func (m mainModel) trackParamCount() int {
-	count := 0
-	for _, param := range m.parameters.track {
-		if !param.active(m.getActiveTrack()) {
-			continue
-		}
-		count++
-	}
-	return count
-}
-
-func (m mainModel) stepParamCount() int {
-	count := 0
-	for _, param := range m.parameters.step {
-		if !param.active(m.getActiveStep()) {
-			continue
-		}
-		count++
-	}
-	return count
 }
 
 func setLengthParam(item sequencer.Parametrable, value int, add int) {

@@ -227,18 +227,20 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case key.Matches(msg, m.keymap.RemoveParam):
-			// TODO: Not working
-			m.getActiveTrack().RemoveControl(m.getActiveParam())
+			nb := m.getActiveParam() - m.parameters.fixedParamNb
+			if nb >= 0 {
+				m.getActiveTrack().RemoveControl(nb)
+				m.previousParam()
+			}
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamSelectLeft):
-			// TODO: Not working with added parameters
-			m.setActiveParam(m.getActiveParam() - 1)
+			m.previousParam()
 			m.stepModeTimer = 0
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamSelectRight):
-			m.setActiveParam(m.getActiveParam() + 1)
+			m.nextParam()
 			m.stepModeTimer = 0
 			return m, nil
 
@@ -335,17 +337,40 @@ func (m mainModel) getActiveParam() int {
 	return m.activeParams[m.activeTrack].track
 }
 
-func (m *mainModel) setActiveParam(value int) {
-	min := 0
+func (m *mainModel) nextParam() {
+	current := m.getActiveParam() + 1
 	if m.mode == stepMode {
-		max := m.stepParamCount()
-		if value >= min && value < max {
-			m.activeParams[m.activeTrack].step = value
+		for i := current; i < len(m.parameters.step); i++ {
+			if m.parameters.step[i].active(m.getActiveStep()) {
+				m.activeParams[m.activeStep].step = i
+				return
+			}
 		}
-		return
+	} else {
+		for i := current; i < len(m.parameters.track); i++ {
+			if m.parameters.track[i].active(m.getActiveTrack()) {
+				m.activeParams[m.activeTrack].track = i
+				return
+			}
+		}
 	}
-	max := m.trackParamCount()
-	if value >= min && value < max {
-		m.activeParams[m.activeTrack].track = value
+}
+
+func (m *mainModel) previousParam() {
+	current := m.getActiveParam() - 1
+	if m.mode == stepMode {
+		for i := current; i >= 0; i-- {
+			if m.parameters.step[i].active(m.getActiveStep()) {
+				m.activeParams[m.activeStep].step = i
+				return
+			}
+		}
+	} else {
+		for i := current; i >= 0; i-- {
+			if m.parameters.track[i].active(m.getActiveTrack()) {
+				m.activeParams[m.activeTrack].track = i
+				return
+			}
+		}
 	}
 }

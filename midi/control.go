@@ -53,7 +53,7 @@ type Control struct {
 
 // NewControls create every possible midi controls:
 //   - 127 Control Changes
-//   - 1 Programe Change
+//   - 1 Program Change
 //   - 1 Pichbend
 //   - 1 Aftertouch
 func NewControls(midi Midi, parent Controllable) []Control {
@@ -126,7 +126,7 @@ func (c *Control) Set(value int16) {
 	c.value = value
 }
 
-// Send sends the actual midi message.s
+// Send sends the actual midi messages.
 func (c Control) Send() {
 	switch c.msgType {
 	case controlChange:
