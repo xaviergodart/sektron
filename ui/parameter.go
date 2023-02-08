@@ -338,6 +338,7 @@ func (p *parameter[t]) decrease(item t) {
 
 func (m mainModel) renderParams() string {
 	var params []string
+	// TODO: render params on 2 lines
 	if m.mode == stepMode {
 		params = append(params, paramStepTitleStyle.Render(toASCIIFont(fmt.Sprintf("S%d", m.activeStep+1))))
 		if m.getActiveStep().IsActive() {
@@ -375,6 +376,7 @@ func (m mainModel) renderParams() string {
 			)
 		}
 	} else if m.mode == paramSelectMode {
+		// TODO: fix table bug
 		params = append(params, paramTrackTitleStyle.Render(toASCIIFont(fmt.Sprintf("T%d", m.activeTrack+1))))
 		m.paramMidiTable.SetHeight(6)
 		indicator := []string{
