@@ -380,7 +380,6 @@ func (m mainModel) renderParams() string {
 		indicator := []string{
 			" ",
 			"⏶",
-			" ",
 			"⏷",
 		}
 		params = append(params,
