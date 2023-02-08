@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sektron/sequencer"
 
+	"github.com/charmbracelet/bubbles/table"
 	"github.com/charmbracelet/lipgloss"
 )
 
@@ -305,6 +306,28 @@ func (m *mainModel) initParameters() {
 	}
 }
 
+func (m *mainModel) initMidiControls() {
+	rows := []table.Row{}
+	for _, c := range m.seq.Tracks()[0].Controls() {
+		rows = append(rows, table.Row{c.Name()})
+	}
+
+	m.paramMidiTable = table.New(
+		table.WithColumns([]table.Column{
+			{Width: 40},
+		}),
+		table.WithRows(rows),
+		table.WithFocused(true),
+		table.WithKeyMap(table.DefaultKeyMap()),
+	)
+	s := table.DefaultStyles()
+	s.Selected = s.Selected.
+		Foreground(primaryTextColor).
+		Background(secondaryColor).
+		Bold(true)
+	m.paramMidiTable.SetStyles(s)
+}
+
 func (p *parameter[t]) increase(item t) {
 	p.set(item, p.value(item), 1)
 }
@@ -334,7 +357,7 @@ func (m mainModel) renderParams() string {
 				)
 			}
 		}
-	} else {
+	} else if m.mode == trackMode {
 		params = append(params, paramTrackTitleStyle.Render(toASCIIFont(fmt.Sprintf("T%d", m.activeTrack+1))))
 		for i, p := range m.parameters.track {
 			if !p.active(m.getActiveTrack()) {
@@ -351,6 +374,25 @@ func (m mainModel) renderParams() string {
 				style.Render(p.string(m.getActiveTrack())),
 			)
 		}
+	} else if m.mode == paramSelectMode {
+		params = append(params, paramTrackTitleStyle.Render(toASCIIFont(fmt.Sprintf("T%d", m.activeTrack+1))))
+		m.paramMidiTable.SetHeight(6)
+		indicator := []string{
+			" ",
+			"⏶",
+			" ",
+			"⏷",
+		}
+		params = append(params,
+			lipgloss.JoinHorizontal(
+				lipgloss.Left,
+				lipgloss.JoinVertical(
+					lipgloss.Top,
+					indicator...,
+				),
+				m.paramMidiTable.View(),
+			),
+		)
 	}
 	return lipgloss.NewStyle().MarginTop(1).Render(lipgloss.JoinHorizontal(
 		lipgloss.Left,

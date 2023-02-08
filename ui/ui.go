@@ -64,19 +64,8 @@ func New(seq sequencer.Sequencer) mainModel {
 		activeParams: make([]struct{ track, step int }, 10),
 		help:         help.New(),
 	}
-	rows := []table.Row{}
-	for _, c := range seq.Tracks()[0].Controls() {
-		rows = append(rows, table.Row{c.Name()})
-	}
 	model.initParameters()
-	model.paramMidiTable = table.New(
-		table.WithColumns([]table.Column{
-			{Title: "midi message", Width: 40},
-		}),
-		table.WithRows(rows),
-		table.WithFocused(true),
-		table.WithKeyMap(table.DefaultKeyMap()),
-	)
+	model.initMidiControls()
 	return model
 }
 
@@ -128,6 +117,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keymap.Validate):
 			if m.mode == paramSelectMode {
 				m.getActiveTrack().AddControl(m.paramMidiTable.Cursor())
+				m.activeParams[m.activeTrack].track = m.paramMidiTable.Cursor() + m.parameters.fixedParamNb
 				m.mode = trackMode
 			}
 			return m, nil
@@ -235,6 +225,10 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case key.Matches(msg, m.keymap.ParamSelectLeft):
+			if m.mode == paramSelectMode {
+				m.mode = trackMode
+				return m, nil
+			}
 			m.previousParam()
 			m.stepModeTimer = 0
 			return m, nil
@@ -290,23 +284,10 @@ func (m mainModel) View() string {
 		lipgloss.Left,
 		m.renderTransport(),
 		m.renderSequencer(),
+		m.renderParams(),
 	)
 
 	help := m.help.View(m.keymap)
-
-	var params string
-	if m.mode == paramSelectMode {
-		m.paramMidiTable.SetHeight(m.height - lipgloss.Height(mainView) - lipgloss.Height(help) - 2)
-		params = m.paramMidiTable.View()
-	} else {
-		params = m.renderParams()
-	}
-
-	mainView = lipgloss.JoinVertical(
-		lipgloss.Left,
-		mainView,
-		params,
-	)
 
 	// Cleanup gibber
 	cleanup := lipgloss.NewStyle().
