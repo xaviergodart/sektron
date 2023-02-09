@@ -176,6 +176,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.activeTrack = number
 			m.activeTrackPage = 0
 			m.activeStep = 0
+			m.mode = trackMode
 			return m, nil
 
 		case key.Matches(msg, m.keymap.TrackToggle):
