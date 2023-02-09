@@ -219,6 +219,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case key.Matches(msg, m.keymap.RemoveParam):
+			m.mode = trackMode
 			nb := m.getActiveParam() - m.parameters.fixedParamNb
 			if nb >= 0 {
 				m.getActiveTrack().RemoveControl(nb)
@@ -325,8 +326,7 @@ func (m *mainModel) nextParam() {
 	if m.mode == stepMode {
 		for i := current; i < len(m.parameters.step); i++ {
 			if m.parameters.step[i].active(m.getActiveStep()) {
-				// TODO: fix panic happening here
-				m.activeParams[m.activeStep].step = i
+				m.activeParams[m.activeTrack].step = i
 				return
 			}
 		}
@@ -345,7 +345,7 @@ func (m *mainModel) previousParam() {
 	if m.mode == stepMode {
 		for i := current; i >= 0; i-- {
 			if m.parameters.step[i].active(m.getActiveStep()) {
-				m.activeParams[m.activeStep].step = i
+				m.activeParams[m.activeTrack].step = i
 				return
 			}
 		}
