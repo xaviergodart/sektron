@@ -6,6 +6,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/table"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/muesli/reflow/wordwrap"
 )
 
 const (
@@ -158,11 +159,14 @@ func (m *mainModel) initParameters() {
 				return item.Device()
 			},
 			string: func(item sequencer.Track) string {
+				device := item.DeviceString()
+				if len(device) > 40 {
+					device = device[:37] + "..."
+				}
 				return lipgloss.JoinVertical(
 					lipgloss.Center,
 					"",
-					item.DeviceString(),
-					"",
+					wordwrap.String(device, 20),
 					"",
 					"device",
 				)
@@ -319,12 +323,15 @@ func (m *mainModel) initMidiControls() {
 		table.WithRows(rows),
 		table.WithFocused(true),
 		table.WithKeyMap(table.DefaultKeyMap()),
+		table.WithHeight(5),
 	)
+
 	s := table.DefaultStyles()
 	s.Selected = s.Selected.
 		Foreground(primaryTextColor).
 		Background(secondaryColor).
 		Bold(true)
+
 	m.paramMidiTable.SetStyles(s)
 }
 
@@ -338,9 +345,15 @@ func (p *parameter[t]) decrease(item t) {
 
 func (m mainModel) renderParams() string {
 	var params []string
+	var title string
+	switch m.mode {
+	case stepMode:
+		title = paramStepTitleStyle.Render(toASCIIFont(fmt.Sprintf("S%d", m.activeStep+1)))
+	default:
+		title = paramTrackTitleStyle.Render(toASCIIFont(fmt.Sprintf("T%d", m.activeTrack+1)))
+	}
 	// TODO: render params on 2 lines
 	if m.mode == stepMode {
-		params = append(params, paramStepTitleStyle.Render(toASCIIFont(fmt.Sprintf("S%d", m.activeStep+1))))
 		if m.getActiveStep().IsActive() {
 			for i, p := range m.parameters.step {
 				if !p.active(m.getActiveStep()) {
@@ -359,7 +372,6 @@ func (m mainModel) renderParams() string {
 			}
 		}
 	} else if m.mode == trackMode {
-		params = append(params, paramTrackTitleStyle.Render(toASCIIFont(fmt.Sprintf("T%d", m.activeTrack+1))))
 		for i, p := range m.parameters.track {
 			if !p.active(m.getActiveTrack()) {
 				continue
@@ -376,10 +388,7 @@ func (m mainModel) renderParams() string {
 			)
 		}
 	} else if m.mode == paramSelectMode {
-		// TODO: fix table bug
-		params = append(params, paramTrackTitleStyle.Render(toASCIIFont(fmt.Sprintf("T%d", m.activeTrack+1))))
-		m.paramMidiTable.SetHeight(6)
-		indicator := []string{
+		scrollIndicator := []string{
 			" ",
 			"⏶",
 			"⏷",
@@ -389,16 +398,24 @@ func (m mainModel) renderParams() string {
 				lipgloss.Left,
 				lipgloss.JoinVertical(
 					lipgloss.Top,
-					indicator...,
+					scrollIndicator...,
 				),
 				m.paramMidiTable.View(),
 			),
 		)
 	}
-	return lipgloss.NewStyle().MarginTop(1).Render(lipgloss.JoinHorizontal(
+	return lipgloss.NewStyle().
+		MarginTop(1).
+		Render(
+			lipgloss.JoinHorizontal(
+				lipgloss.Top,
+				append(params, title)...,
+			),
+		)
+	/*return lipgloss.NewStyle().MarginTop(1).Render(lipgloss.JoinHorizontal(
 		lipgloss.Left,
 		params...,
-	))
+	))*/
 }
 
 func setLengthParam(item sequencer.Parametrable, value int, add int) {
