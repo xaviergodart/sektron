@@ -296,8 +296,11 @@ func (s sequencer) SavablePattern() filesystem.Pattern {
 }
 
 func (s *sequencer) LoadPattern(pattern filesystem.Pattern) {
-	s.SetTempo(pattern.Tempo)
+	for _, t := range s.tracks {
+		t.close()
+	}
 	s.tracks = []*track{}
+	s.SetTempo(pattern.Tempo)
 
 	for i, t := range pattern.Tracks {
 		s.tracks = append(s.tracks, &track{
@@ -337,8 +340,10 @@ func (s *sequencer) LoadPattern(pattern filesystem.Pattern) {
 			})
 
 			for k, v := range stp.Controls {
-				s.tracks[i].steps[j].controls[k].Set(v)
+				s.tracks[i].steps[j].SetControl(k, v)
 			}
 		}
+
+		s.tracks[i].start()
 	}
 }
