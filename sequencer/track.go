@@ -40,8 +40,11 @@ type track struct {
 	// A track can send multiple midi control changes. All possible midi
 	// controls are initialized in the controls slice. But actual messages
 	// will be sent only for those that are activated.
-	controls       []midi.Control
-	activeControls map[int]struct{}
+	// We also keep the last sent values for each controls, preventing
+	// multiple messages with the same values while playing.
+	controls              []midi.Control
+	activeControls        map[int]struct{}
+	lastSentControlValues map[int]int16
 
 	// Each track starts a goroutine to handle its pulse progression and step
 	// triggering, by using the trig chan at each clock tick.
@@ -200,6 +203,8 @@ func (t *track) RemoveControl(nb int) {
 // SetControl sets the given midi control.
 func (t *track) SetControl(nb int, value int16) {
 	t.controls[nb].Set(value)
+	t.controls[nb].Send()
+	t.lastSentControlValues[nb] = t.controls[nb].Value()
 }
 
 // SetChord sets a new chord value.
@@ -309,6 +314,7 @@ func (t track) isInfinite() bool {
 func (t track) sendControls() {
 	for c := range t.activeControls {
 		t.Control(c).Send()
+		t.lastSentControlValues[c] = t.Control(c).Value()
 	}
 }
 
@@ -317,6 +323,7 @@ func (t track) sendControls() {
 func (t *track) reset() {
 	t.pulse = 0
 	t.lastTriggeredStep = 0
+	t.lastSentControlValues = make(map[int]int16)
 	t.clear()
 }
 

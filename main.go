@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"sektron/filesystem"
 	"sektron/midi"
 	"sektron/sequencer"
 	"sektron/ui"
@@ -17,6 +18,8 @@ func main() {
 	defer midi.Close()
 
 	seq := sequencer.New(midi)
+
+	filesystem.Load("default", seq)
 
 	p := tea.NewProgram(ui.New(seq))
 	if _, err := p.Run(); err != nil {

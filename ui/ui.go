@@ -5,6 +5,7 @@
 package ui
 
 import (
+	"sektron/filesystem"
 	"sektron/sequencer"
 	"time"
 
@@ -37,6 +38,8 @@ const (
 	refreshFrequency = 33 * time.Millisecond
 
 	stepModeTimeout = 90
+
+	defaultPatternFilename = "default"
 )
 
 type mainModel struct {
@@ -276,6 +279,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.seq.TogglePlay()
 			}
 			m.seq.Reset()
+			filesystem.Save(defaultPatternFilename, m.seq)
 			return m, tea.Quit
 		}
 	}

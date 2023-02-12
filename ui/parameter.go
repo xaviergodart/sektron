@@ -409,13 +409,9 @@ func (m mainModel) renderParams() string {
 		Render(
 			lipgloss.JoinHorizontal(
 				lipgloss.Top,
-				append(params, title)...,
+				append([]string{title}, params...)...,
 			),
 		)
-	/*return lipgloss.NewStyle().MarginTop(1).Render(lipgloss.JoinHorizontal(
-		lipgloss.Left,
-		params...,
-	))*/
 }
 
 func setLengthParam(item sequencer.Parametrable, value int, add int) {

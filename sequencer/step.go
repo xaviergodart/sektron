@@ -242,24 +242,16 @@ func (s *step) trigger() {
 // multiple times.
 func (s step) sendControls() {
 	for c := range s.track.activeControls {
-		// TODO: maybe this could be improved.
-		// Small bug: if only the first step is activated,
-		// controls are sent everytime.
-		if s.isSameStepPlayed() && s.Control(c).Value() == s.track.Control(c).Value() {
-			continue
-		} else if !s.isSameStepPlayed() && s.Control(c).Value() == s.track.previousStep().Control(c).Value() {
+		if value, ok := s.track.lastSentControlValues[c]; ok && s.Control(c).Value() == value {
 			continue
 		}
 		s.Control(c).Send()
+		s.track.lastSentControlValues[c] = s.Control(c).Value()
 	}
 }
 
 func (s step) skip() bool {
 	return s.Probability() < 100 && rand.Intn(100) > s.Probability()
-}
-
-func (s step) isSameStepPlayed() bool {
-	return s.track.lastTriggeredStep == s.Position()
 }
 
 func (s step) startingPulse() int {
@@ -287,6 +279,7 @@ func (s step) isInfinite() bool {
 
 func (s *step) clearParameters() {
 	s.reset()
+	s.controls = make(map[int]*midi.Control)
 	s.length = nil
 	s.chord = nil
 	s.velocity = nil
