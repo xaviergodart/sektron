@@ -35,7 +35,7 @@ type Controllable interface {
 // Control represents a midi control.
 // It can represent 4 types of message (see msgType):
 //   - Control Change (midi cc)
-//   - Program Change
+//   - Program Change // TODO: send all 3 program related cc messages on change
 //   - Pitchbend
 //   - Aftertouch
 type Control struct {
