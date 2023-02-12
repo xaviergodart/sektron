@@ -1,9 +1,11 @@
+// Package filesystem provides interfaces and serializable structures that
+// allows saving/loading sequencer state to/from json files.
 package filesystem
 
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 
@@ -14,16 +16,20 @@ const (
 	patternsPath = "patterns"
 )
 
-type Savable interface {
-	SavablePattern() Pattern
+// Patternable should be implemented by the sequencer struct for state
+// manipulation through Pattern objects.
+type Patternable interface {
+	GetPattern() Pattern
 	LoadPattern(Pattern)
 }
 
+// Pattern represents a sequencer state that is json serializable.
 type Pattern struct {
 	Tempo  float64 `json:"tempo"`
 	Tracks []Track `json:"tracks"`
 }
 
+// Track represents a sequencer track state that is json serializable.
 type Track struct {
 	Steps       []Step        `json:"steps"`
 	Device      int           `json:"device"`
@@ -35,6 +41,7 @@ type Track struct {
 	Probability int           `json:"probability"`
 }
 
+// Step represents a sequencer step state that is json serializable.
 type Step struct {
 	Active      bool          `json:"active"`
 	Controls    map[int]int16 `json:"controls"`
@@ -45,10 +52,12 @@ type Step struct {
 	Offset      int           `json:"offset"`
 }
 
-func Save(name string, item Savable) {
+// Save gets a pattern object from a patternable object (sequencer), serializes
+// it, and writes it to a file.
+func Save(name string, item Patternable) {
 	os.MkdirAll(patternsPath, 0755)
 	filename := fmt.Sprintf("%s/%s.json", patternsPath, name)
-	content, err := json.Marshal(item.SavablePattern())
+	content, err := json.Marshal(item.GetPattern())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -58,7 +67,9 @@ func Save(name string, item Savable) {
 	}
 }
 
-func Load(name string, item Savable) {
+// Load reads a json and make a pattern object from it, then loads it into a
+// patternable object (sequencer).
+func Load(name string, item Patternable) {
 	filename := fmt.Sprintf("%s/%s.json", patternsPath, name)
 	f, err := os.Open(filename)
 	if err != nil && errors.Is(err, os.ErrNotExist) {
@@ -68,7 +79,7 @@ func Load(name string, item Savable) {
 	}
 	defer f.Close()
 
-	content, _ := ioutil.ReadAll(f)
+	content, _ := io.ReadAll(f)
 	pattern := Pattern{}
 	json.Unmarshal(content, &pattern)
 
