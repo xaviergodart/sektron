@@ -19,6 +19,7 @@ func main() {
 
 	seq := sequencer.New(midi)
 
+	// load default saved pattern
 	filesystem.Load("default", seq)
 
 	p := tea.NewProgram(ui.New(seq))

@@ -1,6 +1,7 @@
 package filesystem
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -60,7 +61,9 @@ func Save(name string, item Savable) {
 func Load(name string, item Savable) {
 	filename := fmt.Sprintf("%s/%s.json", patternsPath, name)
 	f, err := os.Open(filename)
-	if err != nil {
+	if err != nil && errors.Is(err, os.ErrNotExist) {
+		return
+	} else if err != nil {
 		log.Fatal(err)
 	}
 	defer f.Close()
