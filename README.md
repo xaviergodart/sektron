@@ -1,6 +1,8 @@
 # sektron
 
-An elektron-inspired midi sequencer in the terminal.
+Sektron is a midi step sequencer made with live performance that runs in the terminal (TUI). It's heavily inspired by [elektron machines](https://www.elektron.se).
+
+![sektron screenshot](/docs/screenshot.png)
 
 ## TODO for 0.1
 
