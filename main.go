@@ -17,10 +17,10 @@ func main() {
 	}
 	defer midi.Close()
 
-	seq := sequencer.New(midi)
-
 	// load default saved pattern
-	filesystem.Load("default", seq)
+	bank := filesystem.NewBank("patterns.json")
+
+	seq := sequencer.New(midi, bank)
 
 	p := tea.NewProgram(ui.New(seq))
 	if _, err := p.Run(); err != nil {

@@ -5,7 +5,6 @@
 package ui
 
 import (
-	"sektron/filesystem"
 	"sektron/sequencer"
 	"time"
 
@@ -26,9 +25,15 @@ const (
 	// trackMode allows the user to select the tracks using the step keys.
 	trackMode mode = iota
 
-	// stepMode allows the user to activate/deactivate steps using the step keys.
+	// stepMode allows the user to activate/deactivate steps using the step
+	// keys.
 	stepMode
 
+	// patternSelectMode allows the user to select a specific pattern using the
+	// step keys.
+	patternSelectMode
+
+	// paramSelectMode allows the user to add new midi controls to the track.
 	paramSelectMode
 )
 
@@ -38,8 +43,6 @@ const (
 	refreshFrequency = 33 * time.Millisecond
 
 	stepModeTimeout = 90
-
-	defaultPatternFilename = "default"
 )
 
 type mainModel struct {
@@ -54,6 +57,7 @@ type mainModel struct {
 	activeTrackPage int
 	activeStep      int
 	activeParams    []struct{ track, step int }
+	activePattern   int
 	stepModeTimer   int
 	help            help.Model
 }
@@ -152,6 +156,20 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case key.Matches(msg, m.keymap.StepSelect):
 			number := m.keymap.StepSelectIndex[msg.String()]
+			if m.mode == patternSelectMode {
+				if m.seq.IsPlaying() {
+					m.seq.Save(m.activePattern)
+					// TODO: use activePattern value from bank
+					m.activePattern = number
+					m.seq.ChainNow(m.activePattern)
+				} else {
+					m.seq.Save(m.activePattern)
+					m.activePattern = number
+					m.seq.Load(m.activePattern)
+				}
+				m.mode = trackMode
+				return m, nil
+			}
 			if number >= len(m.getActiveTrack().Steps())-(m.activeTrackPage*stepsPerPage) {
 				return m, nil
 			}
@@ -162,6 +180,11 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case key.Matches(msg, m.keymap.StepToggle):
 			number := m.keymap.StepToggleIndex[msg.String()]
+			if m.mode == patternSelectMode {
+				m.activePattern = number
+				m.seq.Chain(m.activePattern)
+				return m, nil
+			}
 			if number >= len(m.getActiveTrack().Steps()) {
 				return m, nil
 			}
@@ -270,6 +293,14 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.stepModeTimer = 0
 			return m, nil
 
+		case key.Matches(msg, m.keymap.PatternSelect):
+			if m.mode == patternSelectMode {
+				m.mode = trackMode
+			} else {
+				m.mode = patternSelectMode
+			}
+			return m, tea.ClearScreen
+
 		case key.Matches(msg, m.keymap.Help):
 			m.help.ShowAll = !m.help.ShowAll
 			return m, tea.ClearScreen
@@ -279,7 +310,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.seq.TogglePlay()
 			}
 			m.seq.Reset()
-			filesystem.Save(defaultPatternFilename, m.seq)
+			m.seq.Save(m.activePattern)
 			return m, tea.Quit
 		}
 	}

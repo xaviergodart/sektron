@@ -5,9 +5,16 @@ import (
 	"sektron/midi"
 )
 
+// Patterns returns all patterns from the bank.
+func (s sequencer) Patterns() []filesystem.Pattern {
+	return s.bank.Patterns
+}
+
 // GetPattern returns a new Pattern object from the current sequencer state.
-func (s sequencer) GetPattern() filesystem.Pattern {
+func (s *sequencer) Save(pattern int) {
+	// TODO: we should probably add a lock here
 	var tracks []filesystem.Track
+	shouldSave := false
 	for _, t := range s.Tracks() {
 		var steps []filesystem.Step
 		controls := map[int]int16{}
@@ -16,6 +23,9 @@ func (s sequencer) GetPattern() filesystem.Pattern {
 		}
 
 		for _, s := range t.Steps() {
+			if !shouldSave && s.active {
+				shouldSave = true
+			}
 			stepControls := map[int]int16{}
 			for k, c := range s.controls {
 				stepControls[k] = c.Value()
@@ -43,22 +53,57 @@ func (s sequencer) GetPattern() filesystem.Pattern {
 		})
 	}
 
-	return filesystem.Pattern{
+	if !shouldSave {
+		return
+	}
+
+	s.bank.Patterns[pattern] = filesystem.Pattern{
 		Tempo:  s.Tempo(),
 		Tracks: tracks,
+	}
+
+	s.bank.Save()
+}
+
+// Chain adds a pattern to the chain.
+func (s *sequencer) Chain(pattern int) {
+	s.chain = append(s.chain, pattern)
+}
+
+// LoadNext empties the pattern chain and add the given pattern first in chain.
+func (s *sequencer) ChainNow(pattern int) {
+	s.chain = make([]int, 1)
+	s.chain[0] = pattern
+}
+
+// LoadNextInChain loads the first pattern in chain.
+func (s *sequencer) LoadNextInChain() {
+	if len(s.chain) > 0 {
+		var pattern int
+		pattern, s.chain = s.chain[0], s.chain[1:]
+		s.Load(pattern)
 	}
 }
 
 // LoadPattern loads a new sequencer state from Pattern object.
-func (s *sequencer) LoadPattern(pattern filesystem.Pattern) {
+func (s *sequencer) Load(pattern int) {
 	// close existing tracks first
 	for _, t := range s.tracks {
+		t.reset()
 		t.close()
 	}
 	s.tracks = []*track{}
-	s.SetTempo(pattern.Tempo)
 
-	for i, t := range pattern.Tracks {
+	if s.bank.Patterns[pattern].Tracks == nil {
+		for i := 0; i < defaultTracks; i++ {
+			s.AddTrack()
+		}
+		return
+	}
+
+	s.SetTempo(s.bank.Patterns[pattern].Tempo)
+
+	for i, t := range s.bank.Patterns[pattern].Tracks {
 		s.tracks = append(s.tracks, &track{
 			midi:                  s.midi,
 			steps:                 []*step{},
@@ -101,5 +146,6 @@ func (s *sequencer) LoadPattern(pattern filesystem.Pattern) {
 		}
 
 		s.tracks[i].start()
+		s.bank.Active = pattern
 	}
 }

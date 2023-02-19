@@ -18,8 +18,9 @@ const (
 
 var (
 	paramTrackTitleStyle = lipgloss.NewStyle().
-				Padding(1, 1, 1, 2).
+				Padding(0, 1, 0, 2).
 				MarginRight(2).
+				Bold(true).
 				BorderStyle(lipgloss.HiddenBorder())
 
 	paramStepTitleStyle = paramTrackTitleStyle.Copy().
@@ -29,7 +30,6 @@ var (
 	paramStyle = lipgloss.NewStyle().
 			Align(lipgloss.Center).
 			Padding(0, 1, 0, 2).
-			Bold(true).
 			BorderStyle(lipgloss.HiddenBorder()).
 			BorderForeground(secondaryColor)
 
@@ -348,9 +348,25 @@ func (m mainModel) renderParams() string {
 	var title string
 	switch m.mode {
 	case stepMode:
-		title = paramStepTitleStyle.Render(toASCIIFont(fmt.Sprintf("S%d", m.activeStep+1)))
+		title = paramStepTitleStyle.Render(
+			lipgloss.JoinVertical(
+				lipgloss.Center,
+				toASCIIFont(fmt.Sprintf("S%d", m.activeStep+1)),
+				"",
+				fmt.Sprintf("pattern %d", m.activePattern+1),
+			),
+		)
+	case trackMode, paramSelectMode:
+		title = paramTrackTitleStyle.Render(
+			lipgloss.JoinVertical(
+				lipgloss.Center,
+				toASCIIFont(fmt.Sprintf("T%d", m.activeTrack+1)),
+				"",
+				fmt.Sprintf("pattern %d", m.activePattern+1),
+			),
+		)
 	default:
-		title = paramTrackTitleStyle.Render(toASCIIFont(fmt.Sprintf("T%d", m.activeTrack+1)))
+		title = ""
 	}
 	// TODO: render params on 2 lines
 	if m.mode == stepMode {

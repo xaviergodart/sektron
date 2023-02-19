@@ -52,6 +52,8 @@ type keyMap struct {
 	ParamValueUp   key.Binding
 	ParamValueDown key.Binding
 
+	PatternSelect key.Binding
+
 	Help key.Binding
 	Quit key.Binding
 }
@@ -170,6 +172,10 @@ func DefaultKeyMap() keyMap {
 		ParamValueDown: key.NewBinding(
 			key.WithKeys("down"),
 			key.WithHelp("↓", "decrease selected parameter value"),
+		),
+		PatternSelect: key.NewBinding(
+			key.WithKeys("w"),
+			key.WithHelp("w", "toggle pattern select mode"),
 		),
 		Help: key.NewBinding(
 			key.WithKeys("?"),

@@ -36,6 +36,12 @@ const (
 type Sequencer interface {
 	TogglePlay()
 	IsPlaying() bool
+	Save(pattern int)
+	Load(pattern int)
+	LoadNextInChain()
+	Chain(pattern int)
+	ChainNow(pattern int)
+	Patterns() []filesystem.Pattern
 	AddTrack()
 	RemoveTrack()
 	Tracks() []*track
@@ -46,11 +52,13 @@ type Sequencer interface {
 	Tempo() float64
 	SetTempo(tempo float64)
 	Reset()
-	filesystem.Patternable
 }
 
 type sequencer struct {
-	midi   midi.Midi
+	midi  midi.Midi
+	bank  filesystem.Bank
+	chain []int
+
 	tracks []*track
 	clock  *clock
 
@@ -62,23 +70,25 @@ type sequencer struct {
 
 // New creates a new sequencer. It also creates new tracks and calls the
 // start() method that starts the clock.
-func New(midi midi.Midi) *sequencer {
+func New(midi midi.Midi, bank filesystem.Bank) *sequencer {
 	// The randomizer will be used for step trigger probability.
 	// Check step.go.
 	rand.Seed(time.Now().UnixNano())
 
 	seq := &sequencer{
 		midi:      midi,
+		bank:      bank,
 		clockSend: []int{defaultDevice},
 		isPlaying: false,
 	}
 
-	for i := 0; i < defaultTracks; i++ {
-		seq.AddTrack()
-	}
-
 	// Let's start the clock right away.
 	seq.start()
+
+	// Load the last active pattern from bank if available.
+	// Or instanciate default number of tracks.
+	seq.Load(seq.bank.Active)
+
 	return seq
 }
 
@@ -240,6 +250,12 @@ func (s *sequencer) tick() {
 	if !s.isPlaying {
 		return
 	}
+
+	// Load first pattern in chain if chain not empty.
+	if s.tracks[0].pulse == 0 {
+		s.LoadNextInChain()
+	}
+
 	for _, track := range s.tracks {
 		track.tick()
 	}

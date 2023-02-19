@@ -37,7 +37,7 @@ var (
 				Background(currentColor).
 				Foreground(secondaryTextColor)
 	transportPlayingStyle = transportPlayerStyle.Copy().
-				Background(transportPlayColor)
+				Background(tertiaryColor)
 
 	tempoStyle = transportBarStyle.Copy().
 			Foreground(primaryTextColor).

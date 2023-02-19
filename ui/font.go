@@ -118,6 +118,14 @@ var (
 				"█ █",
 			}...,
 		),
+		"P": lipgloss.JoinVertical(
+			lipgloss.Left,
+			[]string{
+				"█▀█",
+				"█▀▀",
+				"█  ",
+			}...,
+		),
 		"S": lipgloss.JoinVertical(
 			lipgloss.Left,
 			[]string{

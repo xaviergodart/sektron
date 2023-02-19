@@ -1,10 +1,10 @@
 // Package filesystem provides interfaces and serializable structures that
 // allows saving/loading sequencer state to/from json files.
+// TODO: no need for a separate module. Move back to sequencer
 package filesystem
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -13,20 +13,27 @@ import (
 )
 
 const (
-	patternsPath = "patterns"
+	maxPatterns = 128
 )
 
-// Patternable should be implemented by the sequencer struct for state
-// manipulation through Pattern objects.
-type Patternable interface {
-	GetPattern() Pattern
-	LoadPattern(Pattern)
+// TODO: cpu consomption went up 10% since adding that.
+
+// Bank holds a slice of patterns in memory
+type Bank struct {
+	Patterns []Pattern `json:"patterns"`
+	Active   int       `json:"active"`
+	filename string
 }
 
 // Pattern represents a sequencer state that is json serializable.
 type Pattern struct {
 	Tempo  float64 `json:"tempo"`
 	Tracks []Track `json:"tracks"`
+}
+
+// IsFree returns true if the pattern is not used, false otherwise.
+func (p Pattern) IsFree() bool {
+	return p.Tracks == nil
 }
 
 // Track represents a sequencer track state that is json serializable.
@@ -52,16 +59,24 @@ type Step struct {
 	Offset      int           `json:"offset"`
 }
 
+// NewBank creates and loads a new bank from a given file.
+func NewBank(filename string) Bank {
+	bank := Bank{
+		filename: filename,
+		Patterns: make([]Pattern, maxPatterns),
+	}
+	bank.Load(filename)
+	return bank
+}
+
 // Save gets a pattern object from a patternable object (sequencer), serializes
 // it, and writes it to a file.
-func Save(name string, item Patternable) {
-	os.MkdirAll(patternsPath, 0755)
-	filename := fmt.Sprintf("%s/%s.json", patternsPath, name)
-	content, err := json.Marshal(item.GetPattern())
+func (b *Bank) Save() {
+	content, err := json.Marshal(b)
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = os.WriteFile(filename, content, 0644)
+	err = os.WriteFile(b.filename, content, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -69,8 +84,7 @@ func Save(name string, item Patternable) {
 
 // Load reads a json and make a pattern object from it, then loads it into a
 // patternable object (sequencer).
-func Load(name string, item Patternable) {
-	filename := fmt.Sprintf("%s/%s.json", patternsPath, name)
+func (b *Bank) Load(filename string) {
 	f, err := os.Open(filename)
 	if err != nil && errors.Is(err, os.ErrNotExist) {
 		return
@@ -80,8 +94,5 @@ func Load(name string, item Patternable) {
 	defer f.Close()
 
 	content, _ := io.ReadAll(f)
-	pattern := Pattern{}
-	json.Unmarshal(content, &pattern)
-
-	item.LoadPattern(pattern)
+	json.Unmarshal(content, b)
 }
