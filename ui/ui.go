@@ -145,6 +145,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.seq.AddStep(m.activeTrack)
 			return m, nil
 
+		// TODO: step length seems to bug when removing steps...
 		case key.Matches(msg, m.keymap.RemoveStep):
 			remainingStepsInPage := (len(m.getActiveTrack().Steps()) - 1) % stepsPerPage
 			if m.activeTrackPage > 0 && remainingStepsInPage == 0 {
