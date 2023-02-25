@@ -43,7 +43,7 @@ func (s *sequencer) Save(pattern int) {
 
 		tracks = append(tracks, filesystem.Track{
 			Steps:       steps,
-			Device:      t.device, // TODO: check if device exists
+			Device:      t.device,
 			Channel:     t.channel,
 			Controls:    controls,
 			Length:      t.length,
@@ -104,6 +104,11 @@ func (s *sequencer) Load(pattern int) {
 	s.SetTempo(s.bank.Patterns[pattern].Tempo)
 
 	for i, t := range s.bank.Patterns[pattern].Tracks {
+		// Check if midi device exists or set the first one found.
+		if len(s.midi.Devices()) < t.Device+1 {
+			t.Device = 0
+		}
+
 		s.tracks = append(s.tracks, &track{
 			midi:                  s.midi,
 			steps:                 []*step{},
