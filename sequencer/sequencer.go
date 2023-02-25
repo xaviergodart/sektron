@@ -36,12 +36,13 @@ const (
 type Sequencer interface {
 	TogglePlay()
 	IsPlaying() bool
-	Save(pattern int)
+	Save()
 	Load(pattern int)
 	LoadNextInChain()
 	Chain(pattern int)
 	ChainNow(pattern int)
 	Patterns() []filesystem.Pattern
+	ActivePattern() int
 	AddTrack()
 	RemoveTrack()
 	Tracks() []*track

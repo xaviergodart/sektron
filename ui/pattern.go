@@ -47,7 +47,7 @@ func (m mainModel) renderPattern(pattern int) string {
 		number,
 		toASCIIFont(fmt.Sprintf("P%s", number)),
 	)
-	if pattern == m.activePattern {
+	if pattern == m.seq.ActivePattern() {
 		return stepStyle.Render(lipgloss.Place(
 			width,
 			height,

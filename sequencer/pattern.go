@@ -10,9 +10,13 @@ func (s sequencer) Patterns() []filesystem.Pattern {
 	return s.bank.Patterns
 }
 
+// ActivePattern returns the active pattern.
+func (s sequencer) ActivePattern() int {
+	return s.bank.Active
+}
+
 // GetPattern returns a new Pattern object from the current sequencer state.
-func (s *sequencer) Save(pattern int) {
-	// TODO: we should probably add a lock here
+func (s *sequencer) Save() {
 	var tracks []filesystem.Track
 	shouldSave := false
 	for _, t := range s.Tracks() {
@@ -57,7 +61,7 @@ func (s *sequencer) Save(pattern int) {
 		return
 	}
 
-	s.bank.Patterns[pattern] = filesystem.Pattern{
+	s.bank.Patterns[s.bank.Active] = filesystem.Pattern{
 		Tempo:  s.Tempo(),
 		Tracks: tracks,
 	}
@@ -67,11 +71,13 @@ func (s *sequencer) Save(pattern int) {
 
 // Chain adds a pattern to the chain.
 func (s *sequencer) Chain(pattern int) {
+	s.Save()
 	s.chain = append(s.chain, pattern)
 }
 
 // LoadNext empties the pattern chain and add the given pattern first in chain.
 func (s *sequencer) ChainNow(pattern int) {
+	s.Save()
 	s.chain = make([]int, 1)
 	s.chain[0] = pattern
 }
@@ -93,6 +99,7 @@ func (s *sequencer) Load(pattern int) {
 		t.close()
 	}
 	s.tracks = []*track{}
+	s.bank.Active = pattern
 
 	if s.bank.Patterns[pattern].Tracks == nil {
 		for i := 0; i < defaultTracks; i++ {
@@ -151,6 +158,5 @@ func (s *sequencer) Load(pattern int) {
 		}
 
 		s.tracks[i].start()
-		s.bank.Active = pattern
 	}
 }

@@ -353,7 +353,7 @@ func (m mainModel) renderParams() string {
 				lipgloss.Center,
 				toASCIIFont(fmt.Sprintf("S%d", m.activeStep+1)),
 				"",
-				fmt.Sprintf("pattern %d", m.activePattern+1),
+				fmt.Sprintf("pattern %d", m.seq.ActivePattern()+1),
 			),
 		)
 	case trackMode, paramSelectMode:
@@ -362,7 +362,7 @@ func (m mainModel) renderParams() string {
 				lipgloss.Center,
 				toASCIIFont(fmt.Sprintf("T%d", m.activeTrack+1)),
 				"",
-				fmt.Sprintf("pattern %d", m.activePattern+1),
+				fmt.Sprintf("pattern %d", m.seq.ActivePattern()+1),
 			),
 		)
 	default:

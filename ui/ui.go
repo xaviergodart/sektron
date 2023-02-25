@@ -57,7 +57,6 @@ type mainModel struct {
 	activeTrackPage int
 	activeStep      int
 	activeParams    []struct{ track, step int }
-	activePattern   int
 	stepModeTimer   int
 	help            help.Model
 }
@@ -159,14 +158,10 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			number := m.keymap.StepSelectIndex[msg.String()]
 			if m.mode == patternSelectMode {
 				if m.seq.IsPlaying() {
-					m.seq.Save(m.activePattern)
-					// TODO: use activePattern value from bank
-					m.activePattern = number
-					m.seq.ChainNow(m.activePattern)
+					m.seq.ChainNow(number)
 				} else {
-					m.seq.Save(m.activePattern)
-					m.activePattern = number
-					m.seq.Load(m.activePattern)
+					m.seq.Save()
+					m.seq.Load(number)
 				}
 				m.mode = trackMode
 				return m, nil
@@ -182,8 +177,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keymap.StepToggle):
 			number := m.keymap.StepToggleIndex[msg.String()]
 			if m.mode == patternSelectMode {
-				m.activePattern = number
-				m.seq.Chain(m.activePattern)
+				m.seq.Chain(number)
 				return m, nil
 			}
 			if number >= len(m.getActiveTrack().Steps()) {
@@ -311,7 +305,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.seq.TogglePlay()
 			}
 			m.seq.Reset()
-			m.seq.Save(m.activePattern)
+			m.seq.Save()
 			return m, tea.Quit
 		}
 	}
