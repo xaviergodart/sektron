@@ -43,7 +43,7 @@ func (s *sequencer) Save(pattern int) {
 
 		tracks = append(tracks, filesystem.Track{
 			Steps:       steps,
-			Device:      t.device,
+			Device:      t.device, // TODO: should we store the name instead?
 			Channel:     t.channel,
 			Controls:    controls,
 			Length:      t.length,
