@@ -29,11 +29,11 @@ func (m mainModel) renderPatterns() string {
 		lipgloss.Left,
 		lipgloss.JoinHorizontal(
 			lipgloss.Top,
-			pages[0][:patternsPerLine]...,
+			pages[m.activePatternPage][:patternsPerLine]...,
 		),
 		lipgloss.JoinHorizontal(
 			lipgloss.Top,
-			pages[0][len(pages[0])-patternsPerLine:]...,
+			pages[m.activePatternPage][len(pages[m.activePatternPage])-patternsPerLine:]...,
 		),
 	)
 }

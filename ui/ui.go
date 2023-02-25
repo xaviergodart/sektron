@@ -46,19 +46,20 @@ const (
 )
 
 type mainModel struct {
-	seq             sequencer.Sequencer
-	parameters      parameters
-	paramMidiTable  table.Model
-	keymap          keyMap
-	width           int
-	height          int
-	mode            mode
-	activeTrack     int
-	activeTrackPage int
-	activeStep      int
-	activeParams    []struct{ track, step int }
-	stepModeTimer   int
-	help            help.Model
+	seq               sequencer.Sequencer
+	parameters        parameters
+	paramMidiTable    table.Model
+	keymap            keyMap
+	width             int
+	height            int
+	mode              mode
+	activeTrack       int
+	activeTrackPage   int
+	activeStep        int
+	activeParams      []struct{ track, step int }
+	activePatternPage int
+	stepModeTimer     int
+	help              help.Model
 }
 
 // New creates a new mainModel that hols the ui state. It takes a new sequencer.
@@ -206,16 +207,28 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case key.Matches(msg, m.keymap.TrackPageUp):
-			pageNb := m.trackPagesNb()
-			m.activeTrackPage = (m.activeTrackPage + 1) % pageNb
+			if m.mode == patternSelectMode {
+				m.activePatternPage = (m.activePatternPage + 1) % patternPages
+			} else {
+				pageNb := m.trackPagesNb()
+				m.activeTrackPage = (m.activeTrackPage + 1) % pageNb
+			}
 			return m, nil
 
 		case key.Matches(msg, m.keymap.TrackPageDown):
-			pageNb := m.trackPagesNb()
-			if m.activeTrackPage-1 < 0 {
-				m.activeTrackPage = pageNb - 1
+			if m.mode == patternSelectMode {
+				if m.activePatternPage-1 < 0 {
+					m.activePatternPage = patternPages - 1
+				} else {
+					m.activePatternPage = m.activePatternPage - 1
+				}
 			} else {
-				m.activeTrackPage = m.activeTrackPage - 1
+				pageNb := m.trackPagesNb()
+				if m.activeTrackPage-1 < 0 {
+					m.activeTrackPage = pageNb - 1
+				} else {
+					m.activeTrackPage = m.activeTrackPage - 1
+				}
 			}
 			return m, nil
 
