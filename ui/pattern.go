@@ -15,6 +15,21 @@ const (
 	patternPages    = 4
 )
 
+var (
+	patternStyle = lipgloss.NewStyle().
+			Align(lipgloss.Center).
+			Padding(0, 1, 0, 2).
+			Bold(true).
+			BorderStyle(lipgloss.HiddenBorder())
+
+	patternCurrentStyle = lipgloss.NewStyle().
+				Align(lipgloss.Center).
+				Padding(0, 1, 0, 2).
+				Bold(true).
+				BorderStyle(lipgloss.ThickBorder()).
+				BorderForeground(tertiaryColor)
+)
+
 func (m mainModel) renderPatterns() string {
 	pages := make([][]string, patternPages)
 
@@ -35,11 +50,11 @@ func (m mainModel) renderPatterns() string {
 			lipgloss.Top,
 			pages[m.activePatternPage][len(pages[m.activePatternPage])-patternsPerLine:]...,
 		),
+		m.renderChain(),
 	)
 }
 
 func (m mainModel) renderPattern(pattern int) string {
-	// TODO: display chain somewhere
 	width, height := m.stepSize()
 	number := strconv.Itoa(pattern + 1)
 	content := lipgloss.JoinVertical(
@@ -75,4 +90,40 @@ func (m mainModel) renderPattern(pattern int) string {
 			lipgloss.WithWhitespaceBackground(inactiveColor),
 		))
 	}
+}
+
+func (m mainModel) renderChain() string {
+	var patterns []string
+
+	for i, pattern := range m.seq.FullChain() {
+		if i == 0 {
+			patterns = append(patterns, patternCurrentStyle.Render(
+				lipgloss.JoinVertical(
+					lipgloss.Center,
+					toASCIIFont(fmt.Sprintf("P%d", pattern+1)),
+					"",
+					" current ",
+				),
+			))
+		} else {
+			patterns = append(patterns, patternStyle.Render(
+				lipgloss.JoinVertical(
+					lipgloss.Center,
+					toASCIIFont(fmt.Sprintf("P%d", pattern+1)),
+					"",
+					fmt.Sprintf("next %d", i),
+				),
+			))
+		}
+
+	}
+
+	return lipgloss.NewStyle().
+		MarginTop(1).
+		Render(
+			lipgloss.JoinHorizontal(
+				lipgloss.Top,
+				patterns...,
+			),
+		)
 }

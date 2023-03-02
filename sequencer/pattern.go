@@ -69,6 +69,11 @@ func (s *sequencer) Save() {
 	s.bank.Save()
 }
 
+// FullChain returns the full pattern chain.
+func (s *sequencer) FullChain() []int {
+	return append([]int{s.bank.Active}, s.chain...)
+}
+
 // Chain adds a pattern to the chain.
 func (s *sequencer) Chain(pattern int) {
 	s.Save()

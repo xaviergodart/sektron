@@ -41,6 +41,7 @@ type Sequencer interface {
 	LoadNextInChain()
 	Chain(pattern int)
 	ChainNow(pattern int)
+	FullChain() []int
 	Patterns() []filesystem.Pattern
 	ActivePattern() int
 	AddTrack()

@@ -164,7 +164,6 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.seq.Save()
 					m.seq.Load(number)
 				}
-				m.mode = trackMode
 				return m, nil
 			}
 			if number >= len(m.getActiveTrack().Steps())-(m.activeTrackPage*stepsPerPage) {
