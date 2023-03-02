@@ -18,6 +18,7 @@ func main() {
 	defer midi.Close()
 
 	// load default saved pattern
+	// TODO: retrieve filename from command argument.
 	bank := filesystem.NewBank("patterns.json")
 
 	seq := sequencer.New(midi, bank)

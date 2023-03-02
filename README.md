@@ -22,15 +22,16 @@ make GOLANG_OS=darwin build
 make GOLANG_OS=windows build
 ```
 
-and then:
+
+## Usage
+
 ```sh
 ./bin/sektron
 ```
 
+Hit `?` to see all keybindings. `esc` to quit.
 
-## Usage
-
-TODO
+![sektron gif](/docs/vhs.gif)
 
 
 ## Roadmap for 0.1
@@ -38,7 +39,7 @@ TODO
  - [x] Exhaustive midi messages type (CC etc...)
  - [x] Basic pattern management (and chaining)
  - [ ] Improve controls UX
- - [ ] Keymapping management
+ - [ ] Key mapping management and configuration
 
 ## Roadmap for later
 
