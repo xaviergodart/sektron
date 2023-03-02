@@ -33,6 +33,8 @@ Hit `?` to see all keybindings. `esc` to quit.
 
 ![sektron gif](/docs/vhs.gif)
 
+[Qsynth](https://qsynth.sourceforge.io/) is a nice companion app for testing Sektron.
+
 
 ## Roadmap for 0.1
 
@@ -40,6 +42,7 @@ Hit `?` to see all keybindings. `esc` to quit.
  - [x] Basic pattern management (and chaining)
  - [ ] Improve controls UX
  - [ ] Key mapping management and configuration
+ - [ ] Write documentation
 
 ## Roadmap for later
 
