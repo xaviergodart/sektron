@@ -68,6 +68,8 @@ type sequencer struct {
 	clockSend []int
 
 	isPlaying bool
+
+	isFirstTick bool
 }
 
 // New creates a new sequencer. It also creates new tracks and calls the
@@ -78,10 +80,11 @@ func New(midi midi.Midi, bank filesystem.Bank) *sequencer {
 	rand.Seed(time.Now().UnixNano())
 
 	seq := &sequencer{
-		midi:      midi,
-		bank:      bank,
-		clockSend: []int{defaultDevice},
-		isPlaying: false,
+		midi:        midi,
+		bank:        bank,
+		clockSend:   []int{defaultDevice},
+		isPlaying:   false,
+		isFirstTick: false,
 	}
 
 	// Let's start the clock right away.
@@ -101,6 +104,7 @@ func (s *sequencer) TogglePlay() {
 	if !s.isPlaying {
 		s.Reset()
 	} else {
+		s.isFirstTick = true
 		s.sendControls()
 	}
 }
@@ -255,13 +259,15 @@ func (s *sequencer) tick() {
 	}
 
 	// Load first pattern in chain if chain not empty.
-	if s.tracks[0].pulse == 0 {
+	if !s.isFirstTick && s.tracks[0].pulse == 0 {
 		s.LoadNextInChain()
 	}
 
 	for _, track := range s.tracks {
 		track.tick()
 	}
+
+	s.isFirstTick = false
 }
 
 // sendControls sends all track's active midi control messages.
