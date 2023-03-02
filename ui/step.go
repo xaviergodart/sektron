@@ -76,7 +76,6 @@ func (m mainModel) renderStep(step sequencer.Step) string {
 			textStyle.Background(stepActiveColor).Render(content),
 			lipgloss.WithWhitespaceBackground(stepActiveColor),
 		))
-
 	} else {
 		stepStr = stepStyle.Render(lipgloss.Place(
 			width,

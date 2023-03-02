@@ -4,12 +4,11 @@
 package filesystem
 
 import (
+	"encoding/json"
 	"errors"
 	"io"
 	"log"
 	"os"
-
-	"encoding/json"
 )
 
 const (
@@ -76,7 +75,7 @@ func (b *Bank) Save() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = os.WriteFile(b.filename, content, 0644)
+	err = os.WriteFile(b.filename, content, 0o644)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -94,5 +93,8 @@ func (b *Bank) Load(filename string) {
 	defer f.Close()
 
 	content, _ := io.ReadAll(f)
-	json.Unmarshal(content, b)
+	err = json.Unmarshal(content, b)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

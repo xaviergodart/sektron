@@ -87,7 +87,10 @@ func (m *midi) start() {
 					// remaining messages, ensuring that all the note off
 					// signals will be sent before exiting.
 					for len(output) > 0 {
-						send(<-output)
+						err := send(<-output)
+						if err != nil {
+							log.Println(err)
+						}
 					}
 					return
 				case msg := <-output:

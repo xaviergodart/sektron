@@ -115,7 +115,6 @@ func (m mainModel) renderChain() string {
 				),
 			))
 		}
-
 	}
 
 	return lipgloss.NewStyle().

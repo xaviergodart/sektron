@@ -12,7 +12,6 @@ package sequencer
 
 import (
 	"math/rand"
-
 	"sektron/filesystem"
 	"sektron/midi"
 	"time"
