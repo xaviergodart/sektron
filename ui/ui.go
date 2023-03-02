@@ -158,11 +158,12 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keymap.StepSelect):
 			number := m.keymap.StepSelectIndex[msg.String()]
 			if m.mode == patternSelectMode {
+				pattern := number + (m.activePatternPage * patternsPerPage)
 				if m.seq.IsPlaying() {
-					m.seq.ChainNow(number)
+					m.seq.ChainNow(pattern)
 				} else {
 					m.seq.Save()
-					m.seq.Load(number)
+					m.seq.Load(pattern)
 				}
 				return m, nil
 			}
