@@ -36,6 +36,13 @@ Hit `?` to see all keybindings. `esc` to quit.
 [Qsynth](https://qsynth.sourceforge.io/) is a nice companion app for testing Sektron.
 
 
+## Acknowledgments
+
+Sektron uses a few awesome packages:
+ - [gomidi/midi](https://gitlab.com/gomidi/midi) for all midi communication
+ - [charmbracelet/bubbletea](https://github.com/charmbracelet/bubbletea) as the main TUI framework
+ - [charmbracelet/lipgloss](https://github.com/charmbracelet/lipgloss) for making things beautiful
+
 ## Roadmap for 0.1
 
  - [x] Exhaustive midi messages type (CC etc...)
