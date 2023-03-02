@@ -68,9 +68,9 @@ func (k keyMap) ShortHelp() []key.Binding {
 // key.Map interface.
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.TogglePlay, k.Mode, k.AddTrack, k.RemoveTrack, k.AddStep, k.RemoveStep, k.TempoUp, k.TempoDown, k.TempoFineUp, k.TempoFineDown},
+		{k.TogglePlay, k.Mode, k.PatternSelect, k.Validate, k.AddTrack, k.RemoveTrack, k.AddStep, k.RemoveStep, k.TempoUp, k.TempoDown, k.TempoFineUp, k.TempoFineDown},
 		{k.StepSelect, k.StepToggle, k.TrackSelect, k.TrackToggle, k.TrackPageUp, k.TrackPageDown, k.ParamValueUp, k.ParamValueDown},
-		{k.Help, k.Quit},
+		{k.AddParam, k.RemoveParam, k.Help, k.Quit},
 	}
 }
 
@@ -108,12 +108,12 @@ func DefaultKeyMap() keyMap {
 		StepSelectIndex: map[string]int{},
 		StepSelect: key.NewBinding(
 			key.WithKeys(stepSelectKeys...),
-			key.WithHelp(strings.Join(stepSelectKeys, "/"), "select step 1 to 16"),
+			key.WithHelp(strings.Join(stepSelectKeys, "/"), "select step|pattern 1 to 16"),
 		),
 		StepToggleIndex: map[string]int{},
 		StepToggle: key.NewBinding(
 			key.WithKeys(stepToggleKeys...),
-			key.WithHelp(strings.Join(stepToggleKeys, "/"), "toggle step 1 to 16"),
+			key.WithHelp(strings.Join(stepToggleKeys, "/"), "toggle step or chain pattern 1 to 16"),
 		),
 		TrackSelectIndex: map[string]int{},
 		TrackSelect: key.NewBinding(

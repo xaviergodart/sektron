@@ -2,20 +2,49 @@
 
 Sektron is a midi step sequencer, made with live performance in mind, that runs in the terminal (TUI). It's heavily inspired by [elektron machines](https://www.elektron.se).
 
+**_Sektron is still under heavy development. Features are missing and it's probably unstable._**
+
 ![sektron screenshot](/docs/screenshot.png)
 
-## TODO for 0.1
+## Build
+
+You'll need [go 1.18](https://go.dev/dl/) minimum.
+Although you should be able to build it for either **linux**, **macOS** or **Windows**, it has only been tested on **linux**.
+
+```sh
+# Linux
+make GOLANG_OS=linux build
+
+# macOS
+make GOLANG_OS=darwin build
+
+# Windows
+make GOLANG_OS=windows build
+```
+
+and then:
+```sh
+./bin/sektron
+```
+
+
+## Usage
+
+TODO
+
+
+## Roadmap for 0.1
 
  - [x] Exhaustive midi messages type (CC etc...)
- - [ ] Basic pattern management (and chaining)
+ - [x] Basic pattern management (and chaining)
+ - [ ] Improve controls UX
  - [ ] Keymapping management
- - [x] Check midi drivers
 
-## TODO for later
+## Roadmap for later
 
  - Step polyphony
  - Keyboard mode
  - Live record
- - Random note in scale
- - Retrig
+ - More random/generative features
+ - Retrigs
  - LFOs
