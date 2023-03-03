@@ -42,7 +42,7 @@ const (
 	// It saves some cpu. Right now we run it at 30 fps.
 	refreshFrequency = 33 * time.Millisecond
 
-	stepModeTimeout = 90
+	stepModeTimeout = 40
 )
 
 type mainModel struct {
