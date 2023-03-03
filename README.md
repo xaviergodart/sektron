@@ -1,6 +1,9 @@
 # Sektron
 
-Sektron is a midi step sequencer, made with live performance in mind, that runs in the terminal (TUI). It's heavily inspired by [elektron machines](https://www.elektron.se).
+Sektron is a midi step sequencer, made with live performance in mind, that runs in the terminal (TUI).
+Its main purpose is to mimic the fun and immediacity of hardware sequencers by being entirely controllable via keyboard.
+
+It's heavily inspired by [elektron devices](https://www.elektron.se).
 
 **_Sektron is still under heavy development. Features are missing and it's probably unstable._**
 
@@ -35,6 +38,13 @@ Hit `?` to see all keybindings. `esc` to quit.
 
 [Qsynth](https://qsynth.sourceforge.io/) is a nice companion app for testing Sektron.
 
+### Patterns management
+
+Each time you start Sektron, a json file (default: `patterns.json`) containing 128 pattern slots is loaded.
+For selecting a different file, use the `--patterns` flag:
+```sh
+./bin/sektron --patterns my-patterns.json
+```
 
 ## Acknowledgments
 

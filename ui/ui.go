@@ -178,7 +178,8 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keymap.StepToggle):
 			number := m.keymap.StepToggleIndex[msg.String()]
 			if m.mode == patternSelectMode {
-				m.seq.Chain(number)
+				pattern := number + (m.activePatternPage * patternsPerPage)
+				m.seq.Chain(pattern)
 				return m, nil
 			}
 			if number >= len(m.getActiveTrack().Steps()) {

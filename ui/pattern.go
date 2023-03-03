@@ -12,7 +12,7 @@ const (
 	patternHeight   = patternWidth / 2
 	patternsPerPage = 16
 	patternsPerLine = 8
-	patternPages    = 4
+	patternPages    = 8
 )
 
 var (

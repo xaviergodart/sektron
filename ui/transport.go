@@ -67,14 +67,14 @@ func (m mainModel) renderTransport() string {
 	transportSignature := trackActiveCurrentStepActiveStyle.Render(
 		fmt.Sprintf("%d/%d", len(m.getActiveTrack().Steps()), m.trackPagesNb()*stepsPerPage),
 	)
-	transportTrackPages := m.renderTransportTrackPages()
+	transportPages := m.renderTransportPages()
 
 	transportBar := lipgloss.JoinHorizontal(lipgloss.Center,
 		transportTempo,
 		transportPlayer,
 		transportTrack,
 		transportSignature,
-		transportTrackPages,
+		transportPages,
 	)
 
 	logo := logoStyle.PaddingLeft((m.width/stepsPerLine-2)*stepsPerLine - w(transportBar) - w(logoBig[0]) + 14).
@@ -122,6 +122,29 @@ func (m mainModel) renderTransportPlayer() string {
 		return transportPlayingStyle.Render("▶")
 	}
 	return transportPlayerStyle.Render("■")
+}
+
+func (m mainModel) renderTransportPages() string {
+	if m.mode == patternSelectMode {
+		return m.renderTransportPatternPages()
+	}
+
+	return m.renderTransportTrackPages()
+}
+
+func (m mainModel) renderTransportPatternPages() string {
+	text := "●"
+	pages := make([]string, patternPages)
+	for i := range pages {
+		if m.activePatternPage == i {
+			pages[i] = trackPageActive.Render(text)
+		} else {
+			pages[i] = trackPage.Render(text)
+		}
+	}
+	return transportTrackPage.Render(
+		lipgloss.JoinHorizontal(lipgloss.Left, pages...),
+	)
 }
 
 func (m mainModel) renderTransportTrackPages() string {
