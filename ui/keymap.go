@@ -142,12 +142,12 @@ func DefaultKeyMap() keyMap {
 			key.WithHelp("page down", "tempo down (1 bpm)"),
 		),
 		TempoFineUp: key.NewBinding(
-			key.WithKeys("alt+pgup"),
-			key.WithHelp("alt+page up", "tempo up (0.1 bpm)"),
+			key.WithKeys("ctrl+pgup"),
+			key.WithHelp("ctrl+page up", "tempo up (0.1 bpm)"),
 		),
 		TempoFineDown: key.NewBinding(
-			key.WithKeys("alt+pgdown"),
-			key.WithHelp("alt+page down", "tempo down (0.1 bpm)"),
+			key.WithKeys("ctrl+pgdown"),
+			key.WithHelp("ctrl+page down", "tempo down (0.1 bpm)"),
 		),
 		AddParam: key.NewBinding(
 			key.WithKeys("ctrl+up"),
@@ -174,8 +174,8 @@ func DefaultKeyMap() keyMap {
 			key.WithHelp("↓", "decrease selected parameter value"),
 		),
 		PatternSelect: key.NewBinding(
-			key.WithKeys("w"),
-			key.WithHelp("w", "toggle pattern select mode"),
+			key.WithKeys("²"),
+			key.WithHelp("²", "toggle pattern select mode"),
 		),
 		Help: key.NewBinding(
 			key.WithKeys("?"),
