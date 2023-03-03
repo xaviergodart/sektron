@@ -47,12 +47,12 @@ var (
 			Foreground(primaryTextColor).
 			Background(currentColor)
 
-	transportTrackPage = lipgloss.NewStyle()
-	trackPage          = transportBarStyle.Copy().
+	transportPageStyle = lipgloss.NewStyle()
+	pageStyle          = transportBarStyle.Copy().
 				Foreground(inactiveColor)
-	trackPageActive = trackPage.Copy().
+	pageActiveStyle = pageStyle.Copy().
 			Foreground(primaryColor)
-	trackPageCurrent = trackPage.Copy().
+	pageCurrentStyle = pageStyle.Copy().
 				Foreground(activeColor)
 
 	logoStyle = lipgloss.NewStyle().Foreground(logoColor)
@@ -137,12 +137,12 @@ func (m mainModel) renderTransportPatternPages() string {
 	pages := make([]string, patternPages)
 	for i := range pages {
 		if m.activePatternPage == i {
-			pages[i] = trackPageActive.Render(text)
+			pages[i] = pageActiveStyle.Render(text)
 		} else {
-			pages[i] = trackPage.Render(text)
+			pages[i] = pageStyle.Render(text)
 		}
 	}
-	return transportTrackPage.Render(
+	return transportPageStyle.Render(
 		lipgloss.JoinHorizontal(lipgloss.Left, pages...),
 	)
 }
@@ -156,19 +156,22 @@ func (m mainModel) renderTransportTrackPages() string {
 	pages := make([]string, pageNb)
 	for i := range pages {
 		if m.isActiveTrackOnQuarterNote() && m.playingTrackPage() == i {
-			pages[i] = trackPageCurrent.Render(text)
+			pages[i] = pageCurrentStyle.Render(text)
 		} else if m.activeTrackPage == i {
-			pages[i] = trackPageActive.Render(text)
+			pages[i] = pageActiveStyle.Render(text)
 		} else {
-			pages[i] = trackPage.Render(text)
+			pages[i] = pageStyle.Render(text)
 		}
 	}
-	return transportTrackPage.Render(
+	return transportPageStyle.Render(
 		lipgloss.JoinHorizontal(lipgloss.Left, pages...),
 	)
 }
 
 func (m mainModel) isActiveTrackOnQuarterNote() bool {
+	if len(m.seq.Tracks()) == 0 {
+		return false
+	}
 	return m.seq.IsPlaying() && m.seq.Tracks()[0].CurrentStep()%4 == 0
 }
 
