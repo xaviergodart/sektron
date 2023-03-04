@@ -38,6 +38,26 @@ Hit `?` to see all keybindings. `esc` to quit.
 
 [Qsynth](https://qsynth.sourceforge.io/) is a nice companion app for testing Sektron.
 
+### Keyboard mapping
+
+Keys mapping is fully customizable. After running Sektron for the first time, a `config.json` is created.
+You can edit all the keys inside it.
+
+Or you can select one of the fex default keyboard layouts are available:
+```sh
+# QWERTY
+./bin/sektron --keyboard qwerty
+
+# AZERTY
+./bin/sektron --keyboard azerty
+
+# QWERTY MAC
+./bin/sektron --keyboard qwerty-mac
+
+# AZERTY MAC
+./bin/sektron --keyboard azerty-mac
+```
+
 ### Patterns management
 
 Each time you start Sektron, a json file (default: `patterns.json`) containing 128 pattern slots is loaded.
