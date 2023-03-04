@@ -12,6 +12,8 @@ import (
 )
 
 func main() {
+	configFile := flag.String("config", "config.json", "config file to load or create")
+	keyboard := flag.String("keyboard", "", "keyboard layout (qwerty, qwerty-mac, azerty, azerty-mac)")
 	patternsFile := flag.String("patterns", "patterns.json", "patterns file to load or create")
 	flag.Parse()
 
@@ -21,11 +23,12 @@ func main() {
 	}
 	defer midi.Close()
 
+	config := filesystem.NewConfiguration(*configFile, *keyboard)
 	bank := filesystem.NewBank(*patternsFile)
 
 	seq := sequencer.New(midi, bank)
 
-	p := tea.NewProgram(ui.New(seq))
+	p := tea.NewProgram(ui.New(config, seq))
 	if _, err := p.Run(); err != nil {
 		log.Fatal(err)
 	}

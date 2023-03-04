@@ -5,6 +5,7 @@
 package ui
 
 import (
+	"sektron/filesystem"
 	"sektron/sequencer"
 	"time"
 
@@ -64,10 +65,10 @@ type mainModel struct {
 
 // New creates a new mainModel that hols the ui state. It takes a new sequencer.
 // Check teh sequencer package.
-func New(seq sequencer.Sequencer) mainModel {
+func New(config filesystem.Configuration, seq sequencer.Sequencer) mainModel {
 	model := mainModel{
 		seq:          seq,
-		keymap:       DefaultKeyMap(),
+		keymap:       NewKeyMap(config.KeyMap),
 		activeParams: make([]struct{ track, step int }, 10),
 		help:         help.New(),
 	}

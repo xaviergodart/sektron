@@ -1,16 +1,10 @@
 package ui
 
 import (
+	"sektron/filesystem"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/key"
-)
-
-var (
-	stepKeys        = []string{"a", "z", "e", "r", "t", "y", "u", "i", "q", "s", "d", "f", "g", "h", "j", "k"}
-	stepToggleKeys  = []string{"A", "Z", "E", "R", "T", "Y", "U", "I", "Q", "S", "D", "F", "G", "H", "J", "K"}
-	trackKeys       = []string{"&", "é", "\"", "'", "(", "-", "è", "_", "ç", "à"}
-	trackToggleKeys = []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "0"}
 )
 
 type keyMap struct {
@@ -75,127 +69,127 @@ func (k keyMap) FullHelp() [][]key.Binding {
 }
 
 // DefaultKeyMap returns the default key mapping.
-func DefaultKeyMap() keyMap {
+func NewKeyMap(keys filesystem.KeyMap) keyMap {
 	km := keyMap{
 		Play: key.NewBinding(
 			key.WithKeys(" "),
 			key.WithHelp("space", "toggle play"),
 		),
 		ParamMode: key.NewBinding(
-			key.WithKeys("tab"),
-			key.WithHelp("tab", "toggle parameter mode (track, record)"),
+			key.WithKeys(keys.ParamMode),
+			key.WithHelp(keys.ParamMode, "toggle parameter mode (track, record)"),
 		),
 		PatternMode: key.NewBinding(
-			key.WithKeys("²"),
-			key.WithHelp("²", "toggle pattern select mode"),
+			key.WithKeys(keys.PatternMode),
+			key.WithHelp(keys.PatternMode, "toggle pattern select mode"),
 		),
 		AddTrack: key.NewBinding(
-			key.WithKeys("="),
-			key.WithHelp("=", "add track"),
+			key.WithKeys(keys.AddTrack),
+			key.WithHelp(keys.AddTrack, "add track"),
 		),
 		RemoveTrack: key.NewBinding(
-			key.WithKeys(")"),
-			key.WithHelp(")", "remove track"),
+			key.WithKeys(keys.RemoveTrack),
+			key.WithHelp(keys.RemoveTrack, "remove track"),
 		),
 		AddStep: key.NewBinding(
-			key.WithKeys("+"),
-			key.WithHelp("+", "add step"),
+			key.WithKeys(keys.AddStep),
+			key.WithHelp(keys.AddStep, "add step"),
 		),
 		RemoveStep: key.NewBinding(
-			key.WithKeys("°"),
-			key.WithHelp("°", "remove track"),
+			key.WithKeys(keys.RemoveStep),
+			key.WithHelp(keys.RemoveStep, "remove track"),
 		),
 		StepIndex: map[string]int{},
 		Step: key.NewBinding(
-			key.WithKeys(stepKeys...),
-			key.WithHelp(strings.Join(stepKeys, "/"), "select step|pattern 1 to 16"),
+			key.WithKeys(keys.Steps[:]...),
+			key.WithHelp(strings.Join(keys.Steps[:], "/"), "select step|pattern 1 to 16"),
 		),
 		StepToggleIndex: map[string]int{},
 		StepToggle: key.NewBinding(
-			key.WithKeys(stepToggleKeys...),
-			key.WithHelp(strings.Join(stepToggleKeys, "/"), "toggle step or chain pattern 1 to 16"),
+			key.WithKeys(keys.StepsToggle[:]...),
+			key.WithHelp(strings.Join(keys.StepsToggle[:], "/"), "toggle step or chain pattern 1 to 16"),
 		),
 		TrackIndex: map[string]int{},
 		Track: key.NewBinding(
-			key.WithKeys(trackKeys...),
-			key.WithHelp(strings.Join(trackKeys, "/"), "select track 1 to 10"),
+			key.WithKeys(keys.Tracks[:]...),
+			key.WithHelp(strings.Join(keys.Tracks[:], "/"), "select track 1 to 10"),
 		),
 		TrackToggleIndex: map[string]int{},
 		TrackToggle: key.NewBinding(
-			key.WithKeys(trackToggleKeys...),
-			key.WithHelp(strings.Join(trackToggleKeys, "/"), "toggle track 1 to 10"),
+			key.WithKeys(keys.TracksToggle[:]...),
+			key.WithHelp(strings.Join(keys.TracksToggle[:], "/"), "toggle track 1 to 10"),
 		),
 		PageUp: key.NewBinding(
-			key.WithKeys("p"),
-			key.WithHelp("p", "step|pattern page up"),
+			key.WithKeys(keys.PageUp),
+			key.WithHelp(keys.PageUp, "step|pattern page up"),
 		),
 		PageDown: key.NewBinding(
-			key.WithKeys("m"),
-			key.WithHelp("m", "step|pattern page down"),
+			key.WithKeys(keys.PageDown),
+			key.WithHelp(keys.PageDown, "step|pattern page down"),
 		),
 		TempoUp: key.NewBinding(
-			key.WithKeys("pgup"),
-			key.WithHelp("page up", "tempo up (1 bpm)"),
+			key.WithKeys(keys.TempoUp),
+			key.WithHelp(keys.TempoUp, "tempo up (1 bpm)"),
 		),
 		TempoDown: key.NewBinding(
-			key.WithKeys("pgdown"),
-			key.WithHelp("page down", "tempo down (1 bpm)"),
+			key.WithKeys(keys.TempoDown),
+			key.WithHelp(keys.TempoDown, "tempo down (1 bpm)"),
 		),
 		TempoFineUp: key.NewBinding(
-			key.WithKeys("ctrl+pgup"),
-			key.WithHelp("ctrl+page up", "tempo up (0.1 bpm)"),
+			key.WithKeys(keys.TempoFineUp),
+			key.WithHelp(keys.TempoFineUp, "tempo up (0.1 bpm)"),
 		),
 		TempoFineDown: key.NewBinding(
-			key.WithKeys("ctrl+pgdown"),
-			key.WithHelp("ctrl+page down", "tempo down (0.1 bpm)"),
+			key.WithKeys(keys.TempoFineDown),
+			key.WithHelp(keys.TempoFineDown, "tempo down (0.1 bpm)"),
 		),
 		AddParam: key.NewBinding(
-			key.WithKeys("ctrl+up"),
-			key.WithHelp("ctrl+↑", "add midi control"),
+			key.WithKeys(keys.AddParam),
+			key.WithHelp(keys.AddParam, "add midi control"),
 		),
 		RemoveParam: key.NewBinding(
-			key.WithKeys("ctrl+down"),
-			key.WithHelp("ctrl+↓", "remove midi control"),
+			key.WithKeys(keys.RemoveParam),
+			key.WithHelp(keys.RemoveParam, "remove midi control"),
 		),
 		Validate: key.NewBinding(
-			key.WithKeys("enter"),
-			key.WithHelp("enter", "validate selection"),
+			key.WithKeys(keys.Validate),
+			key.WithHelp(keys.Validate, "validate selection"),
 		),
 		Left: key.NewBinding(
-			key.WithKeys("left"),
-			key.WithHelp("←", "parameter select left"),
+			key.WithKeys(keys.Left),
+			key.WithHelp(keys.Left, "select parameter left"),
 		),
 		Right: key.NewBinding(
-			key.WithKeys("right"),
-			key.WithHelp("→", "parameter select left"),
+			key.WithKeys(keys.Right),
+			key.WithHelp(keys.Right, "select parameter right"),
 		),
 		Up: key.NewBinding(
-			key.WithKeys("up"),
-			key.WithHelp("↑", "increase selected parameter value"),
+			key.WithKeys(keys.Up),
+			key.WithHelp(keys.Up, "increase selected parameter value"),
 		),
 		Down: key.NewBinding(
-			key.WithKeys("down"),
-			key.WithHelp("↓", "decrease selected parameter value"),
+			key.WithKeys(keys.Down),
+			key.WithHelp(keys.Down, "decrease selected parameter value"),
 		),
 		Help: key.NewBinding(
-			key.WithKeys("?"),
-			key.WithHelp("?", "toggle help"),
+			key.WithKeys(keys.Help),
+			key.WithHelp(keys.Help, "toggle help"),
 		),
 		Quit: key.NewBinding(
 			key.WithKeys("ctrl+c", "esc"),
 			key.WithHelp("ctrl+c/esc", "quit"),
 		),
 	}
-	for i, k := range stepKeys {
+	for i, k := range keys.Steps {
 		km.StepIndex[k] = i
 	}
-	for i, k := range stepToggleKeys {
+	for i, k := range keys.StepsToggle {
 		km.StepToggleIndex[k] = i
 	}
-	for i, k := range trackKeys {
+	for i, k := range keys.Tracks {
 		km.TrackIndex[k] = i
 	}
-	for i, k := range trackToggleKeys {
+	for i, k := range keys.TracksToggle {
 		km.TrackToggleIndex[k] = i
 	}
 	return km
