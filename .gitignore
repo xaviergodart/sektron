@@ -1,4 +1,3 @@
 bin
 .coverage
-patterns
-patterns.json
+*.json

@@ -125,7 +125,7 @@ func (m mainModel) renderTransportPlayer() string {
 }
 
 func (m mainModel) renderTransportPages() string {
-	if m.mode == patternSelectMode {
+	if m.mode == patternMode {
 		return m.renderTransportPatternPages()
 	}
 

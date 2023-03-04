@@ -1,6 +1,5 @@
 // Package filesystem provides interfaces and serializable structures that
 // allows saving/loading sequencer state to/from json files.
-// TODO: no need for a separate module. Move back to sequencer
 package filesystem
 
 import (
@@ -12,10 +11,8 @@ import (
 )
 
 const (
-	maxPatterns = 128
+	maxPatterns = 64
 )
-
-// TODO: cpu consomption went up 10% since adding that.
 
 // Bank holds a slice of patterns in memory
 type Bank struct {
@@ -26,8 +23,8 @@ type Bank struct {
 
 // Pattern represents a sequencer state that is json serializable.
 type Pattern struct {
-	Tempo  float64 `json:"tempo"`
 	Tracks []Track `json:"tracks"`
+	Tempo  float64 `json:"tempo"`
 }
 
 // IsFree returns true if the pattern is not used, false otherwise.
@@ -68,10 +65,9 @@ func NewBank(filename string) Bank {
 	return bank
 }
 
-// Save gets a pattern object from a patternable object (sequencer), serializes
-// it, and writes it to a file.
+// Save serializes the Bank and writes it to a file.
 func (b *Bank) Save() {
-	content, err := json.Marshal(b)
+	content, err := json.MarshalIndent(b, "", "  ")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -81,8 +77,7 @@ func (b *Bank) Save() {
 	}
 }
 
-// Load reads a json and make a pattern object from it, then loads it into a
-// patternable object (sequencer).
+// Load reads a json and unmarshal its content to the Bank..
 func (b *Bank) Load(filename string) {
 	f, err := os.Open(filename)
 	if err != nil && errors.Is(err, os.ErrNotExist) {

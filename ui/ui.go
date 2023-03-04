@@ -29,9 +29,9 @@ const (
 	// keys.
 	stepMode
 
-	// patternSelectMode allows the user to select a specific pattern using the
+	// patternMode allows the user to select a specific pattern using the
 	// step keys.
-	patternSelectMode
+	patternMode
 
 	// paramSelectMode allows the user to add new midi controls to the track.
 	paramSelectMode
@@ -108,11 +108,11 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch {
-		case key.Matches(msg, m.keymap.TogglePlay):
+		case key.Matches(msg, m.keymap.Play):
 			m.seq.TogglePlay()
 			return m, nil
 
-		case key.Matches(msg, m.keymap.Mode):
+		case key.Matches(msg, m.keymap.ParamMode):
 			m.activeStep = 0
 			if m.mode == trackMode {
 				m.mode = stepMode
@@ -121,14 +121,13 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 
-		case key.Matches(msg, m.keymap.Validate):
-			if m.mode == paramSelectMode {
-				m.getActiveTrack().AddControl(m.paramMidiTable.Cursor())
-				m.activeParams[m.activeTrack].track = m.paramMidiTable.Cursor() + m.parameters.fixedParamNb
-				m.paramMidiTable.SetCursor(0)
+		case key.Matches(msg, m.keymap.PatternMode):
+			if m.mode == patternMode {
 				m.mode = trackMode
+			} else {
+				m.mode = patternMode
 			}
-			return m, nil
+			return m, tea.ClearScreen
 
 		case key.Matches(msg, m.keymap.AddTrack):
 			m.seq.AddTrack()
@@ -155,9 +154,9 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.seq.RemoveStep(m.activeTrack)
 			return m, nil
 
-		case key.Matches(msg, m.keymap.StepSelect):
-			number := m.keymap.StepSelectIndex[msg.String()]
-			if m.mode == patternSelectMode {
+		case key.Matches(msg, m.keymap.Step):
+			number := m.keymap.StepIndex[msg.String()]
+			if m.mode == patternMode {
 				pattern := number + (m.activePatternPage * patternsPerPage)
 				if m.seq.IsPlaying() {
 					m.seq.ChainNow(pattern)
@@ -177,7 +176,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case key.Matches(msg, m.keymap.StepToggle):
 			number := m.keymap.StepToggleIndex[msg.String()]
-			if m.mode == patternSelectMode {
+			if m.mode == patternMode {
 				pattern := number + (m.activePatternPage * patternsPerPage)
 				m.seq.Chain(pattern)
 				return m, nil
@@ -191,8 +190,8 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.stepModeTimer = 0
 			return m, nil
 
-		case key.Matches(msg, m.keymap.TrackSelect):
-			number := m.keymap.TrackSelectIndex[msg.String()]
+		case key.Matches(msg, m.keymap.Track):
+			number := m.keymap.TrackIndex[msg.String()]
 			if number >= len(m.seq.Tracks()) {
 				return m, nil
 			}
@@ -207,8 +206,8 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.seq.ToggleTrack(number)
 			return m, nil
 
-		case key.Matches(msg, m.keymap.TrackPageUp):
-			if m.mode == patternSelectMode {
+		case key.Matches(msg, m.keymap.PageUp):
+			if m.mode == patternMode {
 				m.activePatternPage = (m.activePatternPage + 1) % patternPages
 			} else {
 				pageNb := m.trackPagesNb()
@@ -216,8 +215,8 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 
-		case key.Matches(msg, m.keymap.TrackPageDown):
-			if m.mode == patternSelectMode {
+		case key.Matches(msg, m.keymap.PageDown):
+			if m.mode == patternMode {
 				if m.activePatternPage-1 < 0 {
 					m.activePatternPage = patternPages - 1
 				} else {
@@ -262,7 +261,16 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 
-		case key.Matches(msg, m.keymap.ParamSelectLeft):
+		case key.Matches(msg, m.keymap.Validate):
+			if m.mode == paramSelectMode {
+				m.getActiveTrack().AddControl(m.paramMidiTable.Cursor())
+				m.activeParams[m.activeTrack].track = m.paramMidiTable.Cursor() + m.parameters.fixedParamNb
+				m.paramMidiTable.SetCursor(0)
+				m.mode = trackMode
+			}
+			return m, nil
+
+		case key.Matches(msg, m.keymap.Left):
 			if m.mode == paramSelectMode {
 				m.mode = trackMode
 				return m, nil
@@ -271,12 +279,12 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.stepModeTimer = 0
 			return m, nil
 
-		case key.Matches(msg, m.keymap.ParamSelectRight):
+		case key.Matches(msg, m.keymap.Right):
 			m.nextParam()
 			m.stepModeTimer = 0
 			return m, nil
 
-		case key.Matches(msg, m.keymap.ParamValueUp):
+		case key.Matches(msg, m.keymap.Up):
 			if m.mode == stepMode && m.getActiveStep().IsActive() {
 				m.parameters.step[m.getActiveParam()].increase(m.getActiveStep())
 			} else if m.mode == trackMode {
@@ -289,7 +297,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.stepModeTimer = 0
 			return m, nil
 
-		case key.Matches(msg, m.keymap.ParamValueDown):
+		case key.Matches(msg, m.keymap.Down):
 			if m.mode == stepMode && m.getActiveStep().IsActive() {
 				m.parameters.step[m.getActiveParam()].decrease(m.getActiveStep())
 			} else if m.mode == trackMode {
@@ -301,14 +309,6 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			m.stepModeTimer = 0
 			return m, nil
-
-		case key.Matches(msg, m.keymap.PatternSelect):
-			if m.mode == patternSelectMode {
-				m.mode = trackMode
-			} else {
-				m.mode = patternSelectMode
-			}
-			return m, tea.ClearScreen
 
 		case key.Matches(msg, m.keymap.Help):
 			m.help.ShowAll = !m.help.ShowAll

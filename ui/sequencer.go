@@ -5,7 +5,7 @@ import (
 )
 
 func (m mainModel) renderSequencer() string {
-	if m.mode == patternSelectMode {
+	if m.mode == patternMode {
 		return lipgloss.JoinVertical(
 			lipgloss.Center,
 			m.renderPatterns(),
