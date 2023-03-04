@@ -44,6 +44,7 @@ Keys mapping is fully customizable. After running Sektron for the first time, a 
 You can edit all the keys inside it.
 
 The default key mapping looks like this:
+
 ![keyboard layout](/docs/keyboard-layout.png)
 
 You can select one of the fex default keyboard layouts are available:
@@ -80,8 +81,8 @@ Sektron uses a few awesome packages:
 
  - [x] Exhaustive midi messages type (CC etc...)
  - [x] Basic pattern management (and chaining)
+ - [x] Key mapping management and configuration
  - [ ] Improve controls UX
- - [ ] Key mapping management and configuration
  - [ ] Write documentation
 
 ## Roadmap for later
