@@ -13,12 +13,14 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
+
     - name: Install Alsa headers
       run: sudo apt-get install libasound2-dev
+      if: ${{ matrix.os == 'ubuntu-latest' }}
 
     - name: Install Go
       uses: actions/setup-go@v3
