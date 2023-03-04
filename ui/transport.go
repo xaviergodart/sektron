@@ -110,7 +110,7 @@ func (m mainModel) renderTransportTracks() string {
 }
 
 func (m mainModel) renderTransportTempo() string {
-	text := fmt.Sprintf("⧗ %.1f", m.seq.Tempo())
+	text := fmt.Sprintf("⧗ %.0f", m.seq.Tempo())
 	if m.isActiveTrackOnQuarterNote() {
 		return tempoTickStyle.Render(text)
 	}

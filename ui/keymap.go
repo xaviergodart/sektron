@@ -34,10 +34,8 @@ type keyMap struct {
 	PageUp   key.Binding
 	PageDown key.Binding
 
-	TempoUp       key.Binding
-	TempoDown     key.Binding
-	TempoFineUp   key.Binding
-	TempoFineDown key.Binding
+	TempoUp   key.Binding
+	TempoDown key.Binding
 
 	AddParam    key.Binding
 	RemoveParam key.Binding
@@ -62,7 +60,7 @@ func (k keyMap) ShortHelp() []key.Binding {
 // key.Map interface.
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.Play, k.ParamMode, k.PatternMode, k.AddTrack, k.RemoveTrack, k.AddStep, k.RemoveStep, k.TempoUp, k.TempoDown, k.TempoFineUp, k.TempoFineDown},
+		{k.Play, k.ParamMode, k.PatternMode, k.AddTrack, k.RemoveTrack, k.AddStep, k.RemoveStep, k.TempoUp, k.TempoDown},
 		{k.Step, k.StepToggle, k.Track, k.TrackToggle, k.PageUp, k.PageDown, k.AddParam, k.RemoveParam},
 		{k.Validate, k.Up, k.Down, k.Left, k.Right, k.Help, k.Quit},
 	}
@@ -134,14 +132,6 @@ func NewKeyMap(keys filesystem.KeyMap) keyMap {
 		TempoDown: key.NewBinding(
 			key.WithKeys(keys.TempoDown),
 			key.WithHelp(keys.TempoDown, "tempo down (1 bpm)"),
-		),
-		TempoFineUp: key.NewBinding(
-			key.WithKeys(keys.TempoFineUp),
-			key.WithHelp(keys.TempoFineUp, "tempo up (0.1 bpm)"),
-		),
-		TempoFineDown: key.NewBinding(
-			key.WithKeys(keys.TempoFineDown),
-			key.WithHelp(keys.TempoFineDown, "tempo down (0.1 bpm)"),
 		),
 		AddParam: key.NewBinding(
 			key.WithKeys(keys.AddParam),

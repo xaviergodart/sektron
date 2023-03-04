@@ -241,14 +241,6 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.seq.SetTempo(m.seq.Tempo() - 1)
 			return m, nil
 
-		case key.Matches(msg, m.keymap.TempoFineUp):
-			m.seq.SetTempo(m.seq.Tempo() + 0.1)
-			return m, nil
-
-		case key.Matches(msg, m.keymap.TempoFineDown):
-			m.seq.SetTempo(m.seq.Tempo() - 0.1)
-			return m, nil
-
 		case key.Matches(msg, m.keymap.AddParam):
 			m.mode = paramSelectMode
 			return m, nil
