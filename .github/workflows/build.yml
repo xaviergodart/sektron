@@ -18,7 +18,7 @@ jobs:
 
     - name: Install Alsa headers
       run: sudo apt-get install libasound2-dev
-      if: ${{ matrix.os == 'ubuntu-latest' }}
+      if: startsWith(matrix.os, 'ubuntu')
 
     - name: Install Go
       uses: actions/setup-go@v3

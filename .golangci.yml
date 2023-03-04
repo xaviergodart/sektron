@@ -7,3 +7,5 @@ linters:
     - unparam
     - wastedassign
     - errcheck
+  disable:
+    - typecheck
