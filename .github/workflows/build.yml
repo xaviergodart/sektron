@@ -29,9 +29,11 @@ jobs:
 
     - name: Build linux|mac
       run: go build -o bin/sektron
+      if: not startsWith(matrix.os, 'windows')
 
     - name: Build windows
       run: go build -o bin/sektron.exe
+      if: startsWith(matrix.os, 'windows')
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
