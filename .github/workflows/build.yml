@@ -38,7 +38,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: Sektron_${{ runner.os}}_${{ github.sha }}
+        name: sektron_${{ runner.os}}_${{ github.sha }}
         path: |
           bin/sektron*
           LICENSE
