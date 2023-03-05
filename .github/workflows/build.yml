@@ -44,5 +44,5 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: sektron_${{ github.sha }}
-        path: sektron.tar.gz
+        path: sektron_${{ runner.os}}_${{ github.sha }}.tar.gz
         if-no-files-found: error
