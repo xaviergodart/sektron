@@ -15,7 +15,7 @@ $(BIN):
 	mkdir -p $(BIN)
 
 $(GOLANG_LINT): $(BIN)
-	GOBIN=$$(pwd)/$(BIN) go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.49.0
+	GOBIN=$$(pwd)/$(BIN) go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.51.2
 
 build: $(BIN)
 	$(GOLANG_BUILD_OPTS) $(GOLANG_BIN) build -o $(BIN)/$(BIN_NAME)
