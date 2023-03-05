@@ -66,7 +66,7 @@ func (k keyMap) FullHelp() [][]key.Binding {
 	}
 }
 
-// DefaultKeyMap returns the default key mapping.
+// NewKeyMap returns the default key mapping.
 func NewKeyMap(keys filesystem.KeyMap) keyMap {
 	km := keyMap{
 		Play: key.NewBinding(
