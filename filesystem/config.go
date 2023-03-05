@@ -17,7 +17,8 @@ type Configuration struct {
 // NewConfiguration returns a new default configuration.
 func NewConfiguration(filename string, keyboard string) Configuration {
 	config := Configuration{
-		KeyMap: NewDefaultQwertyKeyMap(),
+		KeyMap:   NewDefaultQwertyKeyMap(),
+		filename: filename,
 	}
 	config.Load(filename)
 
@@ -30,8 +31,9 @@ func NewConfiguration(filename string, keyboard string) Configuration {
 		case "azerty-mac":
 			config.KeyMap = NewDefaultAzertyMacKeyMap()
 		}
-		config.Save()
 	}
+
+	config.Save()
 
 	return config
 }
