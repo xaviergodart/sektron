@@ -65,10 +65,10 @@ type mainModel struct {
 
 // New creates a new mainModel that hols the ui state. It takes a new sequencer.
 // Check teh sequencer package.
-func New(config filesystem.Configuration, seq sequencer.Sequencer) mainModel {
+func New(config filesystem.Configuration, seq sequencer.Sequencer) tea.Model {
 	model := mainModel{
 		seq:          seq,
-		keymap:       NewKeyMap(config.KeyMap),
+		keymap:       newKeyMap(config.KeyMap),
 		activeParams: make([]struct{ track, step int }, 10),
 		help:         help.New(),
 	}
