@@ -28,7 +28,7 @@ jobs:
         go-version: 1.19
 
     - name: Build linux|mac
-      run: go build -o bin/sektron chmod +x bin/sektron
+      run: go build -o bin/sektron
       if: ${{ !startsWith(matrix.os, 'windows') }}
 
     - name: linux|mac binary permission
