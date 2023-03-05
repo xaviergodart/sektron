@@ -20,4 +20,7 @@ jobs:
           go-version: 1.19
       - uses: actions/checkout@v3
       - name: golangci-lint
-        run: make checks
+        uses: golangci/golangci-lint-action@v3
+        with:
+          args: -c .golangci.yaml
+          only-new-issues: true
