@@ -1,5 +1,7 @@
 # Sektron
 
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/xaviergodart/sektron) ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/xaviergodart/sektron/build.yml)
+
 Sektron is a midi step sequencer, made with live performance in mind, that runs in the terminal (TUI).
 Its main purpose is to mimic the fun and immediacity of hardware sequencers by being entirely controllable via keyboard.
 
@@ -9,9 +11,19 @@ It's heavily inspired by [elektron devices](https://www.elektron.se).
 
 ![sektron screenshot](/docs/screenshot.png)
 
+
 ## Installation
 
+[Download the last release](https://github.com/xaviergodart/sektron/releases) for your platform.
 
+Then:
+```sh
+# Extract files
+mkdir -p sektron && tar -zxvf sektron_VERSION_PLATFORM.tar.gz -C sektron
+
+# Run sektron
+./sektron
+```
 
 ### Build it yourself
 
@@ -29,16 +41,10 @@ make GOLANG_OS=darwin build
 make GOLANG_OS=windows build
 ```
 
-Then:
-```sh
-./bin/sektron
-```
-
-
 ## Usage
 
 ```sh
-./bin/sektron
+./sektron
 ```
 
 Hit `?` to see all keybindings. `esc` to quit.
@@ -46,6 +52,7 @@ Hit `?` to see all keybindings. `esc` to quit.
 ![sektron gif](/docs/vhs.gif)
 
 [Qsynth](https://qsynth.sourceforge.io/) is a nice companion app for testing Sektron.
+
 
 ### Keyboard mapping
 
@@ -59,16 +66,16 @@ The default key mapping looks like this:
 You can select one of the fex default keyboard layouts are available:
 ```sh
 # QWERTY
-./bin/sektron --keyboard qwerty
+./sektron --keyboard qwerty
 
 # AZERTY
-./bin/sektron --keyboard azerty
+./sektron --keyboard azerty
 
 # QWERTY MAC
-./bin/sektron --keyboard qwerty-mac
+./sektron --keyboard qwerty-mac
 
 # AZERTY MAC
-./bin/sektron --keyboard azerty-mac
+./sektron --keyboard azerty-mac
 ```
 
 ### Patterns management
@@ -76,7 +83,7 @@ You can select one of the fex default keyboard layouts are available:
 Each time you start Sektron, a json file (default: `patterns.json`) containing 128 pattern slots is loaded.
 For selecting a different file, use the `--patterns` flag:
 ```sh
-./bin/sektron --patterns my-patterns.json
+./sektron --patterns my-patterns.json
 ```
 
 ## Acknowledgments
@@ -86,6 +93,7 @@ Sektron uses a few awesome packages:
  - [charmbracelet/bubbletea](https://github.com/charmbracelet/bubbletea) as the main TUI framework
  - [charmbracelet/lipgloss](https://github.com/charmbracelet/lipgloss) for making things beautiful
 
+
 ## Roadmap for 0.1
 
  - [x] Exhaustive midi messages type (CC etc...)
@@ -93,6 +101,7 @@ Sektron uses a few awesome packages:
  - [x] Key mapping management and configuration
  - [ ] Improve controls UX
  - [ ] Write documentation
+
 
 ## Roadmap for later
 
