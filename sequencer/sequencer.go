@@ -73,7 +73,7 @@ type sequencer struct {
 
 // New creates a new sequencer. It also creates new tracks and calls the
 // start() method that starts the clock.
-func New(midi midi.Midi, bank filesystem.Bank) *sequencer {
+func New(midi midi.Midi, bank filesystem.Bank) Sequencer {
 	// The randomizer will be used for step trigger probability.
 	// Check step.go.
 	rand.Seed(time.Now().UnixNano())

@@ -15,7 +15,7 @@ func (s sequencer) ActivePattern() int {
 	return s.bank.Active
 }
 
-// GetPattern returns a new Pattern object from the current sequencer state.
+// Save saves the current sequencer state to the active pattern.
 func (s *sequencer) Save() {
 	var tracks []filesystem.Track
 	shouldSave := false
@@ -96,7 +96,7 @@ func (s *sequencer) LoadNextInChain() {
 	}
 }
 
-// LoadPattern loads a new sequencer state from Pattern object.
+// Load loads a new sequencer state from Pattern object.
 func (s *sequencer) Load(pattern int) {
 	// close existing tracks first
 	for _, t := range s.tracks {
