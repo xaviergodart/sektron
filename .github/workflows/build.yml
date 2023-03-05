@@ -27,6 +27,14 @@ jobs:
       with:
         go-version: 1.19
 
+    - name: Release version number
+      run: echo '${{ github.ref_name}}' > VERSION
+      if: ${{ github.ref_type == 'tag' }}
+
+    - name: Development version number
+      run: echo 'dev-${{ github.sha}}' > VERSION
+      if: ${{ github.ref_type == 'branch' }}
+
     - name: Build linux|mac
       run: go build -o bin/sektron && chmod +x bin/sektron
       if: ${{ !startsWith(matrix.os, 'windows') }}
