@@ -37,7 +37,7 @@ jobs:
     #   if: startsWith(matrix.os, 'windows')
 
     - name: Tar.gz files
-      run: tar -zcvf sektron_${{ runner.os}}_${{ github.sha }}.tar.gz LICENSE -C bin sektron
+      run: tar -zcvf sektron_${{ github.ref_name }}_${{ runner.os}}.tar.gz LICENSE -C bin sektron
       if: ${{ !startsWith(matrix.os, 'windows') }}
 
     - name: Upload artifact
