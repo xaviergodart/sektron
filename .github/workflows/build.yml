@@ -36,13 +36,13 @@ jobs:
     #   run: go build -ldflags "-linkmode 'external' -extldflags '-static'" -o bin/sektron.exe
     #   if: startsWith(matrix.os, 'windows')
 
-    - name: Tar files
-      run: tar -cvf sektron.tar LICENSE -C bin sektron 
+    - name: Tar.gz files
+      run: tar -zcvf sektron_${{ runner.os}}_${{ github.sha }}.tar.gz LICENSE -C bin sektron
       if: ${{ !startsWith(matrix.os, 'windows') }}
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: sektron_${{ runner.os}}_${{ github.sha }}
-        path: sektron.tar
+        name: sektron_${{ github.sha }}
+        path: sektron.tar.gz
         if-no-files-found: error
