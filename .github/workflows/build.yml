@@ -31,12 +31,8 @@ jobs:
       run: go build -o bin/sektron
       if: ${{ !startsWith(matrix.os, 'windows') }}
 
-    - name: linux|mac binary permission
-      run: chmod +x bin/sektron
-      if: ${{ !startsWith(matrix.os, 'windows') }}
-
     - name: Build windows
-      run: go build -o bin/sektron.exe
+      run: go build -ldflags "-linkmode 'external' -extldflags '-static'" -o bin/sektron.exe
       if: startsWith(matrix.os, 'windows')
 
     - name: Upload artifact
