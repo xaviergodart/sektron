@@ -6,5 +6,10 @@ linters:
     - unconvert
     - unparam
     - revive
-  disable:
-    - typecheck # it weirdly fails when running in github actions on interface composition.
+
+# it weirdly fails when running in github actions on interface composition.
+issues:
+  exclude-rules:
+  - path: ui/parameter.go
+    linters:
+    - typecheck
