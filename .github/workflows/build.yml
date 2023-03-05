@@ -9,7 +9,6 @@ on:
 
 jobs:
   build:
-    if: ${{ false }} # disable for now
     strategy:
       matrix:
         os: [ubuntu-20.04, macos-11, windows-2019]
@@ -28,11 +27,16 @@ jobs:
       with:
         go-version: 1.19
 
-    - name: Build
+    - name: Build linux|mac
       run: go build -o bin/sektron
+
+    - name: Build windows
+      run: go build -o bin/sektron.exe
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
         name: Sektron_${{ runner.os}}_${{ github.sha }}
-        path: bin/
+        path: |
+          bin/sektron*
+          LICENSE
