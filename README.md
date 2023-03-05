@@ -9,7 +9,11 @@ It's heavily inspired by [elektron devices](https://www.elektron.se).
 
 ![sektron screenshot](/docs/screenshot.png)
 
-## Build
+## Installation
+
+
+
+### Build it yourself
 
 You'll need [go 1.18](https://go.dev/dl/) minimum.
 Although you should be able to build it for either **linux**, **macOS** or **Windows**, it has only been tested on **linux**.
@@ -23,6 +27,11 @@ make GOLANG_OS=darwin build
 
 # Windows
 make GOLANG_OS=windows build
+```
+
+Then:
+```sh
+./bin/sektron
 ```
 
 
