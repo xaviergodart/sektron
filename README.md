@@ -130,6 +130,9 @@ For selecting a different file, use the `--patterns` flag:
 ./sektron --patterns my-patterns.json
 ```
 
+Each time you change pattern or quit the program, the current pattern is saved to the file.
+
+
 ## Acknowledgments
 
 Sektron uses a few awesome packages:
