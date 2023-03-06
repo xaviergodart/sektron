@@ -75,7 +75,7 @@ func newKeyMap(keys filesystem.KeyMap) keyMap {
 		),
 		ParamMode: key.NewBinding(
 			key.WithKeys(keys.ParamMode),
-			key.WithHelp(keys.ParamMode, "toggle parameter mode (track, record)"),
+			key.WithHelp(keys.ParamMode, "toggle parameter mode (track, step)"),
 		),
 		PatternMode: key.NewBinding(
 			key.WithKeys(keys.PatternMode),
