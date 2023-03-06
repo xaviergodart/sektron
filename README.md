@@ -11,6 +11,17 @@ It's heavily inspired by [elektron devices](https://www.elektron.se).
 
 ![sektron screenshot](/docs/screenshot.png)
 
+### Features
+
+ - Fully (and only) controllable by keyboard
+ - Customizable keyboard mapping
+ - Up to **10 midi tracks**, that can be attached to specific midi device and channel
+ - Up to **128 steps per track**. The number of steps per track is independent, allowing complex polyrhythms
+ - Parameters can be set per track or step (parameter locking)
+ - Up to 64 patterns can be loaded at the same time.
+ - Pattern chaining
+
+And more to come. See [Planned features](https://github.com/xaviergodart/sektron#planned-features).
 
 ## Installation
 
@@ -44,7 +55,11 @@ make GOLANG_OS=windows build
 ## Usage
 
 ```sh
+# Run sektron
 ./sektron
+
+# Display current version
+./sektron --version
 ```
 
 Hit `?` to see all keybindings. `esc` to quit.
@@ -93,8 +108,9 @@ Sektron uses a few awesome packages:
  - [charmbracelet/bubbletea](https://github.com/charmbracelet/bubbletea) as the main TUI framework
  - [charmbracelet/lipgloss](https://github.com/charmbracelet/lipgloss) for making things beautiful
 
+## Planned features
 
-## Roadmap for 0.1
+### v0.1
 
  - [x] Exhaustive midi messages type (CC etc...)
  - [x] Basic pattern management (and chaining)
@@ -103,7 +119,7 @@ Sektron uses a few awesome packages:
  - [ ] Write documentation
 
 
-## Roadmap for later
+### Considered
 
  - Step polyphony
  - Keyboard mode
