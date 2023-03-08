@@ -102,8 +102,8 @@ For qwerty keyboards, here's the default mapping:
  - `` ` `` **toggle pattern select mode**
  - `1` `2` `3` `4` `5` `6` `7` `8` `9` `0` **select track**
  - `!` `@` `#` `$` `%` `^` `&` `*` `(` `)` **toggle track**
- - `q` `w` `e` `r` `t` `y` `u` `i` `q` `s` `d` `f` `g` `h` `j` `k` **select step** or **select pattern**
- - `Q` `W` `E` `R` `T` `Y` `U` `I` `Q` `S` `D` `F` `G` `H` `J` `K` **toggle step** or **toggle pattern**
+ - `q` `w` `e` `r` `t` `y` `u` `i` `q` `s` `d` `f` `g` `h` `j` `k` **select step** or **switch to pattern**
+ - `Q` `W` `E` `R` `T` `Y` `U` `I` `Q` `S` `D` `F` `G` `H` `J` `K` **toggle step** or **chain pattern**
  - `=` **add track**
  - `-` **remove track**
  - `+` **add step** to the selected track
