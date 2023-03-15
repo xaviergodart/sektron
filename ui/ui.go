@@ -14,6 +14,7 @@ import (
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	carousel "github.com/xaviergodart/bubble-carousel"
 )
 
 // tickMsg is a message that triggers ui rrefresh
@@ -48,7 +49,7 @@ const (
 
 type mainModel struct {
 	seq               sequencer.Sequencer
-	parameters        parameters
+	parameters        carousel.Model
 	paramMidiTable    table.Model
 	keymap            keyMap
 	width             int
@@ -267,12 +268,14 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.mode = trackMode
 				return m, nil
 			}
-			m.previousParam()
+			//m.previousParam()
+			m.parameters.Update(msg)
 			m.stepModeTimer = 0
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Right):
-			m.nextParam()
+			//m.nextParam()
+			m.parameters.Update(msg)
 			m.stepModeTimer = 0
 			return m, nil
 
