@@ -271,13 +271,13 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 			}
 			//m.previousParam()
-			m.paramCarousel.MoveLeft()
+			m.paramCarousel.Update(msg)
 			m.stepModeTimer = 0
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Right):
 			//m.nextParam()
-			m.paramCarousel.MoveRight()
+			m.paramCarousel.Update(msg)
 			m.stepModeTimer = 0
 			return m, nil
 

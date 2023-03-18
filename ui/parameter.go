@@ -350,7 +350,7 @@ func (p *parameter[t]) decrease(item t) {
 	p.set(item, p.value(item), -1)
 }
 
-func (m mainModel) renderParams() string {
+func (m *mainModel) renderParams() string {
 	var params []string
 	var title string
 	switch m.mode {
