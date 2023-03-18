@@ -49,7 +49,8 @@ const (
 
 type mainModel struct {
 	seq               sequencer.Sequencer
-	parameters        carousel.Model
+	parameters        parameters
+	paramCarousel     carousel.Model
 	paramMidiTable    table.Model
 	keymap            keyMap
 	width             int
@@ -96,6 +97,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.height = msg.Height
 		m.help.Width = msg.Width
 		m.paramMidiTable.SetWidth(msg.Width)
+		m.paramCarousel.SetWidth(msg.Width - 2)
 		return m, nil
 
 	case tickMsg:
@@ -269,13 +271,13 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 			}
 			//m.previousParam()
-			m.parameters.Update(msg)
+			m.paramCarousel.MoveLeft()
 			m.stepModeTimer = 0
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Right):
 			//m.nextParam()
-			m.parameters.Update(msg)
+			m.paramCarousel.MoveRight()
 			m.stepModeTimer = 0
 			return m, nil
 

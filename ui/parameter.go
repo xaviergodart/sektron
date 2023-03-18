@@ -7,6 +7,7 @@ import (
 	"github.com/charmbracelet/bubbles/table"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/muesli/reflow/wordwrap"
+	carousel "github.com/xaviergodart/bubble-carousel"
 )
 
 const (
@@ -27,15 +28,18 @@ var (
 				BorderStyle(lipgloss.DoubleBorder()).
 				BorderForeground(primaryColor)
 
-	paramStyle = lipgloss.NewStyle().
+	paramStyles = carousel.Styles{
+		Item: lipgloss.NewStyle().
 			Align(lipgloss.Center).
 			Padding(0, 1, 0, 2).
 			BorderStyle(lipgloss.HiddenBorder()).
-			BorderForeground(secondaryColor)
-
-	selectedParamStyle = paramStyle.Copy().
-				BorderStyle(lipgloss.ThickBorder()).
-				Foreground(primaryTextColor)
+			BorderForeground(secondaryColor),
+		Selected: lipgloss.NewStyle().
+			Align(lipgloss.Center).
+			Padding(0, 1, 0, 2).
+			BorderStyle(lipgloss.ThickBorder()).
+			BorderForeground(primaryTextColor),
+	}
 )
 
 type parameters struct {
@@ -74,6 +78,9 @@ func newMidiParameter[t sequencer.Parametrable](nb int) parameter[t] {
 }
 
 func (m *mainModel) initParameters() {
+	m.paramCarousel = carousel.New(carousel.WithFocused(true))
+	m.paramCarousel.SetStyles(paramStyles)
+
 	m.parameters.track = []parameter[sequencer.Track]{
 		{
 			value: func(item sequencer.Track) int {
@@ -368,39 +375,26 @@ func (m mainModel) renderParams() string {
 	default:
 		title = ""
 	}
-	// TODO: render params on 2 lines
 	if m.mode == stepMode {
 		if m.getActiveStep().IsActive() {
-			for i, p := range m.parameters.step {
+			for _, p := range m.parameters.step {
 				if !p.active(m.getActiveStep()) {
 					continue
 				}
-				var style lipgloss.Style
-				if m.getActiveParam() == i {
-					style = selectedParamStyle
-				} else {
-					style = paramStyle
-				}
 				params = append(
 					params,
-					style.Render(p.string(m.getActiveStep())),
+					p.string(m.getActiveStep()),
 				)
 			}
 		}
 	} else if m.mode == trackMode {
-		for i, p := range m.parameters.track {
+		for _, p := range m.parameters.track {
 			if !p.active(m.getActiveTrack()) {
 				continue
 			}
-			var style lipgloss.Style
-			if m.getActiveParam() == i {
-				style = selectedParamStyle
-			} else {
-				style = paramStyle
-			}
 			params = append(
 				params,
-				style.Render(p.string(m.getActiveTrack())),
+				p.string(m.getActiveTrack()),
 			)
 		}
 	} else if m.mode == paramSelectMode {
@@ -420,12 +414,14 @@ func (m mainModel) renderParams() string {
 			),
 		)
 	}
+	m.paramCarousel.SetItems(params)
 	return lipgloss.NewStyle().
 		MarginTop(1).
 		Render(
 			lipgloss.JoinHorizontal(
-				lipgloss.Top,
-				append([]string{title}, params...)...,
+				lipgloss.Center,
+				title,
+				m.paramCarousel.View(),
 			),
 		)
 }
