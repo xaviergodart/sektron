@@ -6,7 +6,6 @@ import (
 
 	"github.com/charmbracelet/bubbles/table"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/muesli/reflow/wordwrap"
 	carousel "github.com/xaviergodart/bubble-carousel"
 )
 
@@ -45,18 +44,24 @@ var (
 type parameters struct {
 	track        []parameter[sequencer.Track]
 	step         []parameter[sequencer.Step]
+	title        string
+	content      string
 	fixedParamNb int
 }
 
 type parameter[t sequencer.Parametrable] struct {
+	id     func(item t) int
 	value  func(item t) int
 	string func(item t) string
 	set    func(item t, value int, add int)
 	active func(item t) bool
 }
 
-func newMidiParameter[t sequencer.Parametrable](nb int) parameter[t] {
+func newMidiParameter[t sequencer.Parametrable](id, nb int) parameter[t] {
 	return parameter[t]{
+		id: func(item t) int {
+			return id
+		},
 		value: func(item t) int {
 			return int(item.Control(nb).Value())
 		},
@@ -83,6 +88,9 @@ func (m *mainModel) initParameters() {
 
 	m.parameters.track = []parameter[sequencer.Track]{
 		{
+			id: func(item sequencer.Track) int {
+				return 0
+			},
 			value: func(item sequencer.Track) int {
 				// TODO: make chords actual chords
 				return int(item.Chord()[0])
@@ -105,6 +113,9 @@ func (m *mainModel) initParameters() {
 			},
 		},
 		{
+			id: func(item sequencer.Track) int {
+				return 1
+			},
 			value: func(item sequencer.Track) int {
 				return item.Length()
 			},
@@ -124,6 +135,9 @@ func (m *mainModel) initParameters() {
 			},
 		},
 		{
+			id: func(item sequencer.Track) int {
+				return 2
+			},
 			value: func(item sequencer.Track) int {
 				return int(item.Velocity())
 			},
@@ -143,6 +157,9 @@ func (m *mainModel) initParameters() {
 			},
 		},
 		{
+			id: func(item sequencer.Track) int {
+				return 3
+			},
 			value: func(item sequencer.Track) int {
 				return item.Probability()
 			},
@@ -161,7 +178,7 @@ func (m *mainModel) initParameters() {
 				return true
 			},
 		},
-		{
+		/*{
 			value: func(item sequencer.Track) int {
 				return item.Device()
 			},
@@ -203,17 +220,20 @@ func (m *mainModel) initParameters() {
 			active: func(item sequencer.Track) bool {
 				return true
 			},
-		},
+		},*/
 	}
 
 	m.parameters.fixedParamNb = len(m.parameters.track)
 
 	for i := 0; i <= midiParameters; i++ {
-		m.parameters.track = append(m.parameters.track, newMidiParameter[sequencer.Track](i))
+		m.parameters.track = append(m.parameters.track, newMidiParameter[sequencer.Track](4+i, i))
 	}
 
 	m.parameters.step = []parameter[sequencer.Step]{
 		{
+			id: func(item sequencer.Step) int {
+				return 0
+			},
 			value: func(item sequencer.Step) int {
 				return int(item.Chord()[0])
 			},
@@ -235,6 +255,9 @@ func (m *mainModel) initParameters() {
 			},
 		},
 		{
+			id: func(item sequencer.Step) int {
+				return 1
+			},
 			value: func(item sequencer.Step) int {
 				return item.Length()
 			},
@@ -254,6 +277,9 @@ func (m *mainModel) initParameters() {
 			},
 		},
 		{
+			id: func(item sequencer.Step) int {
+				return 2
+			},
 			value: func(item sequencer.Step) int {
 				return int(item.Velocity())
 			},
@@ -273,6 +299,9 @@ func (m *mainModel) initParameters() {
 			},
 		},
 		{
+			id: func(item sequencer.Step) int {
+				return 3
+			},
 			value: func(item sequencer.Step) int {
 				return item.Probability()
 			},
@@ -292,6 +321,9 @@ func (m *mainModel) initParameters() {
 			},
 		},
 		{
+			id: func(item sequencer.Step) int {
+				return 4
+			},
 			value: func(item sequencer.Step) int {
 				return item.Offset()
 			},
@@ -313,8 +345,10 @@ func (m *mainModel) initParameters() {
 	}
 
 	for i := 0; i <= midiParameters; i++ {
-		m.parameters.step = append(m.parameters.step, newMidiParameter[sequencer.Step](i))
+		m.parameters.step = append(m.parameters.step, newMidiParameter[sequencer.Step](5+i, i))
 	}
+
+	m.updateParams()
 }
 
 func (m *mainModel) initMidiControls() {
@@ -350,12 +384,22 @@ func (p *parameter[t]) decrease(item t) {
 	p.set(item, p.value(item), -1)
 }
 
-func (m *mainModel) renderParams() string {
-	var params []string
-	var title string
+func (m mainModel) renderParams() string {
+	return lipgloss.NewStyle().
+		MarginTop(1).
+		Render(
+			lipgloss.JoinHorizontal(
+				lipgloss.Center,
+				m.parameters.title,
+				m.parameters.content,
+			),
+		)
+}
+
+func (m *mainModel) updateParams() {
 	switch m.mode {
 	case stepMode:
-		title = paramStepTitleStyle.Render(
+		m.parameters.title = paramStepTitleStyle.Render(
 			lipgloss.JoinVertical(
 				lipgloss.Center,
 				toASCIIFont(fmt.Sprintf("S%d", m.activeStep+1)),
@@ -364,7 +408,7 @@ func (m *mainModel) renderParams() string {
 			),
 		)
 	case trackMode, paramSelectMode:
-		title = paramTrackTitleStyle.Render(
+		m.parameters.title = paramTrackTitleStyle.Render(
 			lipgloss.JoinVertical(
 				lipgloss.Center,
 				toASCIIFont(fmt.Sprintf("T%d", m.activeTrack+1)),
@@ -373,8 +417,10 @@ func (m *mainModel) renderParams() string {
 			),
 		)
 	default:
-		title = ""
+		m.parameters.title = ""
 	}
+
+	var params []string
 	if m.mode == stepMode {
 		if m.getActiveStep().IsActive() {
 			for _, p := range m.parameters.step {
@@ -415,15 +461,7 @@ func (m *mainModel) renderParams() string {
 		)
 	}
 	m.paramCarousel.SetItems(params)
-	return lipgloss.NewStyle().
-		MarginTop(1).
-		Render(
-			lipgloss.JoinHorizontal(
-				lipgloss.Center,
-				title,
-				m.paramCarousel.View(),
-			),
-		)
+	m.parameters.content = m.paramCarousel.View()
 }
 
 func setLengthParam(item sequencer.Parametrable, value int, add int) {

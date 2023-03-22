@@ -97,7 +97,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.height = msg.Height
 		m.help.Width = msg.Width
 		m.paramMidiTable.SetWidth(msg.Width)
-		m.paramCarousel.SetWidth(msg.Width - 2)
+		m.paramCarousel.SetWidth(msg.Width - lipgloss.Width(m.parameters.title))
 		return m, nil
 
 	case tickMsg:
@@ -123,6 +123,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.mode = trackMode
 			}
+			m.updateParams()
 			return m, nil
 
 		case key.Matches(msg, m.keymap.PatternMode):
@@ -131,6 +132,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.mode = patternMode
 			}
+			m.updateParams()
 			return m, tea.ClearScreen
 
 		case key.Matches(msg, m.keymap.AddTrack):
@@ -175,6 +177,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.activeStep = number + (m.activeTrackPage * stepsPerPage)
 			m.mode = stepMode
 			m.stepModeTimer = 0
+			m.updateParams()
 			return m, nil
 
 		case key.Matches(msg, m.keymap.StepToggle):
@@ -191,6 +194,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.seq.ToggleStep(m.activeTrack, m.activeStep)
 			m.mode = stepMode
 			m.stepModeTimer = 0
+			m.updateParams()
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Track):
@@ -202,6 +206,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.activeTrackPage = 0
 			m.activeStep = 0
 			m.mode = trackMode
+			m.updateParams()
 			return m, nil
 
 		case key.Matches(msg, m.keymap.TrackToggle):
@@ -262,6 +267,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.activeParams[m.activeTrack].track = m.paramMidiTable.Cursor() + m.parameters.fixedParamNb
 				m.paramMidiTable.SetCursor(0)
 				m.mode = trackMode
+				m.updateParams()
 			}
 			return m, nil
 
@@ -270,15 +276,15 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.mode = trackMode
 				return m, nil
 			}
-			//m.previousParam()
-			m.paramCarousel.Update(msg)
+			m.paramCarousel.MoveLeft()
 			m.stepModeTimer = 0
+			m.updateParams()
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Right):
-			//m.nextParam()
-			m.paramCarousel.Update(msg)
+			m.paramCarousel.MoveRight()
 			m.stepModeTimer = 0
+			m.updateParams()
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Up):
@@ -292,6 +298,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, cmd
 			}
 			m.stepModeTimer = 0
+			m.updateParams()
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Down):
@@ -305,6 +312,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, cmd
 			}
 			m.stepModeTimer = 0
+			m.updateParams()
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Help):

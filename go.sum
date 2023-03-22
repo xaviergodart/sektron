@@ -54,8 +54,8 @@ github.com/stretchr/testify v1.7.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO+kdMU+MU=
 github.com/stretchr/testify v1.8.1 h1:w7B6lhMri9wdJUVmEZPGGhZzrYTPvgJArz7wNPgYKsk=
 github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
-github.com/xaviergodart/bubble-carousel v0.3.1 h1:fClpDivPdtLe8OVfsvSutHuqIckIU5iOp0xb1Poap5s=
-github.com/xaviergodart/bubble-carousel v0.3.1/go.mod h1:qRzakeoPl1GY4NiahIONc+ed8e9X295K6J4gA254moM=
+github.com/xaviergodart/bubble-carousel v0.4.0 h1:kPDXGmmcnjqIjpq/epCgMLpIM9gzH739J8+dbr7Q9dI=
+github.com/xaviergodart/bubble-carousel v0.4.0/go.mod h1:qRzakeoPl1GY4NiahIONc+ed8e9X295K6J4gA254moM=
 gitlab.com/gomidi/midi/v2 v2.0.25 h1:dkzVBqbaFHjyWwP71MrQNX7IeRUIDonddmHbPpO/Ucg=
 gitlab.com/gomidi/midi/v2 v2.0.25/go.mod h1:quTyMKSQ4Klevxu6gY4gy2USbeZra0fV5SalndmPfsY=
 golang.org/x/sync v0.1.0 h1:wsuoTGHzEhffawBOhz5CYhcrV4IdKZbEyZjBMuTp12o=
