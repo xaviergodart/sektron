@@ -44,24 +44,33 @@ var (
 type parameters struct {
 	track        []parameter[sequencer.Track]
 	step         []parameter[sequencer.Step]
+	index        map[int]int
 	title        string
 	content      string
 	fixedParamNb int
 }
 
+func (p *parameters) getStepParam(nb int) *parameter[sequencer.Step] {
+	return &p.step[p.index[nb]]
+}
+
+func (p *parameters) getTrackParam(nb int) *parameter[sequencer.Track] {
+	return &p.track[p.index[nb]]
+}
+
+func (p parameters) getParamIndex(nb int) int {
+	return p.index[nb]
+}
+
 type parameter[t sequencer.Parametrable] struct {
-	id     func(item t) int
 	value  func(item t) int
 	string func(item t) string
 	set    func(item t, value int, add int)
 	active func(item t) bool
 }
 
-func newMidiParameter[t sequencer.Parametrable](id, nb int) parameter[t] {
+func newMidiParameter[t sequencer.Parametrable](nb int) parameter[t] {
 	return parameter[t]{
-		id: func(item t) int {
-			return id
-		},
 		value: func(item t) int {
 			return int(item.Control(nb).Value())
 		},
@@ -90,9 +99,6 @@ func (m *mainModel) initParameters() {
 
 	m.parameters.track = []parameter[sequencer.Track]{
 		{
-			id: func(item sequencer.Track) int {
-				return 0
-			},
 			value: func(item sequencer.Track) int {
 				// TODO: make chords actual chords
 				return int(item.Chord()[0])
@@ -115,9 +121,6 @@ func (m *mainModel) initParameters() {
 			},
 		},
 		{
-			id: func(item sequencer.Track) int {
-				return 1
-			},
 			value: func(item sequencer.Track) int {
 				return item.Length()
 			},
@@ -137,9 +140,6 @@ func (m *mainModel) initParameters() {
 			},
 		},
 		{
-			id: func(item sequencer.Track) int {
-				return 2
-			},
 			value: func(item sequencer.Track) int {
 				return int(item.Velocity())
 			},
@@ -159,9 +159,6 @@ func (m *mainModel) initParameters() {
 			},
 		},
 		{
-			id: func(item sequencer.Track) int {
-				return 3
-			},
 			value: func(item sequencer.Track) int {
 				return item.Probability()
 			},
@@ -228,14 +225,11 @@ func (m *mainModel) initParameters() {
 	m.parameters.fixedParamNb = len(m.parameters.track)
 
 	for i := 0; i <= midiParameters; i++ {
-		m.parameters.track = append(m.parameters.track, newMidiParameter[sequencer.Track](4+i, i))
+		m.parameters.track = append(m.parameters.track, newMidiParameter[sequencer.Track](i))
 	}
 
 	m.parameters.step = []parameter[sequencer.Step]{
 		{
-			id: func(item sequencer.Step) int {
-				return 0
-			},
 			value: func(item sequencer.Step) int {
 				return int(item.Chord()[0])
 			},
@@ -257,9 +251,6 @@ func (m *mainModel) initParameters() {
 			},
 		},
 		{
-			id: func(item sequencer.Step) int {
-				return 1
-			},
 			value: func(item sequencer.Step) int {
 				return item.Length()
 			},
@@ -279,9 +270,6 @@ func (m *mainModel) initParameters() {
 			},
 		},
 		{
-			id: func(item sequencer.Step) int {
-				return 2
-			},
 			value: func(item sequencer.Step) int {
 				return int(item.Velocity())
 			},
@@ -301,9 +289,6 @@ func (m *mainModel) initParameters() {
 			},
 		},
 		{
-			id: func(item sequencer.Step) int {
-				return 3
-			},
 			value: func(item sequencer.Step) int {
 				return item.Probability()
 			},
@@ -323,9 +308,6 @@ func (m *mainModel) initParameters() {
 			},
 		},
 		{
-			id: func(item sequencer.Step) int {
-				return 4
-			},
 			value: func(item sequencer.Step) int {
 				return item.Offset()
 			},
@@ -347,7 +329,7 @@ func (m *mainModel) initParameters() {
 	}
 
 	for i := 0; i <= midiParameters; i++ {
-		m.parameters.step = append(m.parameters.step, newMidiParameter[sequencer.Step](5+i, i))
+		m.parameters.step = append(m.parameters.step, newMidiParameter[sequencer.Step](i))
 	}
 
 	m.updateParams()
@@ -423,12 +405,14 @@ func (m *mainModel) updateParams() {
 	}
 
 	var params []string
+	m.parameters.index = map[int]int{}
 	if m.mode == stepMode {
 		if m.getActiveStep().IsActive() {
-			for _, p := range m.parameters.step {
+			for i, p := range m.parameters.step {
 				if !p.active(m.getActiveStep()) {
 					continue
 				}
+				m.parameters.index[len(params)] = i
 				params = append(
 					params,
 					p.string(m.getActiveStep()),
@@ -436,10 +420,11 @@ func (m *mainModel) updateParams() {
 			}
 		}
 	} else if m.mode == trackMode {
-		for _, p := range m.parameters.track {
+		for i, p := range m.parameters.track {
 			if !p.active(m.getActiveTrack()) {
 				continue
 			}
+			m.parameters.index[len(params)] = i
 			params = append(
 				params,
 				p.string(m.getActiveTrack()),
@@ -451,16 +436,15 @@ func (m *mainModel) updateParams() {
 			"⏶",
 			"⏷",
 		}
-		params = append(params,
-			lipgloss.JoinHorizontal(
-				lipgloss.Left,
-				lipgloss.JoinVertical(
-					lipgloss.Top,
-					scrollIndicator...,
-				),
-				m.paramMidiTable.View(),
+		m.parameters.content = lipgloss.JoinHorizontal(
+			lipgloss.Left,
+			lipgloss.JoinVertical(
+				lipgloss.Top,
+				scrollIndicator...,
 			),
+			m.paramMidiTable.View(),
 		)
+		return
 	}
 	m.paramCarousel.SetItems(params)
 	m.paramCarousel.SetCursor(m.getActiveParam())

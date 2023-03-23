@@ -251,11 +251,13 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case key.Matches(msg, m.keymap.AddParam):
 			m.mode = paramSelectMode
+			m.updateParams()
 			return m, nil
 
 		case key.Matches(msg, m.keymap.RemoveParam):
 			m.mode = trackMode
-			nb := m.getActiveParam() - m.parameters.fixedParamNb
+			m.updateParams()
+			nb := m.parameters.getParamIndex(m.getActiveParam()) - m.parameters.fixedParamNb
 			if nb >= 0 {
 				m.getActiveTrack().RemoveControl(nb)
 				m.previousParam()
@@ -288,12 +290,13 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case key.Matches(msg, m.keymap.Up):
 			if m.mode == stepMode && m.getActiveStep().IsActive() {
-				m.parameters.step[m.getActiveParam()].increase(m.getActiveStep())
+				m.parameters.getStepParam(m.getActiveParam()).increase(m.getActiveStep())
 			} else if m.mode == trackMode {
-				m.parameters.track[m.getActiveParam()].increase(m.getActiveTrack())
+				m.parameters.getTrackParam(m.getActiveParam()).increase(m.getActiveTrack())
 			} else if m.mode == paramSelectMode {
 				var cmd tea.Cmd
 				m.paramMidiTable, cmd = m.paramMidiTable.Update(msg)
+				m.updateParams()
 				return m, cmd
 			}
 			m.stepModeTimer = 0
@@ -302,12 +305,13 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case key.Matches(msg, m.keymap.Down):
 			if m.mode == stepMode && m.getActiveStep().IsActive() {
-				m.parameters.step[m.getActiveParam()].decrease(m.getActiveStep())
+				m.parameters.getStepParam(m.getActiveParam()).decrease(m.getActiveStep())
 			} else if m.mode == trackMode {
-				m.parameters.track[m.getActiveParam()].decrease(m.getActiveTrack())
+				m.parameters.getTrackParam(m.getActiveParam()).decrease(m.getActiveTrack())
 			} else if m.mode == paramSelectMode {
 				var cmd tea.Cmd
 				m.paramMidiTable, cmd = m.paramMidiTable.Update(msg)
+				m.updateParams()
 				return m, cmd
 			}
 			m.stepModeTimer = 0
