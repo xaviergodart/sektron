@@ -276,15 +276,13 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.mode = trackMode
 				return m, nil
 			}
-			m.paramCarousel.MoveLeft()
+			m.previousParam()
 			m.stepModeTimer = 0
-			m.updateParams()
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Right):
-			m.paramCarousel.MoveRight()
 			m.stepModeTimer = 0
-			m.updateParams()
+			m.nextParam()
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Up):
@@ -371,39 +369,21 @@ func (m mainModel) getActiveParam() int {
 }
 
 func (m *mainModel) nextParam() {
-	current := m.getActiveParam() + 1
+	m.paramCarousel.MoveRight()
 	if m.mode == stepMode {
-		for i := current; i < len(m.parameters.step); i++ {
-			if m.parameters.step[i].active(m.getActiveStep()) {
-				m.activeParams[m.activeTrack].step = i
-				return
-			}
-		}
+		m.activeParams[m.activeTrack].step = m.paramCarousel.Cursor()
 	} else {
-		for i := current; i < len(m.parameters.track); i++ {
-			if m.parameters.track[i].active(m.getActiveTrack()) {
-				m.activeParams[m.activeTrack].track = i
-				return
-			}
-		}
+		m.activeParams[m.activeTrack].track = m.paramCarousel.Cursor()
 	}
+	m.updateParams()
 }
 
 func (m *mainModel) previousParam() {
-	current := m.getActiveParam() - 1
+	m.paramCarousel.MoveLeft()
 	if m.mode == stepMode {
-		for i := current; i >= 0; i-- {
-			if m.parameters.step[i].active(m.getActiveStep()) {
-				m.activeParams[m.activeTrack].step = i
-				return
-			}
-		}
+		m.activeParams[m.activeTrack].step = m.paramCarousel.Cursor()
 	} else {
-		for i := current; i >= 0; i-- {
-			if m.parameters.track[i].active(m.getActiveTrack()) {
-				m.activeParams[m.activeTrack].track = i
-				return
-			}
-		}
+		m.activeParams[m.activeTrack].track = m.paramCarousel.Cursor()
 	}
+	m.updateParams()
 }

@@ -461,6 +461,7 @@ func (m *mainModel) updateParams() {
 		)
 	}
 	m.paramCarousel.SetItems(params)
+	m.paramCarousel.SetCursor(m.getActiveParam())
 	m.parameters.content = m.paramCarousel.View()
 }
 
