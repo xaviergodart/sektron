@@ -98,6 +98,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.help.Width = msg.Width
 		m.paramMidiTable.SetWidth(msg.Width)
 		m.paramCarousel.SetWidth(msg.Width - lipgloss.Width(m.parameters.title))
+		m.updateParams()
 		return m, nil
 
 	case tickMsg:

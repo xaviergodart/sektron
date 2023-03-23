@@ -6,6 +6,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/table"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/muesli/reflow/wordwrap"
 	carousel "github.com/xaviergodart/bubble-carousel"
 )
 
@@ -178,7 +179,7 @@ func (m *mainModel) initParameters() {
 				return true
 			},
 		},
-		/*{
+		{
 			value: func(item sequencer.Track) int {
 				return item.Device()
 			},
@@ -220,7 +221,7 @@ func (m *mainModel) initParameters() {
 			active: func(item sequencer.Track) bool {
 				return true
 			},
-		},*/
+		},
 	}
 
 	m.parameters.fixedParamNb = len(m.parameters.track)
