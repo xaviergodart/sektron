@@ -267,7 +267,6 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keymap.Validate):
 			if m.mode == paramSelectMode {
 				m.getActiveTrack().AddControl(m.paramMidiTable.Cursor())
-				m.activeParams[m.activeTrack].track = m.paramMidiTable.Cursor() + m.parameters.fixedParamNb
 				m.paramMidiTable.SetCursor(0)
 				m.mode = trackMode
 				m.updateParams()

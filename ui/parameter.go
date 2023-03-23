@@ -21,6 +21,7 @@ var (
 	paramTrackTitleStyle = lipgloss.NewStyle().
 				Padding(0, 1, 0, 2).
 				MarginRight(2).
+				MarginTop(1).
 				Bold(true).
 				BorderStyle(lipgloss.HiddenBorder())
 
@@ -369,15 +370,11 @@ func (p *parameter[t]) decrease(item t) {
 }
 
 func (m mainModel) renderParams() string {
-	return lipgloss.NewStyle().
-		MarginTop(1).
-		Render(
-			lipgloss.JoinHorizontal(
-				lipgloss.Center,
-				m.parameters.title,
-				m.parameters.content,
-			),
-		)
+	return lipgloss.JoinHorizontal(
+		lipgloss.Center,
+		m.parameters.title,
+		m.parameters.content,
+	)
 }
 
 func (m *mainModel) updateParams() {
@@ -448,7 +445,9 @@ func (m *mainModel) updateParams() {
 	}
 	m.paramCarousel.SetItems(params)
 	m.paramCarousel.SetCursor(m.getActiveParam())
-	m.parameters.content = m.paramCarousel.View()
+	m.parameters.content = lipgloss.NewStyle().
+		MarginTop(1).
+		Render(m.paramCarousel.View())
 }
 
 func setLengthParam(item sequencer.Parametrable, value int, add int) {
