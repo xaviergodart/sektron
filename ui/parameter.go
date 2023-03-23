@@ -32,13 +32,12 @@ var (
 		Item: lipgloss.NewStyle().
 			Align(lipgloss.Center).
 			Padding(0, 1, 0, 2).
-			BorderStyle(lipgloss.HiddenBorder()).
-			BorderForeground(secondaryColor),
+			BorderStyle(lipgloss.HiddenBorder()),
 		Selected: lipgloss.NewStyle().
 			Align(lipgloss.Center).
 			Padding(0, 1, 0, 2).
 			BorderStyle(lipgloss.ThickBorder()).
-			BorderForeground(primaryTextColor),
+			BorderForeground(secondaryColor),
 	}
 )
 
@@ -84,8 +83,10 @@ func newMidiParameter[t sequencer.Parametrable](id, nb int) parameter[t] {
 }
 
 func (m *mainModel) initParameters() {
-	m.paramCarousel = carousel.New(carousel.WithFocused(true))
-	m.paramCarousel.SetStyles(paramStyles)
+	m.paramCarousel = carousel.New(
+		carousel.WithFocused(true),
+		carousel.WithStyles(paramStyles),
+	)
 
 	m.parameters.track = []parameter[sequencer.Track]{
 		{
