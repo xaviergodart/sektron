@@ -370,10 +370,19 @@ func (p *parameter[t]) decrease(item t) {
 }
 
 func (m mainModel) renderParams() string {
+	left, right := "   ", "   "
+	if m.paramCarousel.HasLeftItems() {
+		left = toASCIIFont("<")
+	}
+	if m.paramCarousel.HasRightItems() {
+		right = toASCIIFont(">")
+	}
 	return lipgloss.JoinHorizontal(
 		lipgloss.Center,
 		m.parameters.title,
+		left,
 		m.parameters.content,
+		right,
 	)
 }
 

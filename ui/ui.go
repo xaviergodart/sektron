@@ -97,7 +97,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.height = msg.Height
 		m.help.Width = msg.Width
 		m.paramMidiTable.SetWidth(msg.Width)
-		m.paramCarousel.SetWidth(msg.Width - lipgloss.Width(m.parameters.title))
+		m.paramCarousel.SetWidth(msg.Width - lipgloss.Width(m.parameters.title) - 8)
 		m.updateParams()
 		return m, nil
 
