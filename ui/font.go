@@ -48,17 +48,17 @@ var asciiCharTable = map[string]string{
 	"<": lipgloss.JoinVertical(
 		lipgloss.Left,
 		[]string{
-			" ▄▀",
-			"█  ",
-			" ▀▄",
+			" ▄",
+			"▀▄",
+			"  ",
 		}...,
 	),
 	">": lipgloss.JoinVertical(
 		lipgloss.Left,
 		[]string{
-			"▀▄ ",
-			"  █",
-			"▄▀ ",
+			"▄ ",
+			"▄▀",
+			"  ",
 		}...,
 	),
 	"A": lipgloss.JoinVertical(
