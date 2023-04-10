@@ -184,8 +184,8 @@ func (m *mainModel) initParameters() {
 			},
 			string: func(item sequencer.Track) string {
 				device := item.DeviceString()
-				if len(device) > 40 {
-					device = device[:37] + "..."
+				if len(device) > 30 {
+					device = device[:27] + "..."
 				}
 				return lipgloss.JoinVertical(
 					lipgloss.Center,

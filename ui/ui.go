@@ -108,6 +108,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.stepModeTimer > stepModeTimeout {
 			m.stepModeTimer = 0
 			m.mode = trackMode
+			m.updateParams()
 		}
 		return m, tick()
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"sektron/midi"
+	"time"
 )
 
 // Step contains a step state.
@@ -180,6 +181,11 @@ func (s *step) SetChord(chord []uint8) {
 		if note < minChordNote || note > maxChordNote {
 			return
 		}
+		go func(note uint8) {
+			s.midi.NoteOn(s.track.device, s.track.channel, note, s.Velocity())
+			time.Sleep(time.Second)
+			s.midi.NoteOff(s.track.device, s.track.channel, note)
+		}(note)
 	}
 	s.reset()
 	s.chord = &chord

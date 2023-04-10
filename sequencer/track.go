@@ -3,6 +3,7 @@ package sequencer
 import (
 	"fmt"
 	"sektron/midi"
+	"time"
 )
 
 // Track contains a track state.
@@ -213,6 +214,11 @@ func (t *track) SetChord(chord []uint8) {
 		if note < minChordNote || note > maxChordNote {
 			return
 		}
+		go func(note uint8) {
+			t.midi.NoteOn(t.device, t.channel, note, t.Velocity())
+			time.Sleep(time.Second)
+			t.midi.NoteOff(t.device, t.channel, note)
+		}(note)
 	}
 	t.clear()
 	t.chord = chord
