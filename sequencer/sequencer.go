@@ -251,7 +251,7 @@ func (s *sequencer) start() {
 func (s *sequencer) tick() {
 	// We send clock tick to the midi devices.
 	// TODO: make it configurable
-	// s.midi.SendClock(s.clockSend)
+	s.midi.SendClock(s.clockSend)
 
 	if !s.isPlaying {
 		return
