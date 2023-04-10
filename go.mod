@@ -7,7 +7,7 @@ require (
 	github.com/charmbracelet/bubbletea v0.23.2
 	github.com/charmbracelet/lipgloss v0.6.1-0.20221118011007-04a7a77281f2
 	github.com/muesli/reflow v0.3.0
-	github.com/xaviergodart/bubble-carousel v0.4.1
+	github.com/xaviergodart/bubble-carousel v0.4.2
 	gitlab.com/gomidi/midi/v2 v2.0.25
 )
 
