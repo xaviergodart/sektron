@@ -337,4 +337,5 @@ func (t *track) clear() {
 	for _, step := range t.steps {
 		step.reset()
 	}
+	t.midi.Silence(t.device, t.channel)
 }
