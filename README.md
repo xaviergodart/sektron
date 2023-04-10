@@ -140,18 +140,7 @@ Sektron uses a few awesome packages:
  - [charmbracelet/bubbletea](https://github.com/charmbracelet/bubbletea) as the main TUI framework
  - [charmbracelet/lipgloss](https://github.com/charmbracelet/lipgloss) for making things beautiful
 
-## Planned features
-
-### v0.1
-
- - [x] Exhaustive midi messages type (CC etc...)
- - [x] Basic pattern management (and chaining)
- - [x] Key mapping management and configuration
- - [ ] Improve controls UX
- - [ ] Write documentation
-
-
-### Considered
+## Roadmap
 
  - Step polyphony
  - Keyboard mode
