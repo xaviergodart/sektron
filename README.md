@@ -7,9 +7,9 @@ Its main purpose is to mimic the fun and immediacity of hardware sequencers by b
 
 It's heavily inspired by [elektron devices](https://www.elektron.se).
 
-*_Sektron has only been tested on linux (it should work on masOS as well) and you may experience some crashes here and there._*
+**_Sektron has only been tested on linux (it should work on masOS as well) and you may experience some crashes here and there._**
 
-*_Feel free to [open an issue](https://github.com/xaviergodart/sektron/issues/new)._*
+**_Feel free to [open an issue](https://github.com/xaviergodart/sektron/issues/new)._**
 
 ![sektron screenshot](/docs/screenshot.png)
 
