@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+
 	"sektron/sequencer"
 
 	"github.com/charmbracelet/bubbles/table"
@@ -11,7 +12,6 @@ import (
 )
 
 const (
-	paramsPerLine  = 18
 	pulsesPerStep  = 6
 	maxSteps       = 128
 	midiParameters = 131

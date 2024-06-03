@@ -3,8 +3,9 @@ package sequencer
 import (
 	"fmt"
 	"math/rand"
-	"sektron/midi"
 	"time"
+
+	"sektron/midi"
 )
 
 // Step contains a step state.
@@ -160,7 +161,7 @@ func (s step) ProbabilityString() string {
 // OffsetString returns the string representation of the step offset.
 func (s step) OffsetString() string {
 	if s.offset == 0 {
-		return fmt.Sprintf("%d", s.offset)
+		return ""
 	}
 	return fmt.Sprintf("+%d", s.offset)
 }

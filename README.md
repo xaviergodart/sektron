@@ -7,7 +7,7 @@ Its main purpose is to mimic the fun and immediacity of hardware sequencers by b
 
 It's heavily inspired by [elektron devices](https://www.elektron.se).
 
-**_Sektron is still under heavy development. Features are missing and it's probably unstable._**
+**_Sektron has only been tested on linux (it should work on masOS as well) and you may experience some crashes here and there. Feel free to [open an issue](https://github.com/xaviergodart/sektron/issues/new)._*
 
 ![sektron screenshot](/docs/screenshot.png)
 
@@ -21,7 +21,7 @@ It's heavily inspired by [elektron devices](https://www.elektron.se).
  - Up to **64 patterns** can be loaded at the same time
  - **Pattern chaining**
 
-And more to come. See [Planned features](https://github.com/xaviergodart/sektron#planned-features).
+See [Roadmap](https://github.com/xaviergodart/sektron#roadmap) for more.
 
 ## Installation
 
@@ -142,9 +142,9 @@ Sektron uses a few awesome packages:
 
 ## Roadmap
 
+The project isn't under active development right now. I may fix some bugs here and there. But I'll considerer adding more features if there's some interest. 
+
+Things that I may consider adding at some point:
  - Step polyphony
- - Keyboard mode
- - Live record
- - More random/generative features
  - Retrigs
  - LFOs

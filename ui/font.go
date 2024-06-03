@@ -32,17 +32,17 @@ var asciiCharTable = map[string]string{
 	"/": lipgloss.JoinVertical(
 		lipgloss.Left,
 		[]string{
-			"  █",
 			" █ ",
-			"█  ",
+			" █ ",
+			" █ ",
 		}...,
 	),
 	"%": lipgloss.JoinVertical(
 		lipgloss.Left,
 		[]string{
-			"█  █ ",
+			"█ █  ",
 			"  █  ",
-			" █  █",
+			"  █ █",
 		}...,
 	),
 	"<": lipgloss.JoinVertical(
@@ -65,7 +65,7 @@ var asciiCharTable = map[string]string{
 		lipgloss.Left,
 		[]string{
 			"█▀█",
-			"█▄█",
+			"█▀█",
 			"█ █",
 		}...,
 	),
@@ -113,7 +113,7 @@ var asciiCharTable = map[string]string{
 		lipgloss.Left,
 		[]string{
 			"█▀▀",
-			"█ ▄",
+			"█ █",
 			"█▄█",
 		}...,
 	),
@@ -176,7 +176,7 @@ var asciiCharTable = map[string]string{
 	"1": lipgloss.JoinVertical(
 		lipgloss.Left,
 		[]string{
-			"▄█ ",
+			"▀█ ",
 			" █ ",
 			"▄█▄",
 		}...,
@@ -185,7 +185,7 @@ var asciiCharTable = map[string]string{
 		lipgloss.Left,
 		[]string{
 			"█▀█",
-			" ▄▀",
+			"▄▀▀",
 			"█▄▄",
 		}...,
 	),
@@ -193,7 +193,7 @@ var asciiCharTable = map[string]string{
 		lipgloss.Left,
 		[]string{
 			"█▀█",
-			" ▀▄",
+			" ▀█",
 			"█▄█",
 		}...,
 	),
@@ -201,7 +201,7 @@ var asciiCharTable = map[string]string{
 		lipgloss.Left,
 		[]string{
 			"█ █",
-			"█▄█",
+			"▀▀█",
 			"  █",
 		}...,
 	),
@@ -209,40 +209,40 @@ var asciiCharTable = map[string]string{
 		lipgloss.Left,
 		[]string{
 			"█▀▀",
-			"▀▀▄",
-			"▄▄▀",
+			"▀▀█",
+			"▄▄█",
 		}...,
 	),
 	"6": lipgloss.JoinVertical(
 		lipgloss.Left,
 		[]string{
-			"▄▀▄",
-			"█▄ ",
-			"▀▄▀",
+			"█▀▀",
+			"█▀█",
+			"█▄█",
 		}...,
 	),
 	"7": lipgloss.JoinVertical(
 		lipgloss.Left,
 		[]string{
 			"▀▀█",
-			" █ ",
-			"▐▌ ",
+			"  █",
+			"  █",
 		}...,
 	),
 	"8": lipgloss.JoinVertical(
 		lipgloss.Left,
 		[]string{
-			"▄▀▄",
-			"▄▀▄",
-			"▀▄▀",
+			"█▀█",
+			"█▀█",
+			"█▄█",
 		}...,
 	),
 	"9": lipgloss.JoinVertical(
 		lipgloss.Left,
 		[]string{
-			"▄▀▄",
-			"▀▄█",
-			" ▄▀",
+			"█▀█",
+			"▀▀█",
+			"  █",
 		}...,
 	),
 }
