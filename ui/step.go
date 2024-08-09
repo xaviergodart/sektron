@@ -108,6 +108,10 @@ func (m mainModel) renderStepContent(step sequencer.Step) string {
 	if !step.IsActive() {
 		return strconv.Itoa(step.Position() + 1)
 	}
+	offset := step.OffsetString()
+	if step.Offset() == 0 {
+		offset = ""
+	}
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
 		fmt.Sprintf("%d", step.Position()+1),
@@ -120,7 +124,7 @@ func (m mainModel) renderStepContent(step sequencer.Step) string {
 				Render(step.ProbabilityString()),
 			lipgloss.NewStyle().
 				MarginLeft(1).
-				Render(step.OffsetString()),
+				Render(offset),
 		),
 	)
 }
