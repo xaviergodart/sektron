@@ -95,7 +95,7 @@ func newKeyMap(keys filesystem.KeyMap) keyMap {
 		),
 		RemoveStep: key.NewBinding(
 			key.WithKeys(keys.RemoveStep),
-			key.WithHelp(keys.RemoveStep, "remove track"),
+			key.WithHelp(keys.RemoveStep, "remove step"),
 		),
 		StepIndex: map[string]int{},
 		Step: key.NewBinding(
