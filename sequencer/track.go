@@ -24,7 +24,9 @@ type Track interface {
 }
 
 type track struct {
-	midi  midi.Midi
+	midi midi.Midi
+	seq  *sequencer
+
 	steps []*step
 
 	// The pulse defines the current position of the playhead in the track.
@@ -213,6 +215,9 @@ func (t *track) SetChord(chord []uint8) {
 	for _, note := range chord {
 		if note < minChordNote || note > maxChordNote {
 			return
+		}
+		if t.seq.isPlaying {
+			continue
 		}
 		go func(note uint8) {
 			t.midi.NoteOn(t.device, t.channel, note, t.Velocity())

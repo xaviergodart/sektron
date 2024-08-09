@@ -182,6 +182,9 @@ func (s *step) SetChord(chord []uint8) {
 		if note < minChordNote || note > maxChordNote {
 			return
 		}
+		if s.track.seq.isPlaying {
+			continue
+		}
 		go func(note uint8) {
 			s.midi.NoteOn(s.track.device, s.track.channel, note, s.Velocity())
 			time.Sleep(time.Second)

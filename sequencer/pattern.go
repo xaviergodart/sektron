@@ -123,6 +123,7 @@ func (s *sequencer) Load(pattern int) {
 
 		s.tracks = append(s.tracks, &track{
 			midi:                  s.midi,
+			seq:                   s,
 			steps:                 []*step{},
 			chord:                 t.Chord,
 			length:                t.Length,
