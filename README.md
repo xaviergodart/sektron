@@ -52,6 +52,10 @@ make GOLANG_OS=darwin build
 
 # Windows
 make GOLANG_OS=windows build
+
+# Rasperry Pi OS
+sudo apt install libasound2-dev
+make GOLANG_OS=linux GOLANG_ARCH=arm64 build
 ```
 
 ## Usage
