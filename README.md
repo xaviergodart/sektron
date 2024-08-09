@@ -40,7 +40,7 @@ mkdir -p sektron && tar -zxvf sektron_VERSION_PLATFORM.tar.gz -C sektron
 
 ### Build it yourself
 
-You'll need [go 1.18](https://go.dev/dl/) minimum.
+You'll need [go 1.22](https://go.dev/dl/) minimum.
 Although you should be able to build it for either **linux**, **macOS** or **Windows**, it has only been tested on **linux**.
 
 ```sh
