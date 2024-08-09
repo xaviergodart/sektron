@@ -16,7 +16,7 @@ jobs:
     env:
       CGO_ENABLED: 1
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v4
 
     - name: Install Alsa headers
       run: sudo apt-get install libasound2-dev
