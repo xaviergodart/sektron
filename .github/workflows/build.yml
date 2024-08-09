@@ -16,14 +16,14 @@ jobs:
     env:
       CGO_ENABLED: 1
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - name: Install Alsa headers
       run: sudo apt-get install libasound2-dev
       if: startsWith(matrix.os, 'ubuntu')
 
     - name: Install Go
-      uses: actions/setup-go@v4
+      uses: actions/setup-go@v5
       with:
         go-version: 1.22
 
