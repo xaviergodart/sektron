@@ -76,7 +76,7 @@ Hit `?` to see all keybindings. `esc` to quit.
 Keys mapping is fully customizable. After running Sektron for the first time, a `config.json` is created.
 You can edit all the keys inside it.
 
-You can select one of the fex default keyboard layouts are available:
+You can select one of the default keyboard layouts available:
 ```sh
 # QWERTY
 ./sektron --keyboard qwerty
