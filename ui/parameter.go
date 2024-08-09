@@ -25,7 +25,7 @@ var (
 				Bold(true).
 				BorderStyle(lipgloss.HiddenBorder())
 
-	paramStepTitleStyle = paramTrackTitleStyle.Copy().
+	paramStepTitleStyle = paramTrackTitleStyle.
 				BorderStyle(lipgloss.DoubleBorder()).
 				BorderForeground(primaryColor)
 
@@ -66,7 +66,7 @@ func (p parameters) getParamIndex(nb int) int {
 type parameter[t sequencer.Parametrable] struct {
 	value  func(item t) int
 	string func(item t) string
-	set    func(item t, value int, add int)
+	set    func(item t, value, add int)
 	active func(item t) bool
 }
 
@@ -83,7 +83,7 @@ func newMidiParameter[t sequencer.Parametrable](nb int) parameter[t] {
 				item.Control(nb).Name(),
 			)
 		},
-		set: func(item t, value int, add int) {
+		set: func(item t, value, add int) {
 			item.SetControl(nb, int16(value+add))
 		},
 		active: func(item t) bool {
@@ -112,11 +112,12 @@ func (m *mainModel) initParameters() {
 					"note",
 				)
 			},
-			set: func(item sequencer.Track, value int, add int) {
+			set: func(item sequencer.Track, value, add int) {
 				item.SetChord([]uint8{
 					uint8(value + add),
 				})
 			},
+			//nolint:revive
 			active: func(item sequencer.Track) bool {
 				return true
 			},
@@ -133,9 +134,10 @@ func (m *mainModel) initParameters() {
 					"length",
 				)
 			},
-			set: func(item sequencer.Track, value int, add int) {
+			set: func(item sequencer.Track, value, add int) {
 				setLengthParam(item, value, add)
 			},
+			//nolint:revive
 			active: func(item sequencer.Track) bool {
 				return true
 			},
@@ -152,9 +154,10 @@ func (m *mainModel) initParameters() {
 					"velocity",
 				)
 			},
-			set: func(item sequencer.Track, value int, add int) {
+			set: func(item sequencer.Track, value, add int) {
 				item.SetVelocity(uint8(value + add))
 			},
+			//nolint:revive
 			active: func(item sequencer.Track) bool {
 				return true
 			},
@@ -171,9 +174,10 @@ func (m *mainModel) initParameters() {
 					"probability",
 				)
 			},
-			set: func(item sequencer.Track, value int, add int) {
+			set: func(item sequencer.Track, value, add int) {
 				item.SetProbability(value + add)
 			},
+			//nolint:revive
 			active: func(item sequencer.Track) bool {
 				return true
 			},
@@ -195,9 +199,10 @@ func (m *mainModel) initParameters() {
 					"device",
 				)
 			},
-			set: func(item sequencer.Track, value int, add int) {
+			set: func(item sequencer.Track, value, add int) {
 				item.SetDevice(value + add)
 			},
+			//nolint:revive
 			active: func(item sequencer.Track) bool {
 				return true
 			},
@@ -214,9 +219,10 @@ func (m *mainModel) initParameters() {
 					"channel",
 				)
 			},
-			set: func(item sequencer.Track, value int, add int) {
+			set: func(item sequencer.Track, value, add int) {
 				item.SetChannel(uint8(value + add))
 			},
+			//nolint:revive
 			active: func(item sequencer.Track) bool {
 				return true
 			},
@@ -242,11 +248,12 @@ func (m *mainModel) initParameters() {
 					"note",
 				)
 			},
-			set: func(item sequencer.Step, value int, add int) {
+			set: func(item sequencer.Step, value, add int) {
 				item.SetChord([]uint8{
 					uint8(value + add),
 				})
 			},
+			//nolint:revive
 			active: func(item sequencer.Step) bool {
 				return true
 			},
@@ -263,9 +270,10 @@ func (m *mainModel) initParameters() {
 					"length",
 				)
 			},
-			set: func(item sequencer.Step, value int, add int) {
+			set: func(item sequencer.Step, value, add int) {
 				setLengthParam(item, value, add)
 			},
+			//nolint:revive
 			active: func(item sequencer.Step) bool {
 				return true
 			},
@@ -282,9 +290,10 @@ func (m *mainModel) initParameters() {
 					"velocity",
 				)
 			},
-			set: func(item sequencer.Step, value int, add int) {
+			set: func(item sequencer.Step, value, add int) {
 				item.SetVelocity(uint8(value + add))
 			},
+			//nolint:revive
 			active: func(item sequencer.Step) bool {
 				return true
 			},
@@ -301,9 +310,10 @@ func (m *mainModel) initParameters() {
 					"probability",
 				)
 			},
-			set: func(item sequencer.Step, value int, add int) {
+			set: func(item sequencer.Step, value, add int) {
 				item.SetProbability(value + add)
 			},
+			//nolint:revive
 			active: func(item sequencer.Step) bool {
 				return true
 			},
@@ -320,9 +330,10 @@ func (m *mainModel) initParameters() {
 					"offset",
 				)
 			},
-			set: func(item sequencer.Step, value int, add int) {
+			set: func(item sequencer.Step, value, add int) {
 				item.SetOffset(value + add)
 			},
+			//nolint:revive
 			active: func(item sequencer.Step) bool {
 				return true
 			},
@@ -459,7 +470,7 @@ func (m *mainModel) updateParams() {
 		Render(m.paramCarousel.View())
 }
 
-func setLengthParam(item sequencer.Parametrable, value int, add int) {
+func setLengthParam(item sequencer.Parametrable, value, add int) {
 	switch {
 	case value < pulsesPerStep*4:
 		item.SetLength(value + add)

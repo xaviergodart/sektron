@@ -1,8 +1,9 @@
 package ui
 
 import (
-	"sektron/filesystem"
 	"strings"
+
+	"sektron/filesystem"
 
 	"github.com/charmbracelet/bubbles/key"
 )

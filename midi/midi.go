@@ -22,13 +22,13 @@ const (
 // Midi provides a way to interct with midi devices.
 type Midi interface {
 	Devices() gomidi.OutPorts
-	NoteOn(device int, channel uint8, note uint8, velocity uint8)
-	NoteOff(device int, channel uint8, note uint8)
+	NoteOn(device int, channel, note, velocity uint8)
+	NoteOff(device int, channel, note uint8)
 	Silence(device int, channel uint8)
 	ControlChange(device int, channel, controller, value uint8)
-	ProgramChange(device int, channel uint8, value uint8)
+	ProgramChange(device int, channel, value uint8)
 	Pitchbend(device int, channel uint8, value int16)
-	AfterTouch(device int, channel uint8, value uint8)
+	AfterTouch(device int, channel, value uint8)
 	SendClock(devices []int)
 	Close()
 }
@@ -112,12 +112,12 @@ func (m *midi) Devices() gomidi.OutPorts {
 }
 
 // NoteOn sends a Note On midi meessage to the given device.
-func (m *midi) NoteOn(device int, channel uint8, note uint8, velocity uint8) {
+func (m *midi) NoteOn(device int, channel, note, velocity uint8) {
 	m.outputs[device] <- gomidi.NoteOn(channel, note, velocity)
 }
 
 // NoteOff sends a Note Off midi meessage to the given device.
-func (m *midi) NoteOff(device int, channel uint8, note uint8) {
+func (m *midi) NoteOff(device int, channel, note uint8) {
 	m.outputs[device] <- gomidi.NoteOff(channel, note)
 }
 
@@ -134,7 +134,7 @@ func (m *midi) ControlChange(device int, channel, controller, value uint8) {
 }
 
 // ProgramChange sends a Program Change messages to the given device.
-func (m *midi) ProgramChange(device int, channel uint8, value uint8) {
+func (m *midi) ProgramChange(device int, channel, value uint8) {
 	m.outputs[device] <- gomidi.ProgramChange(channel, value)
 }
 
@@ -144,7 +144,7 @@ func (m *midi) Pitchbend(device int, channel uint8, value int16) {
 }
 
 // AfterTouch sends a After Touch messages to the given device.
-func (m *midi) AfterTouch(device int, channel uint8, value uint8) {
+func (m *midi) AfterTouch(device int, channel, value uint8) {
 	m.outputs[device] <- gomidi.AfterTouch(channel, value)
 }
 

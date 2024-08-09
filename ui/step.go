@@ -2,8 +2,9 @@ package ui
 
 import (
 	"fmt"
-	"sektron/sequencer"
 	"strconv"
+
+	"sektron/sequencer"
 
 	"github.com/charmbracelet/lipgloss"
 )

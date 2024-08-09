@@ -17,42 +17,42 @@ var (
 				Padding(1, 2).
 				Bold(true)
 
-	trackActiveStyle = transportBarStyle.Copy().
+	trackActiveStyle = transportBarStyle.
 				Foreground(secondaryTextColor).
 				Background(activeColor)
-	trackActiveInactiveStyle = transportBarStyle.Copy().
+	trackActiveInactiveStyle = transportBarStyle.
 					Italic(true).
 					Foreground(secondaryTextColor).
 					Background(activeColor)
-	trackActiveCurrentStepActiveStyle = transportBarStyle.Copy().
+	trackActiveCurrentStepActiveStyle = transportBarStyle.
 						Foreground(secondaryTextColor).
 						Background(currentColor)
-	trackCurrentStepActiveStyle = transportBarStyle.Copy().
+	trackCurrentStepActiveStyle = transportBarStyle.
 					Background(currentDimmedColor)
-	trackInactiveStyle = transportBarStyle.Copy().
+	trackInactiveStyle = transportBarStyle.
 				Italic(true).
 				Foreground(secondaryDimmedColor)
 
-	transportPlayerStyle = transportBarStyle.Copy().
+	transportPlayerStyle = transportBarStyle.
 				Background(currentColor).
 				Foreground(secondaryTextColor)
-	transportPlayingStyle = transportPlayerStyle.Copy().
+	transportPlayingStyle = transportPlayerStyle.
 				Background(tertiaryColor)
 
-	tempoStyle = transportBarStyle.Copy().
+	tempoStyle = transportBarStyle.
 			Foreground(primaryTextColor).
 			Background(primaryColor)
 
-	tempoTickStyle = tempoStyle.Copy().
+	tempoTickStyle = tempoStyle.
 			Foreground(primaryTextColor).
 			Background(currentColor)
 
 	transportPageStyle = lipgloss.NewStyle()
-	pageStyle          = transportBarStyle.Copy().
+	pageStyle          = transportBarStyle.
 				Foreground(inactiveColor)
-	pageActiveStyle = pageStyle.Copy().
+	pageActiveStyle = pageStyle.
 			Foreground(primaryColor)
-	pageCurrentStyle = pageStyle.Copy().
+	pageCurrentStyle = pageStyle.
 				Foreground(activeColor)
 
 	logoStyle = lipgloss.NewStyle().Foreground(logoColor)

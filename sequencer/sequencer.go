@@ -12,9 +12,10 @@ package sequencer
 
 import (
 	"math/rand"
+	"time"
+
 	"sektron/filesystem"
 	"sektron/midi"
-	"time"
 )
 
 const (
@@ -49,7 +50,7 @@ type Sequencer interface {
 	ToggleTrack(track int)
 	AddStep(track int)
 	RemoveStep(track int)
-	ToggleStep(track int, step int)
+	ToggleStep(track, step int)
 	Tempo() float64
 	SetTempo(tempo float64)
 	Reset()
@@ -59,6 +60,8 @@ type sequencer struct {
 	midi  midi.Midi
 	bank  filesystem.Bank
 	chain []int
+
+	randomizer *rand.Rand
 
 	tracks []*track
 	clock  *clock
@@ -76,11 +79,12 @@ type sequencer struct {
 func New(midi midi.Midi, bank filesystem.Bank) Sequencer {
 	// The randomizer will be used for step trigger probability.
 	// Check step.go.
-	rand.Seed(time.Now().UnixNano())
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	seq := &sequencer{
 		midi:        midi,
 		bank:        bank,
+		randomizer:  r,
 		clockSend:   []int{defaultDevice},
 		isPlaying:   false,
 		isFirstTick: false,
@@ -233,7 +237,7 @@ func (s *sequencer) ToggleTrack(track int) {
 }
 
 // ToggleStep activates or desactivates a specific step of a given track.
-func (s *sequencer) ToggleStep(track int, step int) {
+func (s *sequencer) ToggleStep(track, step int) {
 	if len(s.tracks[track].steps) <= step {
 		return
 	}

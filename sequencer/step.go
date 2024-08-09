@@ -2,7 +2,6 @@ package sequencer
 
 import (
 	"fmt"
-	"math/rand"
 	"time"
 
 	"sektron/midi"
@@ -261,7 +260,7 @@ func (s step) sendControls() {
 }
 
 func (s step) skip() bool {
-	return s.Probability() < 100 && rand.Intn(100) > s.Probability()
+	return s.Probability() < 100 && s.track.seq.randomizer.Intn(100) > s.Probability()
 }
 
 func (s step) startingPulse() int {

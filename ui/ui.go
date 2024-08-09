@@ -5,9 +5,10 @@
 package ui
 
 import (
+	"time"
+
 	"sektron/filesystem"
 	"sektron/sequencer"
-	"time"
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"

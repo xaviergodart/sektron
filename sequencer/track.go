@@ -2,8 +2,9 @@ package sequencer
 
 import (
 	"fmt"
-	"sektron/midi"
 	"time"
+
+	"sektron/midi"
 )
 
 // Track contains a track state.

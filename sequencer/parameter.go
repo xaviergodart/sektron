@@ -2,8 +2,9 @@ package sequencer
 
 import (
 	"fmt"
-	"sektron/midi"
 	"strconv"
+
+	"sektron/midi"
 )
 
 const (

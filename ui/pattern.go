@@ -80,16 +80,15 @@ func (m mainModel) renderPattern(pattern int) string {
 			textStyle.Background(activeColor).Render(content),
 			lipgloss.WithWhitespaceBackground(activeColor),
 		))
-	} else {
-		return stepStyle.Render(lipgloss.Place(
-			width,
-			height,
-			lipgloss.Left,
-			lipgloss.Top,
-			textStyle.Background(inactiveColor).Render(number),
-			lipgloss.WithWhitespaceBackground(inactiveColor),
-		))
 	}
+	return stepStyle.Render(lipgloss.Place(
+		width,
+		height,
+		lipgloss.Left,
+		lipgloss.Top,
+		textStyle.Background(inactiveColor).Render(number),
+		lipgloss.WithWhitespaceBackground(inactiveColor),
+	))
 }
 
 func (m mainModel) renderChain() string {

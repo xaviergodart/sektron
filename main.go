@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+
 	"sektron/filesystem"
 	"sektron/midi"
 	"sektron/sequencer"

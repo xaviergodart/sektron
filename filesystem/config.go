@@ -15,7 +15,7 @@ type Configuration struct {
 }
 
 // NewConfiguration returns a new default configuration.
-func NewConfiguration(filename string, keyboard string) Configuration {
+func NewConfiguration(filename, keyboard string) Configuration {
 	config := Configuration{
 		KeyMap:   NewDefaultQwertyKeyMap(),
 		filename: filename,
