@@ -70,10 +70,11 @@ make GOLANG_OS=linux GOLANG_ARCH=arm64 build
 
 Hit `?` to see all keybindings. `esc` to quit.
 
+Some companion apps that receive midi for testing Sektron:
+ - [Enfer](https://neauoire.github.io/Enfer/) ([github](https://github.com/neauoire/Enfer))
+ - [QSynth](https://qsynth.sourceforge.io/)
+
 ![sektron gif](/docs/vhs.gif)
-
-[Qsynth](https://qsynth.sourceforge.io/) is a nice companion app for testing Sektron.
-
 
 ### Keyboard mapping
 
