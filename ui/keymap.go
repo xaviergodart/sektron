@@ -20,6 +20,9 @@ type keyMap struct {
 	AddStep    key.Binding
 	RemoveStep key.Binding
 
+	NextStep     key.Binding
+	PreviousStep key.Binding
+
 	StepIndex map[string]int
 	Step      key.Binding
 
@@ -61,7 +64,7 @@ func (k keyMap) ShortHelp() []key.Binding {
 // key.Map interface.
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.Play, k.ParamMode, k.PatternMode, k.AddTrack, k.RemoveTrack, k.AddStep, k.RemoveStep, k.TempoUp, k.TempoDown},
+		{k.Play, k.ParamMode, k.PatternMode, k.AddTrack, k.RemoveTrack, k.AddStep, k.RemoveStep, k.PreviousStep, k.NextStep, k.TempoUp, k.TempoDown},
 		{k.Step, k.StepToggle, k.Track, k.TrackToggle, k.PageUp, k.PageDown, k.AddParam, k.RemoveParam},
 		{k.Validate, k.Up, k.Down, k.Left, k.Right, k.Help, k.Quit},
 	}
@@ -97,6 +100,14 @@ func newKeyMap(keys filesystem.KeyMap) keyMap {
 		RemoveStep: key.NewBinding(
 			key.WithKeys(keys.RemoveStep),
 			key.WithHelp(keys.RemoveStep, "remove step"),
+		),
+		PreviousStep: key.NewBinding(
+			key.WithKeys(keys.PreviousStep),
+			key.WithHelp(keys.PreviousStep, "select previous step"),
+		),
+		NextStep: key.NewBinding(
+			key.WithKeys(keys.NextStep),
+			key.WithHelp(keys.NextStep, "select next step"),
 		),
 		StepIndex: map[string]int{},
 		Step: key.NewBinding(
