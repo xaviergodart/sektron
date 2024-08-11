@@ -40,6 +40,8 @@ type keyMap struct {
 
 	AddParam    key.Binding
 	RemoveParam key.Binding
+	CopyParams  key.Binding
+	PasteParams key.Binding
 
 	Validate key.Binding
 	Left     key.Binding
@@ -142,6 +144,14 @@ func newKeyMap(keys filesystem.KeyMap) keyMap {
 			key.WithKeys(keys.RemoveParam),
 			key.WithHelp(keys.RemoveParam, "remove midi control"),
 		),
+		CopyParams: key.NewBinding(
+			key.WithKeys(keys.CopyParams),
+			key.WithHelp(keys.CopyParams, "copy active step parameters"),
+		),
+		PasteParams: key.NewBinding(
+			key.WithKeys(keys.PasteParams),
+			key.WithHelp(keys.PasteParams, "paste copied parameters into active step"),
+		),
 		Validate: key.NewBinding(
 			key.WithKeys(keys.Validate),
 			key.WithHelp(keys.Validate, "validate selection"),
@@ -167,8 +177,8 @@ func newKeyMap(keys filesystem.KeyMap) keyMap {
 			key.WithHelp(keys.Help, "toggle help"),
 		),
 		Quit: key.NewBinding(
-			key.WithKeys("ctrl+c", "esc"),
-			key.WithHelp("ctrl+c/esc", "quit"),
+			key.WithKeys("ctrl+q", "esc"),
+			key.WithHelp("ctrl+q/esc", "quit"),
 		),
 	}
 	for i, k := range keys.Steps {

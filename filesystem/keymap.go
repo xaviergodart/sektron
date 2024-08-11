@@ -18,6 +18,8 @@ type KeyMap struct {
 	TempoDown    string     `json:"tempo_down"`
 	AddParam     string     `json:"add_param"`
 	RemoveParam  string     `json:"remove_param"`
+	CopyParams   string     `json:"copy_params"`
+	PasteParams  string     `json:"paste_params"`
 	Validate     string     `json:"validate"`
 	Left         string     `json:"left"`
 	Right        string     `json:"right"`
@@ -46,6 +48,8 @@ func NewDefaultAzertyKeyMap() KeyMap {
 		TempoDown:    "shift+down",
 		AddParam:     "ctrl+up",
 		RemoveParam:  "ctrl+down",
+		CopyParams:   "ctrl+c",
+		PasteParams:  "ctrl+v",
 		Validate:     "enter",
 		Left:         "left",
 		Right:        "right",
@@ -75,6 +79,8 @@ func NewDefaultAzertyMacKeyMap() KeyMap {
 		TempoDown:    "shift+down",
 		AddParam:     "ctrl+up",
 		RemoveParam:  "ctrl+down",
+		CopyParams:   "ctrl+c",
+		PasteParams:  "ctrl+v",
 		Validate:     "enter",
 		Left:         "left",
 		Right:        "right",
@@ -103,6 +109,8 @@ func NewDefaultQwertyKeyMap() KeyMap {
 		TempoDown:    "shift+down",
 		AddParam:     "ctrl+up",
 		RemoveParam:  "ctrl+down",
+		CopyParams:   "ctrl+c",
+		PasteParams:  "ctrl+v",
 		Validate:     "enter",
 		Left:         "left",
 		Right:        "right",
@@ -132,6 +140,8 @@ func NewDefaultQwertyMacKeyMap() KeyMap {
 		TempoDown:    "shift+down",
 		AddParam:     "ctrl+up",
 		RemoveParam:  "ctrl+down",
+		CopyParams:   "ctrl+c",
+		PasteParams:  "ctrl+v",
 		Validate:     "enter",
 		Left:         "left",
 		Right:        "right",
