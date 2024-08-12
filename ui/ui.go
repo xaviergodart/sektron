@@ -91,6 +91,8 @@ func (m mainModel) Init() tea.Cmd {
 }
 
 func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	m.resetPatternState()
+
 	switch msg := msg.(type) {
 
 	case tea.WindowSizeMsg:
@@ -357,6 +359,16 @@ func (m mainModel) View() string {
 		cleanup,
 		help,
 	)
+}
+
+// resetPattern ensures that we reset active track and step state
+// after a pattern chain if needed
+func (m *mainModel) resetPatternState() {
+	if m.activeTrack >= len(m.seq.Tracks()) || m.activeStep >= len(m.seq.Tracks()[m.activeTrack].Steps()) {
+		m.activeTrack = 0
+		m.activeTrackPage = 0
+		m.activeStep = 0
+	}
 }
 
 func (m *mainModel) getActiveTrack() sequencer.Track {
