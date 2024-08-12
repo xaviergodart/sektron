@@ -176,9 +176,6 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.mode = stepMode
 				m.stepModeTimer = 0
 				m.updateParams()
-			} else if m.mode == patternMode {
-				// TODO: Support navigation for patterns?
-				return m, nil
 			}
 			return m, nil
 
@@ -195,11 +192,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.mode = stepMode
 				m.stepModeTimer = 0
 				m.updateParams()
-			} else if m.mode == patternMode {
-				// TODO: Support navigation for patterns?
-				return m, nil
 			}
-
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Step):
