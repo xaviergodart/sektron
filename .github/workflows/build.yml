@@ -46,7 +46,7 @@ jobs:
 
     - name: Tar.gz files
       run: tar -zcvf sektron_${{ github.ref_name }}_${{ runner.os}}.tar.gz LICENSE -C bin sektron
-      if: ${{ !startsWith(matrix.os, 'windows') }}
+      if: ${{ github.ref_type == 'tag' }}
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
@@ -54,6 +54,7 @@ jobs:
         name: sektron_${{ github.sha }}
         path: sektron_${{ github.ref_name }}_${{ runner.os}}.tar.gz
         if-no-files-found: error
+      if: ${{ github.ref_type == 'tag' }}
 
   release:
     needs: build
