@@ -43,7 +43,7 @@ func NewDefaultAzertyKeyMap() KeyMap {
 		AddStep:      "+",
 		RemoveStep:   "°",
 		PreviousStep: ",",
-		NextStep:     ".",
+		NextStep:     ";",
 		PageUp:       "p",
 		PageDown:     "m",
 		TempoUp:      "shift+up",
