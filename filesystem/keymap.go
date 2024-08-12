@@ -74,7 +74,7 @@ func NewDefaultAzertyMacKeyMap() KeyMap {
 		AddStep:      "_",
 		RemoveStep:   "°",
 		PreviousStep: ",",
-		NextStep:     ".",
+		NextStep:     ";",
 		PageUp:       "p",
 		PageDown:     "m",
 		TempoUp:      "shift+up",
