@@ -164,6 +164,39 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.seq.RemoveStep(m.activeTrack)
 			return m, nil
 
+		case key.Matches(msg, m.keymap.PreviousStep):
+			if m.mode == stepMode || m.mode == trackMode {
+				newIndex := m.activeStep - 1
+				if newIndex < 0 {
+					newIndex = len(m.getActiveTrack().Steps()) - 1
+				}
+
+				m.activeStep = newIndex
+				// Paginate if needed
+				m.activeTrackPage = (newIndex / stepsPerPage)
+
+				m.mode = stepMode
+				m.stepModeTimer = 0
+				m.updateParams()
+			}
+			return m, nil
+
+		case key.Matches(msg, m.keymap.NextStep):
+			if m.mode == stepMode || m.mode == trackMode {
+				newIndex := m.activeStep + 1
+				if newIndex > len(m.getActiveTrack().Steps())-1 {
+					newIndex = 0
+				}
+				m.activeStep = newIndex
+				// Paginate if needed
+				m.activeTrackPage = (newIndex / stepsPerPage)
+
+				m.mode = stepMode
+				m.stepModeTimer = 0
+				m.updateParams()
+			}
+			return m, nil
+
 		case key.Matches(msg, m.keymap.Step):
 			number := m.keymap.StepIndex[msg.String()]
 			if m.mode == patternMode {
@@ -274,6 +307,9 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.paramMidiTable.SetCursor(0)
 				m.mode = trackMode
 				m.updateParams()
+			}
+			if m.mode == stepMode {
+				m.seq.ToggleStep(m.activeTrack, m.activeStep)
 			}
 			return m, nil
 

@@ -12,6 +12,8 @@ type KeyMap struct {
 	RemoveTrack  string     `json:"remove_track"`
 	AddStep      string     `json:"add_step"`
 	RemoveStep   string     `json:"remove_step"`
+	PreviousStep string     `json:"previous_step"`
+	NextStep     string     `json:"next_step"`
 	PageUp       string     `json:"page_up"`
 	PageDown     string     `json:"page_down"`
 	TempoUp      string     `json:"tempo_up"`
@@ -40,6 +42,8 @@ func NewDefaultAzertyKeyMap() KeyMap {
 		RemoveTrack:  ")",
 		AddStep:      "+",
 		RemoveStep:   "°",
+		PreviousStep: ",",
+		NextStep:     ";",
 		PageUp:       "p",
 		PageDown:     "m",
 		TempoUp:      "shift+up",
@@ -69,6 +73,8 @@ func NewDefaultAzertyMacKeyMap() KeyMap {
 		RemoveTrack:  ")",
 		AddStep:      "_",
 		RemoveStep:   "°",
+		PreviousStep: ",",
+		NextStep:     ";",
 		PageUp:       "p",
 		PageDown:     "m",
 		TempoUp:      "shift+up",
@@ -97,6 +103,8 @@ func NewDefaultQwertyKeyMap() KeyMap {
 		RemoveTrack:  "-",
 		AddStep:      "+",
 		RemoveStep:   "_",
+		PreviousStep: ",",
+		NextStep:     ".",
 		PageUp:       "p",
 		PageDown:     ";",
 		TempoUp:      "shift+up",
@@ -126,6 +134,8 @@ func NewDefaultQwertyMacKeyMap() KeyMap {
 		RemoveTrack:  "-",
 		AddStep:      "+",
 		RemoveStep:   "_",
+		PreviousStep: ",",
+		NextStep:     ".",
 		PageUp:       "p",
 		PageDown:     ";",
 		TempoUp:      "shift+up",
