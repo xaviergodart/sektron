@@ -111,6 +111,8 @@ For qwerty keyboards, here's the default mapping:
  - `!` `@` `#` `$` `%` `^` `&` `*` `(` `)` **toggle track**
  - `q` `w` `e` `r` `t` `y` `u` `i` `q` `s` `d` `f` `g` `h` `j` `k` **select step** or **switch to pattern**
  - `Q` `W` `E` `R` `T` `Y` `U` `I` `Q` `S` `D` `F` `G` `H` `J` `K` **toggle step** or **chain pattern**
+ - `,` **next step**
+ - `.` **previous step**
  - `=` **add track**
  - `-` **remove track**
  - `+` **add step** to the selected track
@@ -119,6 +121,8 @@ For qwerty keyboards, here's the default mapping:
  - `;` **page down** either steps or patterns if more than 16 items
  - `shift`+`up` **increase tempo**
  - `shift`+`down` **decrease tempo**
+ - `ctrl`+`c` **copy selected step**
+ - `ctrl`+`v` **paste selected step**
  - `ctrl`+`up` **add new midi control** to the selected track
  - `ctrl`+`down` **remove midi control**. It will remove the selected one
  - `enter` **validate selection**
@@ -127,7 +131,7 @@ For qwerty keyboards, here's the default mapping:
  - `up` **increase selected parameter value**
  - `down` **decrease selected parameter value**
  - `?` **show help**
- - `escape` or `ctrl`+`c` **quit**
+ - `escape` or `ctrl`+`q` **quit**
 
 ### Patterns management
 
