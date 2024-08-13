@@ -250,7 +250,6 @@ func (s *sequencer) ToggleStep(track, step int) {
 }
 
 // CopyStep copies a step to the 'clipboard' step.
-// TODO: Double check this, had some AI help with pointers
 func (s *sequencer) CopyStep(track, srcStep int) {
 	if track < 0 || track >= len(s.tracks) || srcStep < 0 || srcStep >= len(s.tracks[track].steps) {
 		return // Out of bounds, do nothing
