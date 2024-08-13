@@ -91,6 +91,8 @@ func (m mainModel) Init() tea.Cmd {
 }
 
 func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	m.resetPatternState()
+
 	switch msg := msg.(type) {
 
 	case tea.WindowSizeMsg:
@@ -160,6 +162,39 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			m.activeStep = 0
 			m.seq.RemoveStep(m.activeTrack)
+			return m, nil
+
+		case key.Matches(msg, m.keymap.PreviousStep):
+			if m.mode == stepMode || m.mode == trackMode {
+				newIndex := m.activeStep - 1
+				if newIndex < 0 {
+					newIndex = len(m.getActiveTrack().Steps()) - 1
+				}
+
+				m.activeStep = newIndex
+				// Paginate if needed
+				m.activeTrackPage = (newIndex / stepsPerPage)
+
+				m.mode = stepMode
+				m.stepModeTimer = 0
+				m.updateParams()
+			}
+			return m, nil
+
+		case key.Matches(msg, m.keymap.NextStep):
+			if m.mode == stepMode || m.mode == trackMode {
+				newIndex := m.activeStep + 1
+				if newIndex > len(m.getActiveTrack().Steps())-1 {
+					newIndex = 0
+				}
+				m.activeStep = newIndex
+				// Paginate if needed
+				m.activeTrackPage = (newIndex / stepsPerPage)
+
+				m.mode = stepMode
+				m.stepModeTimer = 0
+				m.updateParams()
+			}
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Step):
@@ -287,6 +322,9 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.mode = trackMode
 				m.updateParams()
 			}
+			if m.mode == stepMode {
+				m.seq.ToggleStep(m.activeTrack, m.activeStep)
+			}
 			return m, nil
 
 		case key.Matches(msg, m.keymap.Left):
@@ -371,6 +409,16 @@ func (m mainModel) View() string {
 		cleanup,
 		help,
 	)
+}
+
+// resetPattern ensures that we reset active track and step state
+// after a pattern chain if needed
+func (m *mainModel) resetPatternState() {
+	if m.activeTrack >= len(m.seq.Tracks()) || m.activeStep >= len(m.seq.Tracks()[m.activeTrack].Steps()) {
+		m.activeTrack = 0
+		m.activeTrackPage = 0
+		m.activeStep = 0
+	}
 }
 
 func (m *mainModel) getActiveTrack() sequencer.Track {
