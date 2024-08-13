@@ -19,6 +19,8 @@ type keyMap struct {
 
 	AddStep    key.Binding
 	RemoveStep key.Binding
+	CopyStep   key.Binding
+	PasteStep  key.Binding
 
 	NextStep     key.Binding
 	PreviousStep key.Binding
@@ -101,6 +103,14 @@ func newKeyMap(keys filesystem.KeyMap) keyMap {
 			key.WithKeys(keys.RemoveStep),
 			key.WithHelp(keys.RemoveStep, "remove step"),
 		),
+		CopyStep: key.NewBinding(
+			key.WithKeys(keys.CopyStep),
+			key.WithHelp(keys.CopyStep, "copy active step parameters"),
+		),
+		PasteStep: key.NewBinding(
+			key.WithKeys(keys.PasteStep),
+			key.WithHelp(keys.PasteStep, "paste copied parameters into active step"),
+		),
 		PreviousStep: key.NewBinding(
 			key.WithKeys(keys.PreviousStep),
 			key.WithHelp(keys.PreviousStep, "select previous step"),
@@ -178,8 +188,8 @@ func newKeyMap(keys filesystem.KeyMap) keyMap {
 			key.WithHelp(keys.Help, "toggle help"),
 		),
 		Quit: key.NewBinding(
-			key.WithKeys("ctrl+c", "esc"),
-			key.WithHelp("ctrl+c/esc", "quit"),
+			key.WithKeys("ctrl+q", "esc"),
+			key.WithHelp("ctrl+q/esc", "quit"),
 		),
 	}
 	for i, k := range keys.Steps {

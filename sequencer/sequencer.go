@@ -51,6 +51,8 @@ type Sequencer interface {
 	AddStep(track int)
 	RemoveStep(track int)
 	ToggleStep(track, step int)
+	CopyStep(track, step int)
+	PasteStep(track, step int)
 	Tempo() float64
 	SetTempo(tempo float64)
 	Reset()
@@ -72,6 +74,8 @@ type sequencer struct {
 	isPlaying bool
 
 	isFirstTick bool
+
+	stepClipboard step
 }
 
 // New creates a new sequencer. It also creates new tracks and calls the
@@ -243,6 +247,67 @@ func (s *sequencer) ToggleStep(track, step int) {
 	}
 	s.tracks[track].steps[step].active = !s.tracks[track].steps[step].active
 	s.tracks[track].steps[step].clearParameters()
+}
+
+// CopyStep copies a step to the 'clipboard' step.
+func (s *sequencer) CopyStep(track, srcStep int) {
+	if track < 0 || track >= len(s.tracks) || srcStep < 0 || srcStep >= len(s.tracks[track].steps) {
+		return // Out of bounds, do nothing
+	}
+
+	originalStep := s.tracks[track].steps[srcStep]
+
+	// Create a deep copy of the step
+	s.stepClipboard = step{
+		midi:        originalStep.midi,
+		track:       nil,               // We don't want to keep a reference to the original track
+		position:    originalStep.position,
+		active:      originalStep.active,
+		triggered:   false, // Reset triggered state for the copy
+		controls:    make(map[int]*midi.Control),
+		length:      copyIntPtr(originalStep.length),
+		chord:       copyUint8SlicePtr(originalStep.chord),
+		velocity:    copyUint8Ptr(originalStep.velocity),
+		probability: copyIntPtr(originalStep.probability),
+		offset:      originalStep.offset,
+	}
+
+	// Deep copy the controls
+	for k, v := range originalStep.controls {
+		controlCopy := *v // Assuming midi.Control is safe to copy directly
+		s.stepClipboard.controls[k] = &controlCopy
+	}
+}
+
+// PasteStep pastes a clipboard step into a destination step
+func (s *sequencer) PasteStep(track, dstStep int) {
+	if track < 0 || track >= len(s.tracks) || dstStep < 0 || dstStep >= len(s.tracks[track].steps) {
+		return // Out of bounds, do nothing
+	}
+
+	// Create a deep copy of the clipboard
+	newStep := step{
+		midi:        s.stepClipboard.midi,
+		track:       s.tracks[track],
+		position:    dstStep,
+		active:      s.stepClipboard.active,
+		triggered:   false, // Reset triggered state
+		controls:    make(map[int]*midi.Control),
+		length:      copyIntPtr(s.stepClipboard.length),
+		chord:       copyUint8SlicePtr(s.stepClipboard.chord),
+		velocity:    copyUint8Ptr(s.stepClipboard.velocity),
+		probability: copyIntPtr(s.stepClipboard.probability),
+		offset:      s.stepClipboard.offset,
+	}
+
+	// Deep copy the controls
+	for k, v := range s.stepClipboard.controls {
+		controlCopy := *v
+		newStep.controls[k] = &controlCopy
+	}
+
+	// Replace the step in the track
+	s.tracks[track].steps[dstStep] = &newStep
 }
 
 func (s *sequencer) start() {

@@ -218,6 +218,20 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.updateParams()
 			return m, nil
 
+		case key.Matches(msg, m.keymap.CopyStep):
+			m.seq.CopyStep(m.activeTrack, m.activeStep)
+			m.mode = stepMode
+			m.stepModeTimer = 0
+			m.updateParams()
+			return m, nil
+
+		case key.Matches(msg, m.keymap.PasteStep):
+			m.seq.PasteStep(m.activeTrack, m.activeStep)
+			m.mode = stepMode
+			m.stepModeTimer = 0
+			m.updateParams()
+			return m, nil
+
 		case key.Matches(msg, m.keymap.StepToggle):
 			number := m.keymap.StepToggleIndex[msg.String()]
 			if m.mode == patternMode {
