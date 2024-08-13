@@ -19,6 +19,8 @@ type keyMap struct {
 
 	AddStep    key.Binding
 	RemoveStep key.Binding
+	CopyStep   key.Binding
+	PasteStep  key.Binding
 
 	StepIndex map[string]int
 	Step      key.Binding
@@ -40,8 +42,6 @@ type keyMap struct {
 
 	AddParam    key.Binding
 	RemoveParam key.Binding
-	CopyParams  key.Binding
-	PasteParams key.Binding
 
 	Validate key.Binding
 	Left     key.Binding
@@ -100,6 +100,14 @@ func newKeyMap(keys filesystem.KeyMap) keyMap {
 			key.WithKeys(keys.RemoveStep),
 			key.WithHelp(keys.RemoveStep, "remove step"),
 		),
+		CopyStep: key.NewBinding(
+			key.WithKeys(keys.CopyStep),
+			key.WithHelp(keys.CopyStep, "copy active step parameters"),
+		),
+		PasteStep: key.NewBinding(
+			key.WithKeys(keys.PasteStep),
+			key.WithHelp(keys.PasteStep, "paste copied parameters into active step"),
+		),
 		StepIndex: map[string]int{},
 		Step: key.NewBinding(
 			key.WithKeys(keys.Steps[:]...),
@@ -143,14 +151,6 @@ func newKeyMap(keys filesystem.KeyMap) keyMap {
 		RemoveParam: key.NewBinding(
 			key.WithKeys(keys.RemoveParam),
 			key.WithHelp(keys.RemoveParam, "remove midi control"),
-		),
-		CopyParams: key.NewBinding(
-			key.WithKeys(keys.CopyParams),
-			key.WithHelp(keys.CopyParams, "copy active step parameters"),
-		),
-		PasteParams: key.NewBinding(
-			key.WithKeys(keys.PasteParams),
-			key.WithHelp(keys.PasteParams, "paste copied parameters into active step"),
 		),
 		Validate: key.NewBinding(
 			key.WithKeys(keys.Validate),

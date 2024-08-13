@@ -12,14 +12,14 @@ type KeyMap struct {
 	RemoveTrack  string     `json:"remove_track"`
 	AddStep      string     `json:"add_step"`
 	RemoveStep   string     `json:"remove_step"`
+	CopyStep     string     `json:"copy_step"`
+	PasteStep    string     `json:"paste_step"`
 	PageUp       string     `json:"page_up"`
 	PageDown     string     `json:"page_down"`
 	TempoUp      string     `json:"tempo_up"`
 	TempoDown    string     `json:"tempo_down"`
 	AddParam     string     `json:"add_param"`
 	RemoveParam  string     `json:"remove_param"`
-	CopyParams   string     `json:"copy_params"`
-	PasteParams  string     `json:"paste_params"`
 	Validate     string     `json:"validate"`
 	Left         string     `json:"left"`
 	Right        string     `json:"right"`
@@ -42,14 +42,14 @@ func NewDefaultAzertyKeyMap() KeyMap {
 		RemoveTrack:  ")",
 		AddStep:      "+",
 		RemoveStep:   "°",
+		CopyStep:     "ctrl+c",
+		PasteStep:    "ctrl+v",
 		PageUp:       "p",
 		PageDown:     "m",
 		TempoUp:      "shift+up",
 		TempoDown:    "shift+down",
 		AddParam:     "ctrl+up",
 		RemoveParam:  "ctrl+down",
-		CopyParams:   "ctrl+c",
-		PasteParams:  "ctrl+v",
 		Validate:     "enter",
 		Left:         "left",
 		Right:        "right",
@@ -73,14 +73,14 @@ func NewDefaultAzertyMacKeyMap() KeyMap {
 		RemoveTrack:  ")",
 		AddStep:      "_",
 		RemoveStep:   "°",
+		CopyStep:     "ctrl+c",
+		PasteStep:    "ctrl+v",
 		PageUp:       "p",
 		PageDown:     "m",
 		TempoUp:      "shift+up",
 		TempoDown:    "shift+down",
 		AddParam:     "ctrl+up",
 		RemoveParam:  "ctrl+down",
-		CopyParams:   "ctrl+c",
-		PasteParams:  "ctrl+v",
 		Validate:     "enter",
 		Left:         "left",
 		Right:        "right",
@@ -103,14 +103,14 @@ func NewDefaultQwertyKeyMap() KeyMap {
 		RemoveTrack:  "-",
 		AddStep:      "+",
 		RemoveStep:   "_",
+		CopyStep:     "ctrl+c",
+		PasteStep:    "ctrl+v",
 		PageUp:       "p",
 		PageDown:     ";",
 		TempoUp:      "shift+up",
 		TempoDown:    "shift+down",
 		AddParam:     "ctrl+up",
 		RemoveParam:  "ctrl+down",
-		CopyParams:   "ctrl+c",
-		PasteParams:  "ctrl+v",
 		Validate:     "enter",
 		Left:         "left",
 		Right:        "right",
@@ -134,14 +134,14 @@ func NewDefaultQwertyMacKeyMap() KeyMap {
 		RemoveTrack:  "-",
 		AddStep:      "+",
 		RemoveStep:   "_",
+		CopyStep:     "ctrl+c",
+		PasteStep:    "ctrl+v",
 		PageUp:       "p",
 		PageDown:     ";",
 		TempoUp:      "shift+up",
 		TempoDown:    "shift+down",
 		AddParam:     "ctrl+up",
 		RemoveParam:  "ctrl+down",
-		CopyParams:   "ctrl+c",
-		PasteParams:  "ctrl+v",
 		Validate:     "enter",
 		Left:         "left",
 		Right:        "right",

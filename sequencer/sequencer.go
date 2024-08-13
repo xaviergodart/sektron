@@ -281,7 +281,6 @@ func (s *sequencer) CopyStep(track, srcStep int) {
 }
 
 // PasteStep pastes a clipboard step into a destination step
-// TODO: Double check this, had some AI help with pointers
 func (s *sequencer) PasteStep(track, dstStep int) {
 	if track < 0 || track >= len(s.tracks) || dstStep < 0 || dstStep >= len(s.tracks[track].steps) {
 		return // Out of bounds, do nothing
@@ -289,9 +288,9 @@ func (s *sequencer) PasteStep(track, dstStep int) {
 
 	// Create a deep copy of the clipboard
 	newStep := step{
-		midi:        s.stepClipboard.midi, // Assuming midi.Midi is safe to copy directly
-		track:       s.tracks[track],      // Set the correct track
-		position:    dstStep,              // Set the correct position
+		midi:        s.stepClipboard.midi,
+		track:       s.tracks[track],
+		position:    dstStep,
 		active:      s.stepClipboard.active,
 		triggered:   false, // Reset triggered state
 		controls:    make(map[int]*midi.Control),
@@ -304,7 +303,7 @@ func (s *sequencer) PasteStep(track, dstStep int) {
 
 	// Deep copy the controls
 	for k, v := range s.stepClipboard.controls {
-		controlCopy := *v // Assuming midi.Control is safe to copy directly
+		controlCopy := *v
 		newStep.controls[k] = &controlCopy
 	}
 
@@ -346,32 +345,4 @@ func (s sequencer) sendControls() {
 	for _, track := range s.tracks {
 		track.sendControls()
 	}
-}
-
-// Helper functions for deep copying pointers
-func copyIntPtr(ptr *int) *int {
-	if ptr == nil {
-		return nil
-	}
-	copy := *ptr
-	return &copy
-}
-
-func copyUint8Ptr(ptr *uint8) *uint8 {
-	if ptr == nil {
-		return nil
-	}
-	copy := *ptr
-	return &copy
-}
-
-func copyUint8SlicePtr(ptr *[]uint8) *[]uint8 {
-	if ptr == nil {
-		return nil
-	}
-	copy := make([]uint8, len(*ptr))
-	for i, v := range *ptr {
-		copy[i] = v
-	}
-	return &copy
 }
