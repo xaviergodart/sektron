@@ -259,7 +259,7 @@ func (s *sequencer) CopyStep(track, srcStep int) {
 
 	// Create a deep copy of the step
 	s.stepClipboard = step{
-		midi:        originalStep.midi, // Assuming midi.Midi is safe to copy directly
+		midi:        originalStep.midi,
 		track:       nil,               // We don't want to keep a reference to the original track
 		position:    originalStep.position,
 		active:      originalStep.active,
