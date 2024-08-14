@@ -10,10 +10,9 @@ linters:
 linters-settings:
   gofumpt:
     module-path: sektron
-
 # it weirdly fails when running in github actions on interface composition.
 issues:
   exclude-rules:
-  - path: ui/parameter.go
-    linters:
-    - typecheck
+    - path: ui/parameter.go
+      linters:
+        - typecheck
