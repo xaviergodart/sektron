@@ -23,4 +23,5 @@ jobs:
         uses: golangci/golangci-lint-action@v6
         with:
           args: -c .golangci.yml
-          only-new-issues: true
+          only-new-issues: false
+          install-mode: "goinstall"
