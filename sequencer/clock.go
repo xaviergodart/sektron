@@ -46,6 +46,8 @@ func newClock(tempo float64, tick func()) *clock {
 					c.shouldUpdate = false
 				}
 			case newTempo := <-c.update:
+				// we way for the next tick to update in order
+				// to prevent jitter
 				c.shouldUpdate = true
 				c.tempo = newTempo
 			}
