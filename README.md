@@ -116,7 +116,7 @@ For qwerty keyboards, here's the default mapping:
  - `=` **add track**
  - `-` **remove track**
  - `+` **add step** to the selected track
- - `_` **remove step** form the selected track
+ - `_` **remove step** from the selected track
  - `p` **page up** either steps or patterns if more than 16 items
  - `;` **page down** either steps or patterns if more than 16 items
  - `shift`+`up` **increase tempo**
